@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=${charset}" />
+<title>Struct Navigation</title>
+<style type="text/css">
+<!--
+body {
+	font-family: Consolas, monospace;
+	font-size: 14px;
+}
+-->
+</style>
+</head>
+
+#macro (commandStyle $cmd)
+#if ($cmd.input.messageBean && $cmd.output.messageBean)
+font-weight: bold; color: black;##
+#elseif ($cmd.input.messageBean)
+font-weight: bold; color: blue;##
+#else
+font-weight: bold; color: green;##
+#end
+#end
+
+<body>
+<h1>All Structs</h1>
+#set ($currentCatalog = "0")
+#foreach ($struct in $allStructs)
+#set ($catalog = ${struct.typeName.substring(0, 1).toUpperCase()})
+#if ($currentCatalog != $catalog)
+<h2>${catalog}</h2>
+#set ($currentCatalog = $catalog)
+#end
+<a href="Struct.html#${struct.typeName}" target="structFrame">${struct.typeName}</a><br />
+#end
+</body>
+</html>
