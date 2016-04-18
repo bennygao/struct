@@ -2,11 +2,11 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=${charset}">
-  <title>Messages Definition</title>
+  <title>Struct Definition</title>
 </head>
 
 <!-- Body -->
-<frameset rows="*" cols="200,*" bordercolor="#A7A6AA">
+<frameset rows="*" cols="300,*" bordercolor="#A7A6AA">
   <frame id="navigator" name="nav" src="Navigation.html" scrolling="auto" title="Struct List">
   <frame name="structFrame" src="Struct.html" scrolling="auto" title="Contents">
 </frameset>

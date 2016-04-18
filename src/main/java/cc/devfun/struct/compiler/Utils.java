@@ -1,6 +1,10 @@
 package cc.devfun.struct.compiler;
 
 
+import com.github.rjeschke.txtmark.Processor;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;
 
@@ -27,5 +31,15 @@ public class Utils {
         } else {
             return m.size() == 0;
         }
+    }
+
+    public static String markdown2Html(Collection<String> lines) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println("[$PROFILE$]: extended");
+        for (String l : lines) {
+            pw.println(l);
+        }
+        return Processor.process(sw.toString());
     }
 }

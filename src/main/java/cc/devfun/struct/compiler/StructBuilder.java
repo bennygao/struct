@@ -91,6 +91,10 @@ public class StructBuilder extends StructBaseListener {
         if (currentStruct == null) {
             currentStruct = new StructType(typeName);
             allStructs.put(typeName, currentStruct);
+        } else if (currentStruct.isResolved()) {
+            String errmsg = String.format("%s:%d 重复定义的struct %s",
+                    src.getName(), ctx.getStart().getLine(), typeName);
+            throw new IllegalSemanticException(errmsg);
         }
         currentStruct.setDefinedLocation(src, ctx.getStart().getLine());
         setComments(currentStruct, ctx);
@@ -176,6 +180,8 @@ public class StructBuilder extends StructBaseListener {
             if (st == null) {
                 st = new StructType(typeName, arraySize);
                 allStructs.put(typeName, st);
+            } else {
+                st.setArraySize(arraySize);
             }
             currentType = st;
         }

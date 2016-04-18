@@ -1,6 +1,7 @@
 package cc.devfun.struct.compiler.model;
 
 import cc.devfun.struct.compiler.Utils;
+import com.github.rjeschke.txtmark.Processor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,6 +32,11 @@ public class Field implements Commentable {
 
     public List<String> getComments() {
         return comments;
+    }
+
+    @Override
+    public String getHtmlComments() {
+        return Utils.markdown2Html(comments);
     }
 
     public void addComment(String comment) {

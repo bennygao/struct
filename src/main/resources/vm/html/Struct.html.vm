@@ -34,6 +34,12 @@ body {
     color: #444;
 }
 
+hr {
+    height:1px;
+    border:none;
+    border-top:1px solid #cccccc;
+}
+
 table {
     *border-collapse: collapse; /* IE7 and lower */
     border-spacing: 0;
@@ -128,16 +134,15 @@ table {
 </h1>
 <p>(${struct.definedLocation})</p>
 	#if ($struct.haveComments())
-<p>
-		#foreach ($line in $struct.comments)
-${line}<br/>
-		#end
-</p>
+${struct.htmlComments}
 	#end
 
 #macro (typeHref $field)
 #if (!$field.type.isBasic() && !$field.type.isString())
 <a href="Struct.html#${field.type.typeName}">${field.type.typeName}</a>##
+#if ($field.type.hasArray())
+[${field.type.arraySize}]##
+#end
 #else
 ${field.type.prototype}##
 #end
@@ -154,18 +159,10 @@ ${field.type.prototype}##
   </thead>
   #foreach ($field in $struct.fields)
   <tr valign="top">
-	<td>#typeHref($field)</td>
-	<td>${field.name}</td>
-	<td>#defaultValue($field)</td>
-	<td>
-#if ($field.haveComments())
-		#foreach ($line in $field.comments)
-		${line}<br />
-		#end
-#else
-	&nbsp;
-#end
-	</td>
+	<td><p>#typeHref($field)</p></td>
+	<td><p>${field.name}</p></td>
+	<td><p>#defaultValue($field)</p></td>
+	<td>${field.htmlComments}</td>
   </tr>
 #end
 </table>

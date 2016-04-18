@@ -1,6 +1,7 @@
 package cc.devfun.struct.compiler.model;
 
 import cc.devfun.struct.compiler.Utils;
+import com.github.rjeschke.txtmark.Processor;
 
 import java.io.*;
 import java.util.*;
@@ -26,6 +27,7 @@ public class StructType extends DataType implements Commentable {
     public void setDefinedLocation(File file, int line) {
         definedLocation.setFile(file);
         definedLocation.setLine(line);
+        resolved = true;
     }
 
     public Location getDefinedLocation() {
@@ -57,7 +59,6 @@ public class StructType extends DataType implements Commentable {
     }
 
     public void addField(Field f) {
-        this.resolved = true;
         this.fields.put(f.getName(), f);
     }
 
@@ -75,6 +76,11 @@ public class StructType extends DataType implements Commentable {
 
     public boolean haveComments() {
         return comments.size() > 0;
+    }
+
+    @Override
+    public String getHtmlComments() {
+        return Utils.markdown2Html(comments);
     }
 
     public String getClassName() {
