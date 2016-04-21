@@ -3,6 +3,7 @@ package cc.devfun.struct.compiler.codegenerator;
 import java.io.File;
 import java.io.Writer;
 import java.util.Date;
+import java.util.Map;
 
 import cc.devfun.struct.compiler.CodeGenerator;
 import cc.devfun.struct.compiler.GeneratorContext;
@@ -18,7 +19,10 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         vc.put("package", ctx.getJavaPackage());
         vc.put("createTime", new Date());
         vc.put("utils", Utils.getInstance());
-        vc.put("allStructs", ctx.getAllStructs().values());
+
+        Map<String, StructType> allStructs = ctx.getAllStructs();
+        allStructs.remove("Struct");
+        vc.put("allStructs", allStructs.values());
 
         String path = getSourcePath(ctx.getOutputDir(), ctx.getJavaPackage());
         StringBuilder pathname = new StringBuilder();

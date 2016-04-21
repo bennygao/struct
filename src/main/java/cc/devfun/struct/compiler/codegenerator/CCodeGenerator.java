@@ -31,12 +31,22 @@ public class CCodeGenerator extends VelocityCodeGenerator implements
         }
         vc.put("fileName", fn.toUpperCase());
 
+        Map<String, StructType> allStructs = ctx.getAllStructs();
+        allStructs.remove("Struct");
         List<StructType> list = new ArrayList<>();
-        list.addAll(ctx.getAllStructs().values());
+        list.addAll(allStructs.values());
         Collections.sort(list, new Comparator<StructType>() {
             @Override
             public int compare(StructType o1, StructType o2) {
-                return o1.getTypeName().compareTo(o2.getTypeName());
+                String n1 = o1.getName();
+                String n2 = o2.getName();
+                if (o1.depend(o2)) {
+                    return 1;
+                } else if (o2.depend(o1)) {
+                    return -1;
+                } else {
+                    return o1.getTypeName().compareTo(o2.getTypeName());
+                }
             }
         });
         vc.put("allStructs", list);

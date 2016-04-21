@@ -33,6 +33,10 @@ public class Utils {
     }
 
     public String getCStyleIdentifier(String name) {
+        if (name.equalsIgnoreCase("struct")) {
+            return "Struct";
+        }
+
         StringBuilder sb = new StringBuilder();
         Matcher m = upperPattern.matcher(name);
         int start = 0, b = 0, e = 0;

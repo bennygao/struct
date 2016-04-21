@@ -25,6 +25,8 @@
 #macro (cType $field)
 #if ($field.type.isBasic())
 ${cTypeMap[$field.type.name]}##
+#elseif ($field.type.isString())
+char##
 #else
 struct ${utils.getCStyleIdentifier($field.type.typeName)}##
 #end
@@ -34,15 +36,20 @@ struct ${utils.getCStyleIdentifier($field.type.typeName)}##
 #macro (array $field)
 #if ($field.type.hasArray())
 #if ($field.type.isFixedLength())
-[${field.type.arraySize}] ##
+[${field.type.arraySize}]##
 #else
-[0] ##
+[0]##
 #end
 #else
- ##
+##
 #end
 #end
+
 \#define ALIGNED_BY_BYTE __attribute__((packed,aligned(1)))
+
+struct Struct {
+    char member[0];
+} ALIGNED_BY_BYTE;
 
 #foreach ($struct in $allStructs)
 struct ${utils.getCStyleIdentifier($struct.name)};
@@ -65,7 +72,7 @@ typedef struct ${utils.getCStyleIdentifier($struct.name)} {
     // $line
 #end
 #end
-    #cType($field)#array($field)${utils.getCStyleIdentifier($field.name)};
+    #cType($field) ${utils.getCStyleIdentifier($field.name)}#array($field);
 
 #end
 } ALIGNED_BY_BYTE ${utils.getCStyleIdentifier($struct.name)}_t;

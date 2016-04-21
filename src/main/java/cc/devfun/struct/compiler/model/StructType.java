@@ -12,10 +12,12 @@ public class StructType extends DataType implements Commentable {
     private Map<String, Field> fields = new LinkedHashMap<>();
     private List<String> comments = new ArrayList<String>();
     private Location definedLocation;
+    private Map<String, StructType> dependency;
 
     public StructType(String name) {
         this.name = name;
         this.resolved = false;
+        this.dependency = new HashMap<>();
         this.definedLocation = new Location();
     }
 
@@ -63,7 +65,25 @@ public class StructType extends DataType implements Commentable {
     }
 
     public void addField(Field f) {
+        DataType type = f.getType();
+        if (type.isStruct()) {
+            dependency.put(type.getName(), (StructType) type);
+        }
         this.fields.put(f.getName(), f);
+    }
+
+    public boolean depend(StructType st) {
+        if (dependency.containsKey(st.getName())) {
+            return true;
+        } else {
+            for (StructType d : dependency.values()) {
+                if (d.depend(st)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public Field getField(String name) {

@@ -242,7 +242,7 @@ public class StructCompiler {
                 System.err.println("语法错!");
                 System.exit(0);
             }
-            allStructs.remove("Struct");
+
             ctx.setAllStructs(allStructs);
             CodeGeneratorFactory factory;
             CodeGenerator generator;

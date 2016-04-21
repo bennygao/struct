@@ -23,7 +23,9 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         vc.put("utils", Utils.getInstance());
         vc.put("charset", ctx.getOutputEncoding());
         List<StructType> list = new ArrayList<>();
-        list.addAll(ctx.getAllStructs().values());
+        Map<String, StructType> allStructs = ctx.getAllStructs();
+        allStructs.remove("Struct");
+        list.addAll(allStructs.values());
         Collections.sort(list, new Comparator<StructType>() {
             @Override
             public int compare(StructType o1, StructType o2) {
