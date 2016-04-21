@@ -1,7 +1,11 @@
 grammar Struct;
 
 prog
-    : struct+
+    : include* struct+
+    ;
+
+include
+    : '#include' StringLiteral
     ;
 
 struct

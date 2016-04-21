@@ -12,10 +12,61 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.cli.*;
 
 import java.io.*;
-import java.util.Map;
+import java.util.*;
 
 public class StructCompiler {
-    public static Map<String, StructType> parse(File defineFile) throws Exception {
+    private Map<String, StructType> allStructs;
+    private Set<String> parsedFiles;
+    private List<String> searchPath;
+
+    public StructCompiler() {
+        parsedFiles = new HashSet<>();
+        searchPath = new ArrayList<>();
+        allStructs = new LinkedHashMap<>();
+        StructType struct = new StructType("Struct", "1");
+        struct.setResolved();
+        allStructs.put(struct.getName(), struct);
+    }
+
+    public Map<String, StructType> getAllStructs() {
+        return allStructs;
+    }
+
+    public Set<String> getParsedFiles() {
+        return parsedFiles;
+    }
+
+    public Map<String, StructType> parse(String fileName) throws Exception {
+        File defineFile;
+        if (fileName.startsWith("/")) {
+            defineFile = new File(fileName);
+            if (!defineFile.exists()) {
+                throw new IllegalSemanticException("不存在的struct定义文件: " + fileName);
+            } else {
+                return parse(defineFile);
+            }
+        } else {
+            for (String path : searchPath) {
+                defineFile = new File(path, fileName);
+                if (defineFile.exists()) {
+                    return parse(defineFile);
+                }
+            }
+
+            throw new IllegalSemanticException("不存在的struct定义文件: " + fileName);
+        }
+    }
+
+    public Map<String, StructType> parse(File defineFile) throws Exception {
+        if (parsedFiles.contains(defineFile.getAbsolutePath())) {
+            return new HashMap<>();
+        } else {
+            parsedFiles.add(defineFile.getAbsolutePath());
+            searchPath.add(defineFile.getParent());
+        }
+
+        System.out.println("Compiling " + defineFile.getAbsolutePath());
+
         InputStream is = new FileInputStream(defineFile);
         ANTLRInputStream input = new ANTLRInputStream(is);
         StructLexer lexer = new StructLexer(input);
@@ -27,7 +78,7 @@ public class StructCompiler {
         }
 
         ParseTreeWalker walker = new ParseTreeWalker();
-        StructBuilder builder = new StructBuilder(defineFile, tokens);
+        StructBuilder builder = new StructBuilder(defineFile, tokens, this);
         walker.walk(builder, tree);
         Map<String, StructType> allStructs = builder.getAllStructs();
         for (StructType st : allStructs.values()) {
@@ -35,6 +86,7 @@ public class StructCompiler {
                 throw new IllegalSemanticException("未定义的struct " + st.getName());
             }
         }
+
         return allStructs;
     }
 
@@ -184,12 +236,13 @@ public class StructCompiler {
         }
 
         try {
-            Map<String, StructType> allStructs = parse(ctx.getDefineFile());
+            StructCompiler compiler = new StructCompiler();
+            Map<String, StructType> allStructs = compiler.parse(ctx.getDefineFile());
             if (allStructs == null) {
                 System.err.println("语法错!");
                 System.exit(0);
             }
-
+            allStructs.remove("Struct");
             ctx.setAllStructs(allStructs);
             CodeGeneratorFactory factory;
             CodeGenerator generator;
@@ -208,7 +261,6 @@ public class StructCompiler {
             System.err.println(ise.getMessage());
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 }

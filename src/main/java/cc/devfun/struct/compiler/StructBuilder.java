@@ -9,10 +9,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StructBuilder extends StructBaseListener {
     private File src;
@@ -22,14 +19,19 @@ public class StructBuilder extends StructBaseListener {
     private StructType currentStruct;
     private DataType currentType;
     private DefaultValue defaultValue;
+    private Set<String> parsedFiles;
+    private StructCompiler compiler;
 
-    public StructBuilder(File src, CommonTokenStream tokens) {
+    public StructBuilder(File src, CommonTokenStream tokens, StructCompiler compiler) {
         this.src = src;
         this.tokens = tokens;
+        this.compiler = compiler;
+        this.parsedFiles = compiler.getParsedFiles();
+        this.allStructs = compiler.getAllStructs();
+
         this.currentStruct = null;
         this.defaultValue = null;
         this.usedComments = new HashMap<>();
-        this.allStructs = new LinkedHashMap<>();
     }
 
     public Map<String, StructType> getAllStructs() {
@@ -81,6 +83,17 @@ public class StructBuilder extends StructBaseListener {
     @Override
     public void exitProg(StructParser.ProgContext ctx) {
         super.exitProg(ctx);
+    }
+
+    @Override
+    public void exitInclude(StructParser.IncludeContext ctx) {
+        try {
+            String str = ctx.getChild(1).getText();
+            String fileName = str.substring(1, str.length() - 1);
+            compiler.parse(fileName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

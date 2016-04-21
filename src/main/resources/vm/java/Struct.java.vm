@@ -25,6 +25,10 @@ public class Struct {
         return this;
     }
 
+    public int calcSize() {
+        return 0;
+    }
+
     public <T> T read(DataInput dis, Class<T> clazz) throws IOException {
         if (clazz.equals(Character.class) || clazz.equals(char.class)) {
             return (T) (Character) readChar(dis);

@@ -24,6 +24,10 @@ public class StructType extends DataType implements Commentable {
         setArraySize(arraySize);
     }
 
+    public void setResolved() {
+        this.resolved = true;
+    }
+
     public void setDefinedLocation(File file, int line) {
         definedLocation.setFile(file);
         definedLocation.setLine(line);
