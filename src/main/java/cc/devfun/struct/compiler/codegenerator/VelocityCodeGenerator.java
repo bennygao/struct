@@ -14,6 +14,14 @@ import org.apache.velocity.app.Velocity;
 public class VelocityCodeGenerator {
     private final static String DIGEST_IDENTIFIER = "@DIGEST";
 
+    public VelocityCodeGenerator() {
+        try {
+            init();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void init() throws Exception {
         Properties props = new Properties();
         // 模板文件是UTF-8编码

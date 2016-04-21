@@ -13,10 +13,6 @@ import org.apache.velocity.app.Velocity;
 
 public class J2seCodeGenerator extends VelocityCodeGenerator implements
         CodeGenerator {
-    public J2seCodeGenerator() throws Exception {
-        init();
-    }
-
     public void generate(GeneratorContext ctx) throws Exception {
         VelocityContext vc = new VelocityContext();
         vc.put("package", ctx.getJavaPackage());

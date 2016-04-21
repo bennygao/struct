@@ -1,8 +1,10 @@
 package cc.devfun.struct.test;
 
+import cc.devfun.struct.compiler.codegenerator.Utils;
 import cc.devfun.struct.test.struct.*;
 import com.github.rjeschke.txtmark.Configuration;
 import com.github.rjeschke.txtmark.Processor;
+import org.apache.velocity.app.Velocity;
 
 import java.io.*;
 
@@ -30,8 +32,10 @@ public class Test {
     private final static String src2 = "[$PROFILE$]: extended\nThis is a paragraph\n" +
             "* and this is not a list";
     public static void main(String[] args) throws Exception {
-
-        String result = Processor.process(src);
-        System.out.println(result);
+        Utils utils = Utils.getInstance();
+        System.out.println(utils.getCStyleIdentifier("HTPv3Head"));
+        System.out.println(utils.getCStyleIdentifier("abcHTPv3Head"));
+        System.out.println(utils.getCStyleIdentifier("H"));
+        System.out.println(utils.getCStyleIdentifier("SegSeg123456H"));
     }
 }

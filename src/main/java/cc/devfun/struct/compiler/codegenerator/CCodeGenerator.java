@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.Writer;
 import java.util.*;
 
-public class HtmlGenerator extends VelocityCodeGenerator implements
+public class CCodeGenerator extends VelocityCodeGenerator implements
         CodeGenerator {
     @Override
     public void generate(GeneratorContext ctx) throws Exception {
@@ -22,6 +22,15 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         vc.put("createTime", new Date());
         vc.put("utils", Utils.getInstance());
         vc.put("charset", ctx.getOutputEncoding());
+
+        File f = ctx.getDefineFile();
+        String fn = f.getName();
+        int posi = fn.lastIndexOf('.');
+        if (posi > 0) {
+            fn = fn.substring(0, posi);
+        }
+        vc.put("fileName", fn.toUpperCase());
+
         List<StructType> list = new ArrayList<>();
         list.addAll(ctx.getAllStructs().values());
         Collections.sort(list, new Comparator<StructType>() {
@@ -37,24 +46,8 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         StringBuilder pathname = new StringBuilder();
         File html;
 
-        template = Velocity.getTemplate("vm/html/index.html.vm");
-        html = new File(outdir, "index.html");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
-        writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
-        template.merge(vc, writer);
-        writer.close();
-        System.out.println("完成。");
-
-        template = Velocity.getTemplate("vm/html/Navigation.html.vm");
-        html = new File(outdir, "Navigation.html");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
-        writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
-        template.merge(vc, writer);
-        writer.close();
-        System.out.println("完成。");
-
-        template = Velocity.getTemplate("vm/html/Struct.html.vm");
-        html = new File(outdir, "Struct.html");
+        template = Velocity.getTemplate("vm/c/Header.h.vm");
+        html = new File(outdir, fn.toLowerCase() + ".h");
         System.out.print("生成 " + html.getAbsolutePath() + " ... ");
         writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
         template.merge(vc, writer);

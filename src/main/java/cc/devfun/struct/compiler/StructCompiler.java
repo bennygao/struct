@@ -1,5 +1,6 @@
 package cc.devfun.struct.compiler;
 
+import cc.devfun.struct.compiler.codegenerator.CCodeGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.HtmlGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.J2seCodeGeneratorFactory;
 import cc.devfun.struct.compiler.model.StructType;
@@ -40,30 +41,40 @@ public class StructCompiler {
     private static void usage(Options options) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("MessageCompiler <options> <struct-define-file>",
+        formatter.printHelp("StructCompiler <options> <struct-define-file>",
                 options);
         System.out.println();
 
         System.out.println("生成HTML文档");
         System.out
-                .println("MessageCompiler -html -encoding <Encoding> -outputencoding <Encoding> -outdir <Dir> <struct-define-file>");
+                .println("StructCompiler -html -encoding <Encoding> -outputencoding <Encoding> -outdir <Dir> <struct-define-file>");
         System.out
                 .println(" -encoding <Encoding> 指定定义文件的字符编码，例如UTF8、gb2312。");
         System.out
                 .println(" -outputencoding <Encoding> 指定生成HTML的字符编码，例如UTF8、gb2312。");
         System.out.println(" -outdir <Dir> 指定存放生成HTML的路径。");
-        System.out.println(" <struct-define-file> 消息定义文件。");
+        System.out.println(" <struct-define-file> struct定义文件。");
         System.out.println();
 
         System.out.println("生成Java2 SE代码");
         System.out
-                .println("MessageCompiler -j2se -encoding <Encoding> -outputencoding <Encoding> -outdir <Dir> -package <Package> <struct-define-file>");
+                .println("StructCompiler -j2se -encoding <Encoding> -outputencoding <Encoding> -outdir <Dir> -package <Package> <struct-define-file>");
         System.out
                 .println(" -encoding <Encoding> 指定定义文件的字符编码，例如UTF8、gb2312。");
         System.out.println(" -outputencoding <Encoding> 指定生成源代码的字符编码，例如UTF8、gb2312。");
         System.out.println(" -outdir <Dir> 指定存放生成源代码的路径。");
         System.out.println(" -package <Package> 指定生成源代码class的package。");
-        System.out.println(" <struct-define-file> 消息定义文件。");
+        System.out.println(" <struct-define-file> struct定义文件。");
+        System.out.println();
+
+        System.out.println("生成C头文件");
+        System.out
+                .println("StructCompiler -c -encoding <Encoding> -outputencoding <Encoding> -outdir <Dir> <struct-define-file>");
+        System.out
+                .println(" -encoding <Encoding> 指定定义文件的字符编码，例如UTF8、gb2312。");
+        System.out.println(" -outputencoding <Encoding> 指定生成源代码的字符编码，例如UTF8、gb2312。");
+        System.out.println(" -outdir <Dir> 指定存放生成C头文件的路径。");
+        System.out.println(" <struct-define-file> struct定义文件。");
         System.out.println();
     }
 
@@ -75,6 +86,7 @@ public class StructCompiler {
         Options options = new Options();
         options.addOption(OptionBuilder.withDescription("生成html格式文档。").create("html"));
         options.addOption(OptionBuilder.withDescription("生成J2SE代码。").create("java"));
+        options.addOption(OptionBuilder.withDescription("生成C头文件。").create("c"));
         options.addOption(OptionBuilder.withArgName("OutputDirectory").hasArg()
                 .withDescription("存放html格式文档的目录。").create("outdir"));
         options.addOption(OptionBuilder.withArgName("Encoding").hasArg()
@@ -86,11 +98,12 @@ public class StructCompiler {
         options.addOption(OptionBuilder.withArgName("Package").hasArg()
                 .withDescription("生成代码的package。").create("package"));
         options.addOption(OptionBuilder.withArgName("Prefix").hasArg()
-                .withDescription("生成消息实体类名的前缀。").create("prefix"));
+                .withDescription("生成实体类名的前缀。").create("prefix"));
         options.addOption("h", "help", false, "打印帮助信息。");
 
         boolean isJava = false;
         boolean isHtml = false;
+        boolean isC = false;
         int actionNum = 0;
         GeneratorContext ctx = new GeneratorContext();
 
@@ -107,17 +120,22 @@ public class StructCompiler {
                 ++actionNum;
             }
 
+            if (line.hasOption("c")) {
+                isC = true;
+                ++actionNum;
+            }
+
             if (line.hasOption("html")) {
                 isHtml = true;
                 ++actionNum;
             }
 
             if (actionNum > 1) {
-                System.err.println("错误：-java -html 选项中只能指定一个。");
+                System.err.println("错误：-c -java -html 选项中只能指定一个。");
                 usage(options);
                 System.exit(1);
             } else if (actionNum == 0) {
-                System.err.println("错误：-java -html 选项必须指定一个。");
+                System.err.println("错误：-c -java -html 选项必须指定一个。");
                 usage(options);
                 System.exit(1);
             }
@@ -152,7 +170,7 @@ public class StructCompiler {
 
             String[] otherArgs = line.getArgs();
             if (otherArgs.length == 0) {
-                System.err.println("错误：没有指定消息定义文件路径名。");
+                System.err.println("错误：没有指定struct定义文件路径名。");
                 usage(options);
                 System.exit(1);
             } else {
@@ -179,6 +197,8 @@ public class StructCompiler {
                 factory = new J2seCodeGeneratorFactory();
             } else if (isHtml) {
                 factory = new HtmlGeneratorFactory();
+            } else if (isC) {
+                factory = new CCodeGeneratorFactory();
             } else {
                 throw new UnsupportedOperationException("未知的生成类型");
             }
