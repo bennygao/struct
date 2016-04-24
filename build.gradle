@@ -5,13 +5,13 @@ apply plugin: 'java'
 sourceCompatibility = 1.7
 
 def libPath = 'lib'
-def targetArchive = "${project.name}-${version}.jar"
+def targetArchive = '${project.name}-${version}.jar'
 
 dependencies {
     compile files('lib/antlr-4.5.3-complete.jar')
     compile files('lib/velocity-1.7.jar')
     compile files('lib/velocity-1.7-dep.jar')
-    compile files('lib/commons-cli-1.1.jar')
+    compile files('lib/argparse4j-0.7.0.jar')
 }
 
 jar {

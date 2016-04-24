@@ -15,6 +15,7 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         CodeGenerator {
     @Override
     public void generate(GeneratorContext ctx) throws Exception {
+        init(ctx.getEncoding());
         File outdir = ctx.getOutputDir();
         outdir.mkdirs();
 
@@ -41,26 +42,26 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
 
         template = Velocity.getTemplate("vm/html/index.html.vm");
         html = new File(outdir, "index.html");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
+        System.out.print("creating " + html.getAbsolutePath() + " ... ");
         writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
         template.merge(vc, writer);
         writer.close();
-        System.out.println("完成。");
+        System.out.println("OK");
 
         template = Velocity.getTemplate("vm/html/Navigation.html.vm");
         html = new File(outdir, "Navigation.html");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
+        System.out.print("creating " + html.getAbsolutePath() + " ... ");
         writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
         template.merge(vc, writer);
         writer.close();
-        System.out.println("完成。");
+        System.out.println("OK");
 
         template = Velocity.getTemplate("vm/html/Struct.html.vm");
         html = new File(outdir, "Struct.html");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
+        System.out.print("creating " + html.getAbsolutePath() + " ... ");
         writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
         template.merge(vc, writer);
         writer.close();
-        System.out.println("完成。");
+        System.out.println("OK");
     }
 }

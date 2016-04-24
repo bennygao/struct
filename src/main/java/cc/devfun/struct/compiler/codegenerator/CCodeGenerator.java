@@ -15,6 +15,7 @@ public class CCodeGenerator extends VelocityCodeGenerator implements
         CodeGenerator {
     @Override
     public void generate(GeneratorContext ctx) throws Exception {
+        init(ctx.getEncoding());
         File outdir = ctx.getOutputDir();
         outdir.mkdirs();
 
@@ -38,8 +39,6 @@ public class CCodeGenerator extends VelocityCodeGenerator implements
         Collections.sort(list, new Comparator<StructType>() {
             @Override
             public int compare(StructType o1, StructType o2) {
-                String n1 = o1.getName();
-                String n2 = o2.getName();
                 if (o1.depend(o2)) {
                     return 1;
                 } else if (o2.depend(o1)) {
@@ -58,10 +57,10 @@ public class CCodeGenerator extends VelocityCodeGenerator implements
 
         template = Velocity.getTemplate("vm/c/Header.h.vm");
         html = new File(outdir, fn.toLowerCase() + ".h");
-        System.out.print("生成 " + html.getAbsolutePath() + " ... ");
+        System.out.print("creating " + html.getAbsolutePath() + " ... ");
         writer = getSourceWriter(html.getAbsolutePath(), ctx.getOutputEncoding());
         template.merge(vc, writer);
         writer.close();
-        System.out.println("完成。");
+        System.out.println("OK");
     }
 }

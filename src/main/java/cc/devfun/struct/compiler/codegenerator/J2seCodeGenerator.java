@@ -15,6 +15,7 @@ import org.apache.velocity.app.Velocity;
 public class J2seCodeGenerator extends VelocityCodeGenerator implements
         CodeGenerator {
     public void generate(GeneratorContext ctx) throws Exception {
+        init(ctx.getEncoding());
         VelocityContext vc = new VelocityContext();
         vc.put("package", ctx.getJavaPackage());
         vc.put("createTime", new Date());
@@ -35,24 +36,24 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         template = Velocity.getTemplate("vm/java/Struct.java.vm");
         pathname.append(path).append(File.separatorChar).append(fileName);
         vc.put("fileName", fileName);
-        System.out.print("生成 " + pathname.toString() + " ... ");
+        System.out.print("creating " + pathname.toString() + " ... ");
         writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
         template.merge(vc, writer);
         writer.close();
-        System.out.println("完成。");
+        System.out.println("OK");
 
         template = Velocity.getTemplate("vm/java/StructInstance.java.vm");
         for (StructType st : ctx.getAllStructs().values()) {
             fileName = st.getClassName() + ".java";
             pathname.setLength(0);
             pathname.append(path).append(File.separatorChar).append(fileName);
-            System.out.print("生成 " + st.getName() + " 到 " + pathname.toString() + " ... ");
+            System.out.print("creating " + st.getName() + " to " + pathname.toString() + " ... ");
             vc.put("struct", st);
             vc.put("structName", st.getName());
             writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
             template.merge(vc, writer);
             writer.close();
-            System.out.println("完成。");
+            System.out.println("OK");
         }
     }
 }

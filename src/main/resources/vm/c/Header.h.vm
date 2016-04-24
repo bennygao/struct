@@ -52,10 +52,6 @@ struct Struct {
 } ALIGNED_BY_BYTE;
 
 #foreach ($struct in $allStructs)
-struct ${utils.getCStyleIdentifier($struct.name)};
-#end
-
-#foreach ($struct in $allStructs)
 /*
  * ${utils.getCStyleIdentifier($struct.name)}
 #if ($struct.haveComments())
