@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    static class SingletonHolder {
+    private static class SingletonHolder {
         static Utils singleton = new Utils();
     }
 

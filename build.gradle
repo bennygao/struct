@@ -14,7 +14,7 @@ dependencies {
     compile files('lib/argparse4j-0.7.0.jar')
 }
 
-jar {
+task pack(type: Jar) {
     manifest {
         attributes 'Main-Class': 'cc.devfun.struct.compiler.StructCompiler'
         attributes 'Class-Path': new File(libPath).list().findAll {

@@ -19,14 +19,12 @@ public class StructBuilder extends StructBaseListener {
     private StructType currentStruct;
     private DataType currentType;
     private DefaultValue defaultValue;
-    private Set<String> parsedFiles;
     private StructCompiler compiler;
 
     public StructBuilder(File src, CommonTokenStream tokens, StructCompiler compiler) {
         this.src = src;
         this.tokens = tokens;
         this.compiler = compiler;
-        this.parsedFiles = compiler.getParsedFiles();
         this.allStructs = compiler.getAllStructs();
 
         this.currentStruct = null;
@@ -105,7 +103,7 @@ public class StructBuilder extends StructBaseListener {
             currentStruct = new StructType(typeName);
             allStructs.put(typeName, currentStruct);
         } else if (currentStruct.isResolved()) {
-            String errmsg = String.format("%s:%d 重复定义的struct %s",
+            String errmsg = String.format("%s:%d duplicated defined struct %s",
                     src.getName(), ctx.getStart().getLine(), typeName);
             throw new IllegalSemanticException(errmsg);
         }
@@ -133,19 +131,19 @@ public class StructBuilder extends StructBaseListener {
         field.setName(ctx.getChild(1).getText());
         if (defaultValue != null) {
             if (defaultValue instanceof StringDefaultValue && !currentType.isString()) {
-                String errmsg = String.format("%s:%d 常量类型错误",
+                String errmsg = String.format("%s:%d const type error",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             } else if (defaultValue instanceof NumberDefaultValue && !currentType.isBasic()) {
-                String errmsg = String.format("%s:%d 常量类型错误",
+                String errmsg = String.format("%s:%d const type error",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             } else if (currentType.hasArray() && !currentType.isString()) {
-                String errmsg = String.format("%s:%d 数组类型不能设缺省值",
+                String errmsg = String.format("%s:%d cannot specify default value for array",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             } else if (defaultValue instanceof FloatingDefaultValue && !currentType.isFloating()) {
-                String errmsg = String.format("%s:%d 常量类型错误",
+                String errmsg = String.format("%s:%d const type error",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             }
@@ -171,7 +169,7 @@ public class StructBuilder extends StructBaseListener {
             currentType = new BasicType(typeName, arraySize);
         } else if (DataType.isString(typeName)) {
             if (!fixedLength) {
-                String errmsg = String.format("%s:%d string类型的长度不能为变长",
+                String errmsg = String.format("%s:%d length of string cannot be variable",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             }
@@ -180,11 +178,11 @@ public class StructBuilder extends StructBaseListener {
             if (!fixedLength) {
                 Field numField = currentStruct.getField(arraySize);
                 if (numField == null) {
-                    String errmsg = String.format("%s:%d 未定义的变长数组长度变量%s",
+                    String errmsg = String.format("%s:%d undefined variable array index %s",
                             src.getName(), ctx.getStart().getLine(), arraySize);
                     throw new IllegalSemanticException(errmsg);
                 } else if (!numField.getType().arrayIndex()) {
-                    String errmsg = String.format("%s:%d %s不能作为变长数组长度变量",
+                    String errmsg = String.format("%s:%d %s cannot be variable array index",
                             src.getName(), ctx.getStart().getLine(), arraySize);
                     throw new IllegalSemanticException(errmsg);
                 }

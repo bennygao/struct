@@ -29,7 +29,7 @@ ${defaultValueMap[${field.type.typeName}]}##
 <!--
 body {
     margin: auto 100px auto 100px;
-    font-family: Consolas, monospace, 'trebuchet MS', 'Lucida sans', Arial;
+    font-family: Menlo, monospace, 'trebuchet MS', 'Lucida sans', Arial;
     font-size: 14px;
     color: #444;
 }

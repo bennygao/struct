@@ -7,7 +7,7 @@
 <!--
 body {
     margin: 20px 20px 20px 20px;
-    font-family: Consolas, monospace, 'trebuchet MS', 'Lucida sans', Arial;
+    font-family: Menlo, monospace, 'trebuchet MS', 'Lucida sans', Arial;
     font-size: 14px;
     color: #444;
 }
