@@ -5,7 +5,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.7
 
 def libPath = 'lib'
-def targetArchive = '${project.name}-${version}.jar'
+def targetArchive = "${project.name}-${version}.jar"
 
 dependencies {
     compile files('lib/antlr-4.5.3-complete.jar')
@@ -14,7 +14,15 @@ dependencies {
     compile files('lib/argparse4j-0.7.0.jar')
 }
 
-task pack(type: Jar) {
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+jar {
     manifest {
         attributes 'Main-Class': 'cc.devfun.struct.compiler.StructCompiler'
         attributes 'Class-Path': new File(libPath).list().findAll {
@@ -24,5 +32,9 @@ task pack(type: Jar) {
     archiveName = targetArchive
 
     // 把项目依赖的所有jar也打包进发布的jar包中。
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { 
+		configurations.compile.collect { 
+			it.isDirectory() ? it : zipTree(it) 
+		}
+	}
 }
