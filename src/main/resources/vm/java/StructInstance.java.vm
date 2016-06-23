@@ -92,7 +92,7 @@ ${defaultValueMap[${field.type.typeName}]}##
             this.${field.name}[i] = new ${field.type.typeName}();
         }
 #else
-        this.${field.name} = new java.util.ArrayList<${field.type.typeName}>();
+        this.${field.name} = new java.util.LinkedList<${field.type.typeName}>();
 #end
 #else
         $field.name = new ${field.type.typeName}();
@@ -120,6 +120,7 @@ public class ${struct.className} extends Struct {
 
 #end
     }
+
 #foreach ($field in $struct.fields)
     public #declareType($field) ${utils.getGetter($field.name)}() {
         return this.${field.name};
@@ -132,7 +133,6 @@ public class ${struct.className} extends Struct {
 
 #end
 #end
-
     public int calcSize() {
         int __size = 0;
 
@@ -149,8 +149,8 @@ public class ${struct.className} extends Struct {
         }
 #else
         this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
-        for (int i = 0; i < this.${field.type.arraySize}; ++i) {
-            __size += this.${field.name}.get(i).calcSize();
+        for (Struct __struct : this.${field.name}) {
+            __size += __struct.calcSize();
         }
 #end
 #else
@@ -182,8 +182,8 @@ public class ${struct.className} extends Struct {
         }
 #else
         this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
-        for (int i = 0; i < this.${field.type.arraySize}; ++i) {
-            this.${field.name}.get(i).encode(dos);
+        for (Struct __struct : this.${field.name}) {
+            __struct.encode(dos);
         }
 #end
 #else

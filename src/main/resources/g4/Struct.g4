@@ -5,7 +5,7 @@ prog
     ;
 
 include
-    : '#include' StringLiteral
+    : 'import' StringLiteral ';'
     ;
 
 struct
@@ -178,6 +178,10 @@ JavaIDDigit
 
 WS
     : [ \t\n\r]+ -> skip
+    ;
+
+IGNORED_COMMENT
+    : '#' .*? '\n' -> skip
     ;
 
 SL_COMMENT

@@ -16,6 +16,7 @@
     "int"   : "int32_t",
     "int32" : "int32_t",
     "uint32": "uint32_t",
+    "long"  : "int64_t",
     "int64" : "int64_t",
     "uint64": "uint64_t",
     "float" : "float",

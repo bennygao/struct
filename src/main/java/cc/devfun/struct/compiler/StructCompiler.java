@@ -3,6 +3,7 @@ package cc.devfun.struct.compiler;
 import cc.devfun.struct.compiler.codegenerator.CCodeGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.HtmlGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.J2seCodeGeneratorFactory;
+import cc.devfun.struct.compiler.model.Struct;
 import cc.devfun.struct.compiler.model.StructType;
 import cc.devfun.struct.compiler.parser.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -18,7 +19,7 @@ import java.io.*;
 import java.util.*;
 
 public class StructCompiler {
-    private Map<String, StructType> allStructs;
+    private Map<String, Struct> allStructs;
     private Set<String> parsedFiles;
     private List<String> searchPath;
 
@@ -26,12 +27,12 @@ public class StructCompiler {
         parsedFiles = new HashSet<>();
         searchPath = new ArrayList<>();
         allStructs = new LinkedHashMap<>();
-        StructType struct = new StructType("Struct", "1");
+        Struct struct = new Struct("Struct");
         struct.setResolved();
         allStructs.put(struct.getName(), struct);
     }
 
-    public Map<String, StructType> getAllStructs() {
+    public Map<String, Struct> getAllStructs() {
         return allStructs;
     }
 
@@ -39,7 +40,7 @@ public class StructCompiler {
         return parsedFiles;
     }
 
-    public Map<String, StructType> parse(String fileName) throws Exception {
+    public Map<String, Struct> parse(String fileName) throws Exception {
         File defineFile;
         if (fileName.startsWith("/")) {
             defineFile = new File(fileName);
@@ -60,7 +61,7 @@ public class StructCompiler {
         }
     }
 
-    public Map<String, StructType> parse(File defineFile) throws Exception {
+    public Map<String, Struct> parse(File defineFile) throws Exception {
         if (parsedFiles.contains(defineFile.getAbsolutePath())) {
             return new HashMap<>();
         } else {
@@ -77,16 +78,16 @@ public class StructCompiler {
         StructParser parser = new StructParser(tokens);
         ParseTree tree = parser.prog(); // parse
         if (parser.getNumberOfSyntaxErrors() > 0) {
-            return null;
+            throw new IllegalSemanticException("Syntax error.");
         }
 
         ParseTreeWalker walker = new ParseTreeWalker();
         StructBuilder builder = new StructBuilder(defineFile, tokens, this);
         walker.walk(builder, tree);
-        Map<String, StructType> allStructs = builder.getAllStructs();
-        for (StructType st : allStructs.values()) {
-            if (!st.isResolved()) {
-                throw new IllegalSemanticException("undefined struct: " + st.getName());
+        Map<String, Struct> allStructs = builder.getAllStructs();
+        for (Struct struct : allStructs.values()) {
+            if (!struct.isResolved()) {
+                throw new IllegalSemanticException("undefined struct: " + struct.getName());
             }
         }
 
@@ -150,12 +151,7 @@ public class StructCompiler {
 
         try {
             StructCompiler compiler = new StructCompiler();
-            Map<String, StructType> allStructs = compiler.parse(ctx.getDefineFile());
-            if (allStructs == null) {
-                System.err.println("Syntax error");
-                System.exit(0);
-            }
-
+            Map<String, Struct> allStructs = compiler.parse(ctx.getDefineFile());
             ctx.setAllStructs(allStructs);
             CodeGenerator generator = factory.createCodeGenerator();;
             generator.generate(ctx);

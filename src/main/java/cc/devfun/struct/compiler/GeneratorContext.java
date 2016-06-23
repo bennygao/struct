@@ -1,6 +1,7 @@
 package cc.devfun.struct.compiler;
 
 
+import cc.devfun.struct.compiler.model.Struct;
 import cc.devfun.struct.compiler.model.StructType;
 
 import java.io.File;
@@ -13,7 +14,7 @@ public class GeneratorContext {
     private File outputDir;
     private String javaPackage;
     private File defineFile;
-    private Map<String, StructType> allStructs;
+    private Map<String, Struct> allStructs;
 
     public GeneratorContext() {
         this.encoding = "utf8";
@@ -80,11 +81,11 @@ public class GeneratorContext {
         this.defineFile = defineFile;
     }
 
-    public Map<String, StructType> getAllStructs() {
+    public Map<String, Struct> getAllStructs() {
         return allStructs;
     }
 
-    public void setAllStructs(Map<String, StructType> allStructs) {
+    public void setAllStructs(Map<String, Struct> allStructs) {
         this.allStructs = allStructs;
     }
 }

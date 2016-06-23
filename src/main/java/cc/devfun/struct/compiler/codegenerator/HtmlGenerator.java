@@ -2,6 +2,7 @@ package cc.devfun.struct.compiler.codegenerator;
 
 import cc.devfun.struct.compiler.CodeGenerator;
 import cc.devfun.struct.compiler.GeneratorContext;
+import cc.devfun.struct.compiler.model.Struct;
 import cc.devfun.struct.compiler.model.StructType;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -23,13 +24,13 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         vc.put("createTime", new Date());
         vc.put("utils", Utils.getInstance());
         vc.put("charset", ctx.getOutputEncoding());
-        List<StructType> list = new ArrayList<>();
-        Map<String, StructType> allStructs = ctx.getAllStructs();
+        List<Struct> list = new ArrayList<>();
+        Map<String, Struct> allStructs = ctx.getAllStructs();
         allStructs.remove("Struct");
         list.addAll(allStructs.values());
-        Collections.sort(list, new Comparator<StructType>() {
+        Collections.sort(list, new Comparator<Struct>() {
             @Override
-            public int compare(StructType o1, StructType o2) {
+            public int compare(Struct o1, Struct o2) {
                 return o1.getTypeName().compareTo(o2.getTypeName());
             }
         });

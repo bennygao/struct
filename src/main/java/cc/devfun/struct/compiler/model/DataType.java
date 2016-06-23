@@ -19,6 +19,7 @@ public abstract class DataType {
         basicTypeSet.put("int", "int");
         basicTypeSet.put("int32", "int");
         basicTypeSet.put("uint32", "int");
+        basicTypeSet.put("long", "long");
         basicTypeSet.put("int64", "long");
         basicTypeSet.put("uint64", "long");
         basicTypeSet.put("float", "float");

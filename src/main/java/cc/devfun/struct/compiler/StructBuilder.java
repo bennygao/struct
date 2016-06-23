@@ -15,8 +15,8 @@ public class StructBuilder extends StructBaseListener {
     private File src;
     private CommonTokenStream tokens;
     private Map<Integer, Token> usedComments;
-    private Map<String, StructType> allStructs;
-    private StructType currentStruct;
+    private Map<String, Struct> allStructs;
+    private Struct currentStruct;
     private DataType currentType;
     private DefaultValue defaultValue;
     private StructCompiler compiler;
@@ -32,7 +32,7 @@ public class StructBuilder extends StructBaseListener {
         this.usedComments = new HashMap<>();
     }
 
-    public Map<String, StructType> getAllStructs() {
+    public Map<String, Struct> getAllStructs() {
         return allStructs;
     }
 
@@ -100,7 +100,7 @@ public class StructBuilder extends StructBaseListener {
         String typeName = ctx.getChild(1).getText();
         currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
-            currentStruct = new StructType(typeName);
+            currentStruct = new Struct(typeName);
             allStructs.put(typeName, currentStruct);
         } else if (currentStruct.isResolved()) {
             String errmsg = String.format("%s:%d duplicated defined struct %s",
@@ -187,14 +187,15 @@ public class StructBuilder extends StructBaseListener {
                     throw new IllegalSemanticException(errmsg);
                 }
             }
-            StructType st = allStructs.get(typeName);
-            if (st == null) {
-                st = new StructType(typeName, arraySize);
-                allStructs.put(typeName, st);
-            } else {
-                st.setArraySize(arraySize);
+
+            Struct struct = allStructs.get(typeName);
+            if (struct == null) {
+                struct = new Struct(typeName);
+                allStructs.put(typeName, struct);
             }
-            currentType = st;
+
+            StructType structType = new StructType(struct, arraySize);
+            currentType = structType;
         }
 
         super.exitType(ctx);

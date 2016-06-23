@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cc.devfun.struct.compiler.CodeGenerator;
 import cc.devfun.struct.compiler.GeneratorContext;
+import cc.devfun.struct.compiler.model.Struct;
 import cc.devfun.struct.compiler.model.StructType;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -21,7 +22,7 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         vc.put("createTime", new Date());
         vc.put("utils", Utils.getInstance());
 
-        Map<String, StructType> allStructs = ctx.getAllStructs();
+        Map<String, Struct> allStructs = ctx.getAllStructs();
         allStructs.remove("Struct");
         vc.put("allStructs", allStructs.values());
 
@@ -43,13 +44,13 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         System.out.println("OK");
 
         template = Velocity.getTemplate("vm/java/StructInstance.java.vm");
-        for (StructType st : ctx.getAllStructs().values()) {
-            fileName = st.getClassName() + ".java";
+        for (Struct struct : ctx.getAllStructs().values()) {
+            fileName = struct.getClassName() + ".java";
             pathname.setLength(0);
             pathname.append(path).append(File.separatorChar).append(fileName);
-            System.out.print("creating " + st.getName() + " to " + pathname.toString() + " ... ");
-            vc.put("struct", st);
-            vc.put("structName", st.getName());
+            System.out.print("creating " + struct.getName() + " to " + pathname.toString() + " ... ");
+            vc.put("struct", struct);
+            vc.put("structName", struct.getName());
             writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
             template.merge(vc, writer);
             writer.close();

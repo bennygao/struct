@@ -1,47 +1,28 @@
 package cc.devfun.struct.compiler.model;
 
-import cc.devfun.struct.compiler.Utils;
-import com.github.rjeschke.txtmark.Processor;
+public class StructType extends DataType {
+    private Struct struct;
 
-import java.io.*;
-import java.util.*;
-
-public class StructType extends DataType implements Commentable {
-    private String name;
-    private boolean resolved = false;
-    private Map<String, Field> fields = new LinkedHashMap<>();
-    private List<String> comments = new ArrayList<String>();
-    private Location definedLocation;
-    private Map<String, StructType> dependency;
-
-    public StructType(String name) {
-        this.name = name;
-        this.resolved = false;
-        this.dependency = new HashMap<>();
-        this.definedLocation = new Location();
+    public StructType(Struct struct) {
+        this.struct = struct;
     }
 
-    public StructType(String name, String arraySize) {
-        this(name);
+    public StructType(Struct struct, String arraySize) {
+        this(struct);
         setArraySize(arraySize);
     }
 
-    public void setResolved() {
-        this.resolved = true;
-    }
-
-    public void setDefinedLocation(File file, int line) {
-        definedLocation.setFile(file);
-        definedLocation.setLine(line);
-        resolved = true;
-    }
-
-    public Location getDefinedLocation() {
-        return definedLocation;
+    public Struct getStruct() {
+        return this.struct;
     }
 
     public String getName() {
-        return name;
+        return struct.getName();
+    }
+
+    @Override
+    public String getTypeName() {
+        return struct.getTypeName();
     }
 
     public boolean isBasic() {
@@ -56,91 +37,8 @@ public class StructType extends DataType implements Commentable {
         return false;
     }
 
-    public boolean isResolved() {
-        return resolved;
-    }
-
-    public Collection<Field> getFields() {
-        return fields.values();
-    }
-
-    public void addField(Field f) {
-        DataType type = f.getType();
-        if (type.isStruct()) {
-            dependency.put(type.getName(), (StructType) type);
-        }
-        this.fields.put(f.getName(), f);
-    }
-
-    public boolean depend(StructType st) {
-        if (dependency.containsKey(st.getName())) {
-            return true;
-        } else {
-            for (StructType d : dependency.values()) {
-                if (d.depend(st)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public Field getField(String name) {
-        return fields.get(name);
-    }
-
-    public List<String> getComments() {
-        return comments;
-    }
-
-    public void addComment(String comment) {
-        comments.add(comment);
-    }
-
-    public boolean haveComments() {
-        return comments.size() > 0;
-    }
-
-    @Override
-    public String getHtmlComments() {
-        return Utils.markdown2Html(comments);
-    }
-
-    public String getClassName() {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    @Override
-    public String getTypeName() {
-        return getClassName();
-    }
-
     @Override
     public String toString() {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        if (!Utils.isEmpty(comments)) {
-            pw.println("/**");
-            for (String c : comments) {
-                pw.println(" * " + c);
-            }
-            pw.println(" */");
-        }
-        pw.println("struct " + name + " {");
-        StringBuilder sb = new StringBuilder();
-        for (Field f : fields.values()) {
-            sb.append(f.toString());
-        }
-        BufferedReader reader = new BufferedReader(new StringReader(sb.toString()));
-        String line;
-        try {
-            while ((line = reader.readLine()) != null) {
-                pw.println("    " + line);
-            }
-        } catch (Exception ignore) {}
-        pw.println("}");
-        pw.close();
-        return sw.toString();
+        return struct.getName() + '[' + getArraySize() + ']';
     }
 }
