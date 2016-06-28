@@ -22,8 +22,10 @@ public class StructCompiler {
     private Map<String, Struct> allStructs;
     private Set<String> parsedFiles;
     private List<String> searchPath;
+    private GeneratorContext generatorContext;
 
-    public StructCompiler() {
+    public StructCompiler(GeneratorContext ctx) {
+        generatorContext = ctx;
         parsedFiles = new HashSet<>();
         searchPath = new ArrayList<>();
         allStructs = new LinkedHashMap<>();
@@ -71,8 +73,15 @@ public class StructCompiler {
 
         System.out.println("Compiling " + defineFile.getAbsolutePath());
 
+        ANTLRInputStream input;
         InputStream is = new FileInputStream(defineFile);
-        ANTLRInputStream input = new ANTLRInputStream(is);
+        if (generatorContext.getEncoding() == null) {
+            input = new ANTLRInputStream(is);
+        } else {
+            InputStreamReader reader = new InputStreamReader(is, generatorContext.getEncoding());
+            input = new ANTLRInputStream(reader);
+        }
+
         StructLexer lexer = new StructLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         StructParser parser = new StructParser(tokens);
@@ -150,7 +159,7 @@ public class StructCompiler {
         ctx.setDefineFile(file);
 
         try {
-            StructCompiler compiler = new StructCompiler();
+            StructCompiler compiler = new StructCompiler(ctx);
             Map<String, Struct> allStructs = compiler.parse(ctx.getDefineFile());
             ctx.setAllStructs(allStructs);
             CodeGenerator generator = factory.createCodeGenerator();;

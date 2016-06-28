@@ -1,5 +1,5 @@
 group 'cc.devfun'
-version = '1.0.1'
+version = '1.0.2'
 
 apply plugin: 'java'
 sourceCompatibility = 1.7
