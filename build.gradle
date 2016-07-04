@@ -2,16 +2,43 @@ group 'cc.devfun'
 version = '1.0.2'
 
 apply plugin: 'java'
-sourceCompatibility = 1.7
 
-def libPath = 'lib'
-def targetArchive = "${project.name}-${version}.jar"
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+def archive = "${project.name}-${version}.jar"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+jar {
+
+    archiveName = "${archive}"
+
+    from {
+
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    manifest {
+        attributes 'Main-Class': 'cc.devfun.struct.compiler.StructCompiler'
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
 
 dependencies {
-    compile files('lib/antlr-4.5.3-complete.jar')
-    compile files('lib/velocity-1.7.jar')
-    compile files('lib/velocity-1.7-dep.jar')
-    compile files('lib/argparse4j-0.7.0.jar')
+    compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
+    compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.7.0'
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.3'
 }
 
 sourceSets {
@@ -20,21 +47,4 @@ sourceSets {
             srcDirs = ['src/main/java']
         }
     }
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'cc.devfun.struct.compiler.StructCompiler'
-        attributes 'Class-Path': new File(libPath).list().findAll {
-            it.endsWith('.jar') }.collect { "$libPath/$it" }.join(' ')
-    }
-
-    archiveName = targetArchive
-
-    // 把项目依赖的所有jar也打包进发布的jar包中。
-    from { 
-		configurations.compile.collect { 
-			it.isDirectory() ? it : zipTree(it) 
-		}
-	}
 }
