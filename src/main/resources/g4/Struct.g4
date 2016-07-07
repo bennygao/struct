@@ -19,7 +19,7 @@ field
 type
     : basicType fixedArray?
     | stringType fixedArray
-    | structType array?
+    | structType arrayOfStruct?
     ;
 
 defaultValue
@@ -69,16 +69,21 @@ structType
     : Identifier
     ;
 
-array
-    : fixedArray
-    | varlenArray
+arrayOfStruct
+    : varlenArray
+    | fixedArray
+    | identifierArray
+    ;
+
+varlenArray
+    : '[' ']'
     ;
 
 fixedArray
     : '[' DecimalLiteral ']'
     ;
 
-varlenArray
+identifierArray
     : '[' Identifier ']'
     ;
 

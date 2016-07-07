@@ -172,13 +172,25 @@ public class StructBaseListener implements StructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArray(StructParser.ArrayContext ctx) { }
+	@Override public void enterArrayOfStruct(StructParser.ArrayOfStructContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArray(StructParser.ArrayContext ctx) { }
+	@Override public void exitArrayOfStruct(StructParser.ArrayOfStructContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVarlenArray(StructParser.VarlenArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVarlenArray(StructParser.VarlenArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -196,13 +208,13 @@ public class StructBaseListener implements StructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarlenArray(StructParser.VarlenArrayContext ctx) { }
+	@Override public void enterIdentifierArray(StructParser.IdentifierArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarlenArray(StructParser.VarlenArrayContext ctx) { }
+	@Override public void exitIdentifierArray(StructParser.IdentifierArrayContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

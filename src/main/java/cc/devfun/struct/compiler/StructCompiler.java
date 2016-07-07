@@ -4,7 +4,6 @@ import cc.devfun.struct.compiler.codegenerator.CCodeGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.HtmlGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.J2seCodeGeneratorFactory;
 import cc.devfun.struct.compiler.model.Struct;
-import cc.devfun.struct.compiler.model.StructType;
 import cc.devfun.struct.compiler.parser.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -166,6 +165,7 @@ public class StructCompiler {
             generator.generate(ctx);
         } catch (IllegalSemanticException ise) {
             System.err.println(ise.getMessage());
+            ise.printStackTrace();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

@@ -175,7 +175,7 @@ public class StructBuilder extends StructBaseListener {
             }
             currentType = new StringType(typeName, arraySize);
         } else {
-            if (!fixedLength) {
+            if (!fixedLength && !arraySize.equals("")) {
                 Field numField = currentStruct.getField(arraySize);
                 if (numField == null) {
                     String errmsg = String.format("%s:%d undefined variable array index %s",

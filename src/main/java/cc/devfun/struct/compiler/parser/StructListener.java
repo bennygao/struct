@@ -138,15 +138,25 @@ public interface StructListener extends ParseTreeListener {
 	 */
 	void exitStructType(StructParser.StructTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link StructParser#array}.
+	 * Enter a parse tree produced by {@link StructParser#arrayOfStruct}.
 	 * @param ctx the parse tree
 	 */
-	void enterArray(StructParser.ArrayContext ctx);
+	void enterArrayOfStruct(StructParser.ArrayOfStructContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link StructParser#array}.
+	 * Exit a parse tree produced by {@link StructParser#arrayOfStruct}.
 	 * @param ctx the parse tree
 	 */
-	void exitArray(StructParser.ArrayContext ctx);
+	void exitArrayOfStruct(StructParser.ArrayOfStructContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link StructParser#varlenArray}.
+	 * @param ctx the parse tree
+	 */
+	void enterVarlenArray(StructParser.VarlenArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StructParser#varlenArray}.
+	 * @param ctx the parse tree
+	 */
+	void exitVarlenArray(StructParser.VarlenArrayContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link StructParser#fixedArray}.
 	 * @param ctx the parse tree
@@ -158,13 +168,13 @@ public interface StructListener extends ParseTreeListener {
 	 */
 	void exitFixedArray(StructParser.FixedArrayContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link StructParser#varlenArray}.
+	 * Enter a parse tree produced by {@link StructParser#identifierArray}.
 	 * @param ctx the parse tree
 	 */
-	void enterVarlenArray(StructParser.VarlenArrayContext ctx);
+	void enterIdentifierArray(StructParser.IdentifierArrayContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link StructParser#varlenArray}.
+	 * Exit a parse tree produced by {@link StructParser#identifierArray}.
 	 * @param ctx the parse tree
 	 */
-	void exitVarlenArray(StructParser.VarlenArrayContext ctx);
+	void exitIdentifierArray(StructParser.IdentifierArrayContext ctx);
 }
