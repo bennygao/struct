@@ -38,17 +38,9 @@ public class Struct implements Commentable {
         return name;
     }
 
-//    public boolean isBasic() {
-//        return false;
-//    }
-//
-//    public boolean isStruct() {
-//        return true;
-//    }
-//
-//    public boolean isString() {
-//        return false;
-//    }
+    public boolean isBitfield() {
+        return false;
+    }
 
     public boolean isResolved() {
         return resolved;

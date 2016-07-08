@@ -59,18 +59,13 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
             vc.put("struct", struct);
             vc.put("structName", struct.getName());
             writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
-            if (struct instanceof BitField) {
-                Velocity.mergeTemplate("vm/java/BitFieldInstance.java.vm", ctx.getEncoding(), vc, writer);
+            if (struct.isBitfield()) {
+                template = bitfieldTemplate;
             } else {
-                Velocity.mergeTemplate("vm/java/StructInstance.java.vm", ctx.getEncoding(), vc, writer);
+                template = structTemplate;
             }
-//            if (struct instanceof BitField) {
-//                template = bitfieldTemplate;
-//            } else {
-//                template = structTemplate;
-//            }
-//
-//            template.merge(vc, writer);
+
+            template.merge(vc, writer);
             writer.close();
             System.out.println("OK");
         }
