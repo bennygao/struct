@@ -5,9 +5,7 @@
  */
 package ${package};
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 
 #set ($defaultValueMap = {
     "char"      : "'\0'",
@@ -95,7 +93,7 @@ ${defaultValueMap[${field.type.typeName}]}##
         this.${field.name} = new java.util.LinkedList<${field.type.typeName}>();
 #end
 #else
-        $field.name = new ${field.type.typeName}();
+        this.${field.name} = new ${field.type.typeName}();
 #end
 #end
 #end
@@ -126,13 +124,14 @@ public class ${struct.className} extends Struct {
         return this.${field.name};
     }
 
-#if ((!$field.type.hasArray() && $field.type.isBasic()) || $field.type.isString())
+#if ((!$field.type.hasArray() && $field.type.isBasic()) || $field.type.isString() || $field.type.isStruct())
     public void ${utils.getSetter($field.name)}(#declareType($field) $field.name) {
         this.${field.name} = ${field.name};
     }
 
 #end
 #end
+    @Override
     public int calcSize() {
         int __size = 0;
 
@@ -164,62 +163,66 @@ public class ${struct.className} extends Struct {
         return __size;
     }
 
-    public void encode(DataOutput dos) throws IOException {
+    @Override
+    public void encode(OutputStream output) throws IOException {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            write(dos, this.${field.name}[i], ${field.type.typeName}.class);
+            write(output, this.${field.name}[i], ${field.type.typeName}.class);
         }
 #else
-        write(dos, this.${field.name}, ${field.type.typeName}.class);
+        write(output, this.${field.name}, ${field.type.typeName}.class);
 #end
 #elseif ($field.type.isString())
-        writeString(this.${field.name}, ${field.type.arraySize}, dos);
+        writeString(this.${field.name}, ${field.type.arraySize}, output);
 #else
 #if ($field.type.hasArray())
 #if ($field.type.isFixedLength())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i].encode(dos);
+            this.${field.name}[i].encode(output);
         }
 #else
 #if ($field.type.arraySize != "")
         this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
 #end
         for (Struct __struct : this.${field.name}) {
-            __struct.encode(dos);
+            __struct.encode(output);
         }
 #end
 #else
-        this.${field.name}.encode(dos);
+        if (this.${field.name} != null) {
+            this.${field.name}.encode(output);
+        }
 #end
 #end
 
 #end
     }
 
-    public Struct decode(DataInput dis) throws IOException {
+    @Override
+    public Struct decode(InputStream input) throws IOException {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i] = read(dis, ${field.type.typeName}.class);
+            this.${field.name}[i] = read(input, ${field.type.typeName}.class);
         }
 #else
-        this.${field.name} = read(dis, ${field.type.typeName}.class);
+        this.${field.name} = read(input, ${field.type.typeName}.class);
 #end
 #elseif ($field.type.isString())
-        this.${field.name} = readString(dis, ${field.type.arraySize});
+        this.${field.name} = readString(input, ${field.type.arraySize});
 #else
 #if ($field.type.hasArray())
 #if ($field.type.isFixedLength())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i].decode(dis);
+            this.${field.name}[i].decode(input);
         }
 #else
 #if ($field.type.arraySize != "")
         for (int i = 0; i < this.${field.type.arraySize}; ++i) {
-            this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(dis));
+            this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(input));
         }
 #else
         if (true) {
@@ -229,7 +232,7 @@ public class ${struct.className} extends Struct {
 #end
 #end
 #else
-        this.${field.name}.decode(dis);
+        this.${field.name}.decode(input);
 #end
 #end
 

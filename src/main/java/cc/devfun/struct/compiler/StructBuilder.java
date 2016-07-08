@@ -94,13 +94,40 @@ public class StructBuilder extends StructBaseListener {
         }
     }
 
+    @Override
+    public void enterBitfield(StructParser.BitfieldContext ctx) {
+        String typeName = ctx.getChild(1).getText();
+        enterStructProcess(typeName, ctx);
+        super.enterBitfield(ctx);
+    }
+
+    @Override
+    public void exitBitfield(StructParser.BitfieldContext ctx) {
+        allStructs.put(currentStruct.getName(), currentStruct);
+        super.exitBitfield(ctx);
+    }
 
     @Override
     public void enterStruct(StructParser.StructContext ctx) {
         String typeName = ctx.getChild(1).getText();
+        enterStructProcess(typeName, ctx);
+        super.enterStruct(ctx);
+    }
+
+    @Override
+    public void exitStruct(StructParser.StructContext ctx) {
+        allStructs.put(currentStruct.getName(), currentStruct);
+        super.exitStruct(ctx);
+    }
+
+    private void enterStructProcess(String typeName, ParserRuleContext ctx) {
         currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
-            currentStruct = new Struct(typeName);
+            if (ctx instanceof StructParser.StructContext) {
+                currentStruct = new Struct(typeName);
+            } else {
+                currentStruct = new BitField(typeName);
+            }
             allStructs.put(typeName, currentStruct);
         } else if (currentStruct.isResolved()) {
             String errmsg = String.format("%s:%d duplicated defined struct %s",
@@ -109,13 +136,42 @@ public class StructBuilder extends StructBaseListener {
         }
         currentStruct.setDefinedLocation(src, ctx.getStart().getLine());
         setComments(currentStruct, ctx);
-        super.enterStruct(ctx);
     }
 
     @Override
-    public void exitStruct(StructParser.StructContext ctx) {
-        allStructs.put(currentStruct.getName(), currentStruct);
-        super.exitStruct(ctx);
+    public void enterBits(StructParser.BitsContext ctx) {
+        defaultValue = null;
+        super.enterBits(ctx);
+    }
+
+    @Override
+    public void exitBits(StructParser.BitsContext ctx) {
+        Field field = new Field();
+        int bitsNum;
+        String errmsg;
+        try {
+            bitsNum = Integer.parseInt(ctx.getChild(2).getText());
+            if (bitsNum <= 0) {
+                errmsg = String.format("%s:%d bits number cannot less than or equals to 0.",
+                        src.getName(), ctx.getStart().getLine());
+                throw new IllegalSemanticException(errmsg);
+            } else if (bitsNum > 32) {
+                errmsg = String.format("%s:%d bits number cannot larger than 32.",
+                        src.getName(), ctx.getStart().getLine());
+                throw new IllegalSemanticException(errmsg);
+            }
+        } catch (NumberFormatException nfe) {
+            errmsg = String.format("%s:%d bits number format error, must be integer.",
+                    src.getName(), ctx.getStart().getLine());
+            throw new IllegalSemanticException(errmsg, nfe);
+        }
+        BasicType type = new BasicType("int", bitsNum);
+        field.setType(type);
+        field.setName(ctx.getChild(0).getText());
+        field.setDefaultValue(defaultValue);
+        setComments(field, ctx);
+        currentStruct.addField(field);
+        super.exitBits(ctx);
     }
 
     @Override

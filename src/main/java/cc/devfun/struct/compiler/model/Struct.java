@@ -9,7 +9,7 @@ public class Struct implements Commentable {
     private String name;
     private boolean resolved = false;
     private Map<String, Field> fields = new LinkedHashMap<>();
-    private List<String> comments = new ArrayList<String>();
+    private List<String> comments = new LinkedList<>();
     private Location definedLocation;
     private Map<String, Struct> dependency;
 
@@ -38,17 +38,17 @@ public class Struct implements Commentable {
         return name;
     }
 
-    public boolean isBasic() {
-        return false;
-    }
-
-    public boolean isStruct() {
-        return true;
-    }
-
-    public boolean isString() {
-        return false;
-    }
+//    public boolean isBasic() {
+//        return false;
+//    }
+//
+//    public boolean isStruct() {
+//        return true;
+//    }
+//
+//    public boolean isString() {
+//        return false;
+//    }
 
     public boolean isResolved() {
         return resolved;

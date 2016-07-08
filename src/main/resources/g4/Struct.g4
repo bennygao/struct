@@ -1,11 +1,24 @@
 grammar Struct;
 
 prog
-    : include* struct+
+    : include* clazz+
     ;
 
 include
     : 'import' StringLiteral ';'
+    ;
+
+clazz
+    : struct
+    | bitfield
+    ;
+
+bitfield
+    : 'bitfield' Identifier '{' bits+ '}'
+    ;
+
+bits
+    : Identifier ':' DecimalLiteral numberDefaultValue? ';'
     ;
 
 struct

@@ -28,6 +28,36 @@ public interface StructListener extends ParseTreeListener {
 	 */
 	void exitInclude(StructParser.IncludeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link StructParser#clazz}.
+	 * @param ctx the parse tree
+	 */
+	void enterClazz(StructParser.ClazzContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StructParser#clazz}.
+	 * @param ctx the parse tree
+	 */
+	void exitClazz(StructParser.ClazzContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link StructParser#bitfield}.
+	 * @param ctx the parse tree
+	 */
+	void enterBitfield(StructParser.BitfieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StructParser#bitfield}.
+	 * @param ctx the parse tree
+	 */
+	void exitBitfield(StructParser.BitfieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link StructParser#bits}.
+	 * @param ctx the parse tree
+	 */
+	void enterBits(StructParser.BitsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StructParser#bits}.
+	 * @param ctx the parse tree
+	 */
+	void exitBits(StructParser.BitsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link StructParser#struct}.
 	 * @param ctx the parse tree
 	 */

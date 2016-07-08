@@ -5,9 +5,7 @@
  */
 package ${package};
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 
 public class Struct {
@@ -18,10 +16,10 @@ public class Struct {
     private final static int TRUE = 1;
     private final static int FALSE = 0;
 
-    public void encode(DataOutput dos) throws IOException {
+    public void encode(OutputStream output) throws IOException {
     }
 
-    public Struct decode(DataInput dis) throws IOException {
+    public Struct decode(InputStream input) throws IOException {
         return this;
     }
 
@@ -29,7 +27,9 @@ public class Struct {
         return 0;
     }
 
-    public <T> T read(DataInput dis, Class<T> clazz) throws IOException {
+    @SuppressWarnings("unchecked")
+    public <T> T read(InputStream input, Class<T> clazz) throws IOException {
+        DataInputStream dis = new DataInputStream(input);
         if (clazz.equals(Character.class) || clazz.equals(char.class)) {
             return (T) (Character) readChar(dis);
         } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
@@ -51,7 +51,8 @@ public class Struct {
         }
     }
 
-    public void write(DataOutput dos, Object obj, Class<?> clazz) throws IOException {
+    public void write(OutputStream output, Object obj, Class<?> clazz) throws IOException {
+        DataOutputStream dos = new DataOutputStream(output);
         if (clazz.equals(Character.class) || clazz.equals(char.class)) {
             writeChar((Character) obj, dos);
         } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
@@ -73,13 +74,15 @@ public class Struct {
         }
     }
 
-    public String readString(DataInput dis, int len) throws IOException {
+    public String readString(InputStream input, int len) throws IOException {
+        DataInputStream dis = new DataInputStream(input);
         byte[] bytes = new byte[len];
         dis.readFully(bytes);
         return getString(bytes);
     }
 
-    public void writeString(String value, int len, DataOutput dos) throws IOException {
+    public void writeString(String value, int len, OutputStream output) throws IOException {
+        DataOutputStream dos = new DataOutputStream(output);
         int strlen = isEmpty(value) ? 0 : value.length();
         int wlen = strlen < len ? strlen : len;
         int diff = len - wlen;
@@ -186,6 +189,25 @@ public class Struct {
         dos.writeDouble(bits);
     }
 
+    public int readBits(BitInputStream bis, int num) throws IOException {
+        int value = 0;
+        for (int i = 0; i < num; ++i) {
+            if (i > 0) {
+                value <<= 1;
+            }
+            if (bis.read() != 0) {
+                value |= 0x01;
+            }
+        }
+        return value;
+    }
+
+    public void writeBits(int value, int num, BitOutputStream bos) throws IOException {
+        for (long mask = 1L << (num - 1); mask > 0; mask >>= 1) {
+            bos.write((int) (mask & value));
+        }
+    }
+
     private boolean isEmpty(String str) {
         if (str == null) {
             return true;
@@ -202,5 +224,78 @@ public class Struct {
             }
         }
         return new String(bytes, 0, i);
+    }
+
+    public class BitInputStream extends InputStream {
+        private InputStream input;
+        private int value;
+        private int index;
+
+        public BitInputStream(InputStream input) {
+            this.input = input;
+            this.value = 0;
+            this.index = -1;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (index < 0) {
+                if ((value = input.read()) == -1) {
+                    throw new IOException("unexpected EOF");
+                }
+                index = 7;
+            }
+
+            return (value & (0x01 << index--)) != 0 ? 1 : 0;
+        }
+
+        @Override
+        public void close() throws IOException {
+            input.close();
+        }
+    }
+
+    public class BitOutputStream extends OutputStream {
+        private int value;
+        private int num;
+        private OutputStream ostream;
+
+        public BitOutputStream(OutputStream ostream) {
+            this.value = 0;
+            this.num = 0;
+            this.ostream = ostream;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            int mask = b == 0 ? 0 : 1;
+            value = (value << 1) | mask;
+            ++num;
+            if (num == 8) {
+                ostream.write(value);
+                value = 0;
+                num = 0;
+            }
+        }
+
+        public void end() throws IOException {
+            if (num > 0) {
+                value <<= 8 - num;
+                ostream.write(value);
+                num = 0;
+                value = 0;
+            }
+        }
+
+        @Override
+        public void flush() throws IOException {
+            ostream.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            end();
+            ostream.close();
+        }
     }
 }

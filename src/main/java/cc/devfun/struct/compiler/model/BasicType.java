@@ -12,6 +12,10 @@ public class BasicType extends DataType {
         setArraySize(arraySize);
     }
 
+    public BasicType(String name, int num) {
+        this(name, Integer.toString(num));
+    }
+
     @Override
     public String getName() {
         return name;

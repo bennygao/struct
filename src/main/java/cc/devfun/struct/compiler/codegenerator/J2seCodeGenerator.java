@@ -7,6 +7,7 @@ import java.util.Map;
 
 import cc.devfun.struct.compiler.CodeGenerator;
 import cc.devfun.struct.compiler.GeneratorContext;
+import cc.devfun.struct.compiler.model.BitField;
 import cc.devfun.struct.compiler.model.Struct;
 import cc.devfun.struct.compiler.model.StructType;
 import org.apache.velocity.Template;
@@ -43,8 +44,14 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         writer.close();
         System.out.println("OK");
 
-        template = Velocity.getTemplate("vm/java/StructInstance.java.vm");
+        Template structTemplate = Velocity.getTemplate("vm/java/StructInstance.java.vm");
+        Template bitfieldTemplate = Velocity.getTemplate("vm/java/BitFieldInstance.java.vm");
         for (Struct struct : ctx.getAllStructs().values()) {
+            vc = new VelocityContext();
+            vc.put("package", ctx.getJavaPackage());
+            vc.put("createTime", new Date());
+            vc.put("utils", Utils.getInstance());
+
             fileName = struct.getClassName() + ".java";
             pathname.setLength(0);
             pathname.append(path).append(File.separatorChar).append(fileName);
@@ -52,7 +59,18 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
             vc.put("struct", struct);
             vc.put("structName", struct.getName());
             writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
-            template.merge(vc, writer);
+            if (struct instanceof BitField) {
+                Velocity.mergeTemplate("vm/java/BitFieldInstance.java.vm", ctx.getEncoding(), vc, writer);
+            } else {
+                Velocity.mergeTemplate("vm/java/StructInstance.java.vm", ctx.getEncoding(), vc, writer);
+            }
+//            if (struct instanceof BitField) {
+//                template = bitfieldTemplate;
+//            } else {
+//                template = structTemplate;
+//            }
+//
+//            template.merge(vc, writer);
             writer.close();
             System.out.println("OK");
         }
