@@ -9,6 +9,10 @@ public class StringType extends DataType {
         setArraySize(arraySize);
     }
 
+    public StringType(String name, int num) {
+        this(name, Integer.toString(num));
+    }
+
     @Override
     public String getName() {
         return name;

@@ -16,7 +16,7 @@ public class StructBuilder extends StructBaseListener {
     private CommonTokenStream tokens;
     private Map<Integer, Token> usedComments;
     private Map<String, Struct> allStructs;
-    private Struct currentStruct;
+    private Stack<Struct> structStack;
     private DataType currentType;
     private DefaultValue defaultValue;
     private StructCompiler compiler;
@@ -27,7 +27,7 @@ public class StructBuilder extends StructBaseListener {
         this.compiler = compiler;
         this.allStructs = compiler.getAllStructs();
 
-        this.currentStruct = null;
+        this.structStack = new Stack<>();
         this.defaultValue = null;
         this.usedComments = new HashMap<>();
     }
@@ -58,17 +58,34 @@ public class StructBuilder extends StructBaseListener {
         return c.trim().split("\\r\\n|\\n");
     }
 
+    private void addComments(Commentable target, Token token) {
+        for (String c : trimComments(token.getText())) {
+            target.addComment(c.trim());
+        }
+        usedComments.put(token.getTokenIndex(), token);
+    }
+
     private void setComments(Commentable obj, ParserRuleContext ctx) {
         Token semi = ctx.getStart();
         int start = semi.getTokenIndex(), index;
         List<Token> tokenList = tokens.getTokens();
-        for (Token t : tokenList) {
-            index = t.getTokenIndex();
-            if (start > index && t.getChannel() == StructLexer.HIDDEN && !usedComments.containsKey(index)) {
-                for (String c : trimComments(t.getText())) {
-                    obj.addComment(c.trim());
+        Token token;
+        for (index = 0; index < start; ++index) {
+            token = tokenList.get(index);
+            if (token.getChannel() == StructLexer.HIDDEN && !usedComments.containsKey(index)) {
+                addComments(obj, token);
+            }
+        }
+
+        // 向后看一个token,如果是单行注释,并且与obj在同一行,则把注释内容也加上去。
+        semi = ctx.getStop();
+        int next = semi.getTokenIndex() + 1;
+        if (next < tokenList.size()) {
+            token = tokenList.get(next);
+            if (token.getChannel() == StructLexer.HIDDEN && !usedComments.containsKey(index)) {
+                if (semi.getLine() == token.getLine()) {
+                    addComments(obj, token);
                 }
-                usedComments.put(t.getTokenIndex(), t);
             }
         }
     }
@@ -103,7 +120,7 @@ public class StructBuilder extends StructBaseListener {
 
     @Override
     public void exitBitfield(StructParser.BitfieldContext ctx) {
-        allStructs.put(currentStruct.getName(), currentStruct);
+        exitStructProcess();
         super.exitBitfield(ctx);
     }
 
@@ -116,12 +133,12 @@ public class StructBuilder extends StructBaseListener {
 
     @Override
     public void exitStruct(StructParser.StructContext ctx) {
-        allStructs.put(currentStruct.getName(), currentStruct);
+        exitStructProcess();
         super.exitStruct(ctx);
     }
 
     private void enterStructProcess(String typeName, ParserRuleContext ctx) {
-        currentStruct = allStructs.get(typeName);
+        Struct currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
             if (ctx instanceof StructParser.StructContext) {
                 currentStruct = new Struct(typeName);
@@ -134,8 +151,15 @@ public class StructBuilder extends StructBaseListener {
                     src.getName(), ctx.getStart().getLine(), typeName);
             throw new IllegalSemanticException(errmsg);
         }
+        structStack.push(currentStruct);
         currentStruct.setDefinedLocation(src, ctx.getStart().getLine());
         setComments(currentStruct, ctx);
+    }
+
+
+    private void exitStructProcess() {
+        Struct currentStruct = structStack.pop();
+        currentType = new StructType(currentStruct);
     }
 
     @Override
@@ -170,6 +194,8 @@ public class StructBuilder extends StructBaseListener {
         field.setName(ctx.getChild(0).getText());
         field.setDefaultValue(defaultValue);
         setComments(field, ctx);
+
+        Struct currentStruct = structStack.peek();
         currentStruct.addField(field);
         super.exitBits(ctx);
     }
@@ -184,7 +210,8 @@ public class StructBuilder extends StructBaseListener {
     public void exitField(StructParser.FieldContext ctx) {
         Field field = new Field();
         field.setType(currentType);
-        field.setName(ctx.getChild(1).getText());
+        String fieldName = ctx.getChild(1).getText();
+        field.setName(fieldName);
         if (defaultValue != null) {
             if (defaultValue instanceof StringDefaultValue && !currentType.isString()) {
                 String errmsg = String.format("%s:%d const type error",
@@ -206,13 +233,44 @@ public class StructBuilder extends StructBaseListener {
         }
         field.setDefaultValue(defaultValue);
         setComments(field, ctx);
+
+        Struct currentStruct = structStack.peek();
         currentStruct.addField(field);
+
+//        currentType = null;
         super.exitField(ctx);
     }
 
     @Override
-    public void exitType(StructParser.TypeContext ctx) {
+    public void exitBasicType(StructParser.BasicTypeContext ctx) {
         String typeName = ctx.getChild(0).getText();
+        currentType = new BasicType(typeName, 1);
+        super.exitBasicType(ctx);
+    }
+
+    @Override
+    public void exitStringType(StructParser.StringTypeContext ctx) {
+        String typeName = ctx.getChild(0).getText();
+        currentType = new StringType(typeName, 1);
+        super.exitStringType(ctx);
+    }
+
+    @Override
+    public void exitStructType(StructParser.StructTypeContext ctx) {
+        String typeName = ctx.getChild(0).getText();
+        Struct struct = allStructs.get(typeName);
+        if (struct == null) {
+            struct = new Struct(typeName);
+            allStructs.put(typeName, struct);
+        }
+
+        StructType structType = new StructType(struct);
+        currentType = structType;
+        super.exitStructType(ctx);
+    }
+
+    @Override
+    public void exitType(StructParser.TypeContext ctx) {
         String arraySize = "1";
         if (ctx.getChildCount() > 1) {
             String arrayDef = ctx.getChild(1).getText();
@@ -221,17 +279,18 @@ public class StructBuilder extends StructBaseListener {
         }
         boolean fixedLength = DataType.isFixedLength(arraySize);
 
-        if (DataType.isBasic(typeName)) {
-            currentType = new BasicType(typeName, arraySize);
-        } else if (DataType.isString(typeName)) {
+        if (currentType.isBasic()) {
+            currentType.setArraySize(arraySize);
+        } else if (currentType.isString()) {
             if (!fixedLength) {
                 String errmsg = String.format("%s:%d length of string cannot be variable",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             }
-            currentType = new StringType(typeName, arraySize);
+            currentType.setArraySize(arraySize);
         } else {
             if (!fixedLength && !arraySize.equals("")) {
+                Struct currentStruct = structStack.peek();
                 Field numField = currentStruct.getField(arraySize);
                 if (numField == null) {
                     String errmsg = String.format("%s:%d undefined variable array index %s",
@@ -243,15 +302,7 @@ public class StructBuilder extends StructBaseListener {
                     throw new IllegalSemanticException(errmsg);
                 }
             }
-
-            Struct struct = allStructs.get(typeName);
-            if (struct == null) {
-                struct = new Struct(typeName);
-                allStructs.put(typeName, struct);
-            }
-
-            StructType structType = new StructType(struct, arraySize);
-            currentType = structType;
+            currentType.setArraySize(arraySize);
         }
 
         super.exitType(ctx);

@@ -163,11 +163,9 @@ public class StructCompiler {
             ctx.setAllStructs(allStructs);
             CodeGenerator generator = factory.createCodeGenerator();;
             generator.generate(ctx);
-        } catch (IllegalSemanticException ise) {
-            System.err.println(ise.getMessage());
-            ise.printStackTrace();
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

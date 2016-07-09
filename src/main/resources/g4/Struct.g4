@@ -33,6 +33,7 @@ type
     : basicType fixedArray?
     | stringType fixedArray
     | structType arrayOfStruct?
+    | clazz arrayOfStruct?
     ;
 
 defaultValue
@@ -68,6 +69,7 @@ basicType
     | 'int'
     | 'int32'
     | 'uint32'
+    | 'long'
     | 'int64'
     | 'uint64'
     | 'float'
