@@ -52,3 +52,28 @@ struct Task {
     // CCITT-CRC16
     uint16 crc16;
 }
+
+bitfield Property {
+	// [0:3]显示颜色顺序
+	// 0：表示黑色，第一帧就刷给屏幕
+	// 1：表示第二颜色，需要单独发送给屏幕
+	// 2~15：以此类推
+	colorOrder: 4;
+
+	// [4:5]图层类别
+	// 0：标准bitmap
+	// 1：字体bitmap
+	// 2：OSD属性bitmap
+	// 3：采用扩展格式，P属性再增加3个字节
+	layerType: 2;
+
+	// [6:7] 屏幕方向，只对数字字体有意义
+    // 0,1,2,3分别表示0度，90度，180度，270度
+	direction: 2;
+}
+
+bitfield ExtendProperty{
+	layerType: 3;
+	decimalCount: 4;
+	reserved: 17;
+}

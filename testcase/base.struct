@@ -25,5 +25,5 @@ struct Base {
     int[5] fixedArray;
 
     // 变长整数数组
-    int[] varlenArray;
+    byte[] varlenArray;
 }

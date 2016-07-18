@@ -152,6 +152,12 @@ public class StructBuilder extends StructBaseListener {
             String errmsg = String.format("%s:%d duplicated defined struct %s",
                     src.getName(), ctx.getStart().getLine(), typeName);
             throw new IllegalSemanticException(errmsg);
+        } else {
+            // issue#1 [BUG] 1.0.5 struct定义文件中bitfield先引用后定义时，会把bitfield生成成为普通Struct。
+            if (ctx instanceof StructParser.BitfieldContext) {
+                currentStruct = new BitField(typeName);
+                allStructs.put(typeName, currentStruct);
+            }
         }
         structStack.push(currentStruct);
         currentStruct.setDefinedLocation(src, ctx.getStart().getLine());
