@@ -10,6 +10,7 @@ struct 协议生成工具
 1.0.2    | 修改中文版Windows系统下字符集设置错误导致生成文件中中文注释乱码的问题。
 1.0.3    | 支持变长struct的list，例如：`Goos[] goodsList;`
 1.0.4    | 支持位段；支持嵌套定义struct；支持尾部注释；encode/decode的参数类型改为java.io.OutputStream/java.io.InputStream。
+1.0.5    | 支持定义基本数据类型的变长数组，例如`int[] numbers;`
 
 ====
 
@@ -26,7 +27,7 @@ struct让开发者从雷同、繁琐、易错的协议encode/decode编码中脱�
 ### struct和bitfield(位段)
 协议定义的基本单元是struct，一个struct与C语言的struct类似，可以包含多个字段，在Java中是一个POJO。字段的数据类型可以是基本数据类型、定长字符串以及struct和bitfield。
 
-从1.0.4开始支持bitfield(位段)，对字段数据的定义可以细化到bit(位)的级别。例如下面定义了一个位段Color，其中用头4位表示颜色的透明度，后4位便是颜色的值。
+从1.0.4开始支持bitfield(位段)，对字段数据的定义可以细化到bit(位)的级别。例如下面定义了一个位段Color，其中用头4位表示颜色的透明度，后4位表示颜色的值。
 
 	// 颜色
 	// 位0-3 颜色透明度
@@ -187,7 +188,7 @@ struct支持三种注释格式，井号`#`和双斜杠`//`都是单行注释，`
 
 如果在struct文件中指定了初始值，则在POJO实例化时，会赋予struct文件中定义的初始值。
 
-### 嵌套包含其他struct或者struct的数组
+### 引用其他struct或者struct的数组
 第21~31行定义了一个复合的struct `Shelf`，这个struct中包含了另外一个struct `Goods`的变长数组，数组元素个数引用另外一个字段 `displayedGoodsNum`。
 
     21. // 货架
@@ -266,8 +267,12 @@ struct支持三种注释格式，井号`#`和双斜杠`//`都是单行注释，`
 	54. }
 
 第15~25行，在ImageLayer的定义中，又定义了Point和Size两个新的struct。
+> * 在作用域上，所有struct和bitfield都是平级的。嵌套定义的struct和bitfield仍然可以在其他struct定义时进行引用。
+> * 一个struct或者bitfield只能被定义一次。
 
 可以不断嵌套定义，第46~49行，Task中嵌套定义了MixedGroup，MixedGroup中又嵌套定义了Packet。
+
+
 # 2. 编译struct文件生成代码
 struct发行一个`struct-<version>.jar`的可执行jar文件，从命令行运行这个jar可以编译struct文件，生成Java代码、HTML文档以及C语言头文件。
 

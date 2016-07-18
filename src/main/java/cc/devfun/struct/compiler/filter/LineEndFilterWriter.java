@@ -26,6 +26,7 @@ public class LineEndFilterWriter extends Writer {
                     BufferedReader reader = new BufferedReader(pipedReader);
                     while ((line = reader.readLine()) != null) {
                         printWriter.println(line);
+                        printWriter.flush();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

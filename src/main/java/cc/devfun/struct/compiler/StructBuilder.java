@@ -19,6 +19,7 @@ public class StructBuilder extends StructBaseListener {
     private Stack<Struct> structStack;
     private DataType currentType;
     private DefaultValue defaultValue;
+    private ArrayDecl currentArray;
     private StructCompiler compiler;
 
     public StructBuilder(File src, CommonTokenStream tokens, StructCompiler compiler) {
@@ -29,6 +30,7 @@ public class StructBuilder extends StructBaseListener {
 
         this.structStack = new Stack<>();
         this.defaultValue = null;
+        this.currentArray = null;
         this.usedComments = new HashMap<>();
     }
 
@@ -238,20 +240,20 @@ public class StructBuilder extends StructBaseListener {
         currentStruct.addField(field);
 
 //        currentType = null;
-        super.exitField(ctx);
+        currentArray = null;
     }
 
     @Override
     public void exitBasicType(StructParser.BasicTypeContext ctx) {
         String typeName = ctx.getChild(0).getText();
-        currentType = new BasicType(typeName, 1);
+        currentType = new BasicType(typeName);
         super.exitBasicType(ctx);
     }
 
     @Override
     public void exitStringType(StructParser.StringTypeContext ctx) {
         String typeName = ctx.getChild(0).getText();
-        currentType = new StringType(typeName, 1);
+        currentType = new StringType(typeName);
         super.exitStringType(ctx);
     }
 
@@ -270,42 +272,42 @@ public class StructBuilder extends StructBaseListener {
     }
 
     @Override
-    public void exitType(StructParser.TypeContext ctx) {
-        String arraySize = "1";
-        if (ctx.getChildCount() > 1) {
-            String arrayDef = ctx.getChild(1).getText();
-            int posi =  arrayDef.indexOf('[');
-            arraySize = arrayDef.substring(posi + 1, arrayDef.length() - 1);
-        }
-        boolean fixedLength = DataType.isFixedLength(arraySize);
+    public void enterArray(StructParser.ArrayContext ctx) {
+        super.enterArray(ctx);
+    }
 
-        if (currentType.isBasic()) {
-            currentType.setArraySize(arraySize);
-        } else if (currentType.isString()) {
-            if (!fixedLength) {
-                String errmsg = String.format("%s:%d length of string cannot be variable",
+    @Override
+    public void exitArray(StructParser.ArrayContext ctx) {
+        if (ctx.getChild(0).getChildCount() == 3) { // 方括号里有参数
+            currentArray = new ArrayDecl(ctx.getChild(0).getChild(1).getText());
+        } else { // 方括号里没参数, 是变长数组。
+            currentArray = new ArrayDecl();
+        }
+    }
+
+    @Override
+    public void exitType(StructParser.TypeContext ctx) {
+        // 在语意层对数组的限制为:
+        // 1. basicType 支持定长[5]和变长[], 不支持由字段指定长度的数组[num];
+        // 2. stringType 仅支持定长数组[5], 而且必须有长度指定。长度指的是字符串的长度,而不是String的数组;
+        // 3. structType 支持所有3中类型, [5] [] [num];
+        if (currentArray != null) {
+            if (currentType.isBasic() && currentArray.isIdentifier()) {
+                String errmsg = String.format("%s:%d array index of baisc type cannot be identifer.",
+                        src.getName(), ctx.getStart().getLine());
+                throw new IllegalSemanticException(errmsg);
+            } else if (currentType.isString() && !currentArray.isFixed()) {
+                String errmsg = String.format("%s:%d length of string must be number.",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);
             }
-            currentType.setArraySize(arraySize);
-        } else {
-            if (!fixedLength && !arraySize.equals("")) {
-                Struct currentStruct = structStack.peek();
-                Field numField = currentStruct.getField(arraySize);
-                if (numField == null) {
-                    String errmsg = String.format("%s:%d undefined variable array index %s",
-                            src.getName(), ctx.getStart().getLine(), arraySize);
-                    throw new IllegalSemanticException(errmsg);
-                } else if (!numField.getType().arrayIndex()) {
-                    String errmsg = String.format("%s:%d %s cannot be variable array index",
-                            src.getName(), ctx.getStart().getLine(), arraySize);
-                    throw new IllegalSemanticException(errmsg);
-                }
-            }
-            currentType.setArraySize(arraySize);
+        } else if (currentType.isString()) {
+            String errmsg = String.format("%s:%d length of string must be specified by a number.",
+                    src.getName(), ctx.getStart().getLine());
+            throw new IllegalSemanticException(errmsg);
         }
 
-        super.exitType(ctx);
+        currentType.setArray(currentArray);
     }
 
     @Override

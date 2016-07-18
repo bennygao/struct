@@ -29,11 +29,17 @@ field
     : type Identifier defaultValue? ';'
     ;
 
+/*
+在语意层对数组的限制为:
+1. basicType 支持定长[5]和变长[], 不支持由字段指定长度的数组[num];
+2. stringType 仅支持定长数组[5], 而且必须有长度指定。长度指的是字符串的长度,而不是String的数组;
+3. structType 支持所有3中类型, [5] [] [num];
+*/
 type
-    : basicType fixedArray?
-    | stringType fixedArray
-    | structType arrayOfStruct?
-    | clazz arrayOfStruct?
+    : basicType array?
+    | stringType array
+    | structType array?
+    | clazz array?
     ;
 
 defaultValue
@@ -84,7 +90,7 @@ structType
     : Identifier
     ;
 
-arrayOfStruct
+array
     : varlenArray
     | fixedArray
     | identifierArray

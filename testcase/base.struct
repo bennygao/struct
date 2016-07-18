@@ -1,0 +1,29 @@
+// 演示基本数据类型
+struct Base {
+    // 字符串类型,长度16字节。
+    string[16] stringValue = "Hello World!";
+
+    // 字节(byte)类型
+    byte byteValue = 0;
+
+    // 短整型
+    short shortValue = 1;
+
+    // 整型
+    int intValue = 2;
+
+    // 长整型
+    long longValue = 3;
+
+    // 浮点数
+    float floatValue = 1.11;
+
+    // 双精度浮点数
+    double doubleValue = 3.1415926;
+
+    // 定长整数数组
+    int[5] fixedArray;
+
+    // 变长整数数组
+    int[] varlenArray;
+}

@@ -1,0 +1,40 @@
+###########################################
+# 商品陈列协议定义
+# 版本: 1.0.1
+# 修改人: Tony
+###########################################
+import "base.struct";
+import "extension.struct";
+
+/* 商品 */
+struct Goods {
+    // 商品ID
+    int id = 1;
+
+   // 商品名称
+   string[64] name = "烟台苹果";
+
+   // 单价(每500克)
+   double unitPrice = 15.05;
+}
+
+// 货架
+struct Shelf {
+    // 货架编号
+    int id;
+
+    // 货架上陈列的商品数量
+    int displayedGoodsNum;
+
+    // 货架上陈列的商品
+    Goods[displayedGoodsNum] displayedGoods;
+}
+
+// 礼品
+struct Gift {
+    // 礼品ID
+    int id;
+
+    // 礼品赠送的商品
+    Goods goods;
+}

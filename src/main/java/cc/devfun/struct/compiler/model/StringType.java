@@ -4,13 +4,8 @@ package cc.devfun.struct.compiler.model;
 public class StringType extends DataType {
     private String name;
 
-    public StringType(String name, String arraySize) {
+    public StringType(String name) {
         this.name = name;
-        setArraySize(arraySize);
-    }
-
-    public StringType(String name, int num) {
-        this(name, Integer.toString(num));
     }
 
     @Override
@@ -35,6 +30,11 @@ public class StringType extends DataType {
 
     @Override
     public boolean isString() {
+        return true;
+    }
+
+    @Override
+    public boolean isSettable() {
         return true;
     }
 }

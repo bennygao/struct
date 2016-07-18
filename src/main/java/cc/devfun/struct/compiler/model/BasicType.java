@@ -7,13 +7,9 @@ public class BasicType extends DataType {
         this.name = name;
     }
 
-    public BasicType(String name, String arraySize) {
-        this.name = name;
-        setArraySize(arraySize);
-    }
-
     public BasicType(String name, int num) {
-        this(name, Integer.toString(num));
+        this.name = name;
+        setArray(new ArrayDecl(num));
     }
 
     @Override
@@ -42,8 +38,13 @@ public class BasicType extends DataType {
     }
 
     @Override
+    public boolean isSettable() {
+        return !(hasArray() && isFixedLength());
+    }
+
+    @Override
     public String toString() {
-        if (getArraySize().equals("1")) {
+        if (!hasArray()) {
             return name;
         } else {
             return String.format("%s[%d]", name, getArraySize());

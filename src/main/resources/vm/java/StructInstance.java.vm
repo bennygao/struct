@@ -76,8 +76,12 @@ ${defaultValueMap[${field.type.typeName}]}##
 #macro (initField $field)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
+#if ($field.type.fixedLength)
         this.${field.name} = new ${field.type.typeName}[${field.type.arraySize}];
         java.util.Arrays.fill(this.${field.name}, ${defaultValueMap[${field.type.typeName}]});
+#else
+        this.${field.name} = null;
+#end
 #else
         this.$field.name = #defaultValue($field);
 #end
@@ -125,7 +129,7 @@ public class ${struct.className} extends Struct {
         return this.${field.name};
     }
 
-#if ((!$field.type.hasArray() && $field.type.isBasic()) || $field.type.isString() || $field.type.isStruct())
+#if ($field.type.settable)
     public void ${utils.getSetter($field.name)}(#declareType($field) $field.name) {
         this.${field.name} = ${field.name};
     }
@@ -138,17 +142,23 @@ public class ${struct.className} extends Struct {
 
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
+#if ($field.type.fixedLength)
         __size += ${typeSizeMap[${field.type.typeName}]} * ${field.type.arraySize};
+#else
+        if (${field.name} != null) {
+            __size += ${typeSizeMap[${field.type.typeName}]} * ${field.name}.length;
+        }
+#end
 #elseif ($field.type.isString())
         __size += ${field.type.arraySize};
 #else
 #if ($field.type.hasArray())
-#if ($field.type.isFixedLength())
+#if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             __size += this.${field.name}[i].calcSize();
         }
 #else
-#if ($field.type.arraySize != "")
+#if ($field.type.array.identifier)
         this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
 #end
         for (Struct __struct : this.${field.name}) {
@@ -169,9 +179,17 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
+#if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             write(output, this.${field.name}[i], ${field.type.typeName}.class);
         }
+#else
+        if (${field.name} != null) {
+            for (int i = 0; i < ${field.name}.length; ++i) {
+                write(output, this.${field.name}[i], ${field.type.typeName}.class);
+            }
+        }
+#end
 #else
         write(output, this.${field.name}, ${field.type.typeName}.class);
 #end
@@ -179,12 +197,12 @@ public class ${struct.className} extends Struct {
         writeString(this.${field.name}, ${field.type.arraySize}, output);
 #else
 #if ($field.type.hasArray())
-#if ($field.type.isFixedLength())
+#if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             this.${field.name}[i].encode(output);
         }
 #else
-#if ($field.type.arraySize != "")
+#if ($field.type.array.identifier)
         this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
 #end
         for (Struct __struct : this.${field.name}) {
@@ -206,9 +224,16 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
+#if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             this.${field.name}[i] = read(input, ${field.type.typeName}.class);
         }
+#else
+        if (true) {
+            throw new UnsupportedOperationException(
+                "cannot decode array which elements number is unknown.");
+        }
+#end
 #else
         this.${field.name} = read(input, ${field.type.typeName}.class);
 #end
@@ -228,7 +253,7 @@ public class ${struct.className} extends Struct {
 #else
         if (true) {
             throw new UnsupportedOperationException(
-                "struct doesn't support decode list which elements number is unknown.");
+                "cannot decode list which elements number is unknown.");
         }
 #end
 #end

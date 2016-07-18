@@ -3,9 +3,8 @@ package cc.devfun.struct.compiler.model;
 public class BitsType extends DataType {
     private String name;
 
-    public BitsType(String name, String arraySize) {
+    public BitsType(String name) {
         this.name = name;
-        setArraySize(arraySize);
     }
 
     @Override
@@ -31,5 +30,10 @@ public class BitsType extends DataType {
     @Override
     public boolean isString() {
         return false;
+    }
+
+    @Override
+    public boolean isSettable() {
+        return true;
     }
 }

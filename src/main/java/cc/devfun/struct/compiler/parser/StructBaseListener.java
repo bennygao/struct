@@ -208,13 +208,13 @@ public class StructBaseListener implements StructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayOfStruct(StructParser.ArrayOfStructContext ctx) { }
+	@Override public void enterArray(StructParser.ArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArrayOfStruct(StructParser.ArrayOfStructContext ctx) { }
+	@Override public void exitArray(StructParser.ArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

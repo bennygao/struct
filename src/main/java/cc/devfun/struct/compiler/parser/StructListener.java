@@ -168,15 +168,15 @@ public interface StructListener extends ParseTreeListener {
 	 */
 	void exitStructType(StructParser.StructTypeContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link StructParser#arrayOfStruct}.
+	 * Enter a parse tree produced by {@link StructParser#array}.
 	 * @param ctx the parse tree
 	 */
-	void enterArrayOfStruct(StructParser.ArrayOfStructContext ctx);
+	void enterArray(StructParser.ArrayContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link StructParser#arrayOfStruct}.
+	 * Exit a parse tree produced by {@link StructParser#array}.
 	 * @param ctx the parse tree
 	 */
-	void exitArrayOfStruct(StructParser.ArrayOfStructContext ctx);
+	void exitArray(StructParser.ArrayContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link StructParser#varlenArray}.
 	 * @param ctx the parse tree

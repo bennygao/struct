@@ -2,11 +2,9 @@ package cc.devfun.struct.compiler.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public abstract class DataType {
-    public static Map<String, String> basicTypeSet = new HashMap<>();
-
+    static Map<String, String> basicTypeSet = new HashMap<>();
     static {
         basicTypeSet.put("byte", "byte");
         basicTypeSet.put("int8", "byte");
@@ -24,48 +22,47 @@ public abstract class DataType {
         basicTypeSet.put("double", "double");
     }
 
-    public final static Pattern numberPattern = Pattern.compile("^[0-9]+$");
-    private String arraySize = "1";
+    private ArrayDecl array = null;
 
-    public static boolean isFixedLength(String num) {
-        return numberPattern.matcher(num).find();
+    public void setArray(ArrayDecl array) {
+        this.array = array;
+    }
+
+    public ArrayDecl getArray() {
+        return array;
     }
 
     public boolean isFixedLength() {
-        return isFixedLength(getArraySize());
+        return array == null ? true : array.isFixed();
     }
 
-    public boolean arrayIndex() {
+    public boolean canBeArrayLength() {
         String tn = getTypeName();
         return tn.equalsIgnoreCase("byte") || tn.equalsIgnoreCase("short")
                 || tn.equalsIgnoreCase("int") || tn.equalsIgnoreCase("long");
     }
 
     public boolean isFloating() {
-        return !arrayIndex();
+        return !canBeArrayLength();
     }
 
     public String getArraySize() {
-        return arraySize;
-    }
-
-    public void setArraySize(String arraySize) {
-        this.arraySize = arraySize;
+        return array == null ? "1" : array.getSize();
     }
 
     public boolean hasArray() {
-        if (isFixedLength()) {
-            return Integer.parseInt(getArraySize()) > 1;
-        } else {
-            return true;
-        }
+        return array != null;
     }
 
     public String getPrototype() {
         StringBuilder sb = new StringBuilder();
         sb.append(getName());
         if (hasArray()) {
-            sb.append('[').append(getArraySize()).append(']');
+            sb.append('[');
+            if (getArray().isFixed()) {
+                sb.append(getArraySize());
+            }
+            sb.append(']');
         }
         return sb.toString();
     }
@@ -87,4 +84,6 @@ public abstract class DataType {
     public abstract boolean isStruct();
 
     public abstract boolean isString();
+
+    public abstract boolean isSettable();
 }

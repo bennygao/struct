@@ -1,0 +1,54 @@
+#
+# 演示位段和内嵌定义struct
+#
+
+// 颜色
+// 位0-3 颜色透明度
+// 位4-7 颜色值
+bitfield Color {
+    transparency:4; // 透明度, 0为不透明, 15为全透明。
+    color:4; // 颜色值
+}
+
+// 图层
+struct ImageLayer {
+    // 坐标
+    struct Point {
+        int x; // x轴坐标
+        int y; // y轴坐标
+    } leftTop; // 左上角坐标
+
+    // 尺寸
+    struct Size {
+        int width; // 宽度
+        int height; // 高度
+    } size; // 图层大小
+
+    // 图层颜色
+    Color color;
+}
+
+// 任务
+struct Task {
+    // 任务控制字
+    bitfield CtrlAndSID {
+        ctrl:3; // 任务类型标识
+        SID:4; // Session ID
+        reserved:17; // 保留
+    } ctrlAndSID; // 任务控制字和SessionID
+
+    // 混杂模式
+    struct MixedGroup {
+        uint16 power; // 发射功率
+        uint8 channel; // 通讯信道;
+        uint16 num; // 后续数据包(Packet)个数
+        // 数据包
+        struct Packet {
+            byte[4] eslId; // ESL ID
+            byte[26] data; // 数据
+        } [num] packets; // 由num指定个数的多个数据包
+    } mixedGroup;
+
+    // CCITT-CRC16
+    uint16 crc16;
+}

@@ -7,11 +7,6 @@ public class StructType extends DataType {
         this.struct = struct;
     }
 
-    public StructType(Struct struct, String arraySize) {
-        this(struct);
-        setArraySize(arraySize);
-    }
-
     public Struct getStruct() {
         return this.struct;
     }
@@ -38,7 +33,7 @@ public class StructType extends DataType {
     }
 
     @Override
-    public String toString() {
-        return struct.getName() + '[' + getArraySize() + ']';
+    public boolean isSettable() {
+        return !hasArray();
     }
 }
