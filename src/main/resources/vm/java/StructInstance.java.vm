@@ -59,7 +59,7 @@ ${field.type.typeName}##
     // $line
 #end
 #end
-    private #declareType($field) ${field.name};
+    private #declareType($field) ${field.name}; // 原型: ${field.type.prototype}
 #end
 ##
 ## 宏: 生成field的缺省值
@@ -246,7 +246,7 @@ public class ${struct.className} extends Struct {
             this.${field.name}[i].decode(input);
         }
 #else
-#if ($field.type.arraySize != "")
+#if ($field.type.array.identifier)
         for (int i = 0; i < this.${field.type.arraySize}; ++i) {
             this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(input));
         }
