@@ -36,4 +36,9 @@ public class StructType extends DataType {
     public boolean isSettable() {
         return !hasArray();
     }
+
+    @Override
+    public boolean isDecodable() {
+        return !(hasArray() && getArray().isVarlen());
+    }
 }

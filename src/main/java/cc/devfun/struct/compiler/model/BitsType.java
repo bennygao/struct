@@ -36,4 +36,9 @@ public class BitsType extends DataType {
     public boolean isSettable() {
         return true;
     }
+
+    @Override
+    public boolean isDecodable() {
+        return true;
+    }
 }

@@ -20,6 +20,16 @@ public class Struct implements Commentable {
         this.definedLocation = new Location();
     }
 
+    public boolean isDecodable() {
+        for (Field f : fields.values()) {
+            if (!f.getType().isDecodable()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public void setResolved() {
         this.resolved = true;
     }

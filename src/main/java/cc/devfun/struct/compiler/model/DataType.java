@@ -86,4 +86,6 @@ public abstract class DataType {
     public abstract boolean isString();
 
     public abstract boolean isSettable();
+
+    public abstract boolean isDecodable();
 }

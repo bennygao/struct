@@ -50,4 +50,9 @@ public class BasicType extends DataType {
             return String.format("%s[%d]", name, getArraySize());
         }
     }
+
+    @Override
+    public boolean isDecodable() {
+        return !hasArray() || getArray().isFixed();
+    }
 }

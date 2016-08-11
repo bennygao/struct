@@ -166,7 +166,9 @@ public class ${struct.className} extends Struct {
         }
 #end
 #else
-        __size += this.${field.name}.calcSize();
+        if (this.${field.name} != null) {
+            __size += this.${field.name}.calcSize();
+        }
 #end
 #end
 
@@ -221,19 +223,13 @@ public class ${struct.className} extends Struct {
 
     @Override
     public Struct decode(InputStream input) throws IOException {
+#if ($struct.decodable)
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
-#if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             this.${field.name}[i] = read(input, ${field.type.typeName}.class);
         }
-#else
-        if (true) {
-            throw new UnsupportedOperationException(
-                "cannot decode array which elements number is unknown.");
-        }
-#end
 #else
         this.${field.name} = read(input, ${field.type.typeName}.class);
 #end
@@ -246,16 +242,9 @@ public class ${struct.className} extends Struct {
             this.${field.name}[i].decode(input);
         }
 #else
-#if ($field.type.array.identifier)
         for (int i = 0; i < this.${field.type.arraySize}; ++i) {
             this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(input));
         }
-#else
-        if (true) {
-            throw new UnsupportedOperationException(
-                "cannot decode list which elements number is unknown.");
-        }
-#end
 #end
 #else
         this.${field.name}.decode(input);
@@ -264,5 +253,9 @@ public class ${struct.className} extends Struct {
 
 #end
         return this;
+#else
+        throw new UnsupportedOperationException(
+                        "cannot decode array whose elements number is unknown.");
+#end
     }
 }

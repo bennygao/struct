@@ -37,4 +37,9 @@ public class StringType extends DataType {
     public boolean isSettable() {
         return true;
     }
+
+    @Override
+    public boolean isDecodable() {
+        return getArray().isFixed();
+    }
 }
