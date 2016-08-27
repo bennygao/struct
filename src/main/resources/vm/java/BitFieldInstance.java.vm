@@ -125,4 +125,13 @@ public class ${struct.className} extends Struct {
 #end
         return this;
     }
+
+    @Override
+    void format(TextStructFormat structFormat, int level) {
+        structFormat.beginStruct("${struct.className}", level);
+#foreach ($field in $struct.fields)
+        structFormat.writeBits("${field.name}", this.${field.name}, level + 1, ${field.type.arraySize});
+#end
+        structFormat.endStruct("${struct.className}", level);
+    }
 }

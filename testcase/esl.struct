@@ -1,0 +1,191 @@
+
+// 1号命令：显示非数字图层
+struct DisplayNoneNumbericLayerCmd{
+	// 命令字
+	uint8 command = 0x01;
+	
+	// 图层号
+	uint8 layerId;
+}
+
+// 2号命令：显示数字图层
+struct DisplayNumbericLayerCmd{
+	// 命令字
+	uint8 command = 0x02;
+	
+	// 图层号
+	uint8 layerId;
+	
+	// 数值
+	uint32 digitalNumber;
+}
+
+// 3号命令：写图层(只写不显示)
+struct WriteLayerCmd{
+	// 命令字
+	uint8 command = 0x03;
+	
+	// 图层号
+	uint8 layerId;
+	
+	// 图层大小
+	uint16 size;
+	
+	// 图层有效数据长度
+	uint16 len;
+	
+	// 数据
+	Struct data;
+	
+	// 校验内容包括（layerId, size, len, data）
+	uint16 crc;
+}
+
+// 7号命令：只更新价签数字部分。能保持上次刷屏的数据，并且改变其中数字部分
+struct UpdateNumberCmd{
+	// 命令字
+	uint8 command = 0x07;
+	
+	// 上屏显示内容的layerID总集
+	uint8 displayLayerId;
+	
+	// 图层号
+	uint8 layerId_1;
+	
+	// 图层显示的数字
+	uint32 digitalNumber_1;
+	
+	// 图层号
+	uint8 layerId_2;
+	
+	// 图层显示的数字
+	uint32 digitalNumber_2;
+	
+	// 图层号
+	uint8 layerId_3;
+	
+	// 图层显示的数字
+	uint32 digitalNumber_3;
+}
+
+// 数字图层：数字字体库
+struct NumberFontLayer{
+	// 图层属性
+	Property property;
+	
+	// property属性扩展，当P[4:5]值为3时，此字段生效，另外占用3字节。
+	ExtendProperty extendProperty;
+	
+	// 字体高度
+	uint8 fontHeight;
+	
+	// 字体宽度
+	uint8 fontWidth;
+	
+	// 字体点阵图数据
+	byte[] data;
+}
+
+// 数字图层：数字属性
+struct NumberLayer{
+	// 图层属性
+	Property property;
+	
+	// property属性扩展，当P[4:5]值为3时，此字段生效，另外占用3字节。
+	ExtendProperty extendProperty;
+	
+	// 坐标信息
+	uint8[8] position;
+	
+	// 存储整数部分字体的图层
+	uint8 integerFontLayerId;
+	
+	// 存储小数部分字体的图层
+	uint8 decimalFontLayerId;
+	
+	// 显示属性
+	// [0:1]
+	// 0：小数部分有上标
+	// 1：小数部分有下标
+	// 2：没有小数部分
+	// 3：保留
+	// 以值为103为例，当有小数部分时，实际值为1.03；如果没有小数部分，则实际值仍为103。
+	//
+	// [2]
+	// 0：基本数据（例如价格等）
+	// 1：间隔数据（例如日期等）
+	//
+	// [3:4]
+	// 0：左对齐
+	// 1：右对齐
+	// 2：居中对齐
+	// 3：两端对齐
+	//
+	// [5]
+	// 1：反显
+	//
+	// [6:7] 保留
+	uint8 format;
+}
+
+// 非数字图层
+struct NoneNumbericLayer{	
+	// 图层属性
+	Property property;
+	
+	// property属性扩展，当P[4:5]值为3时，此字段生效，另外占用3字节。
+	ExtendProperty extendProperty;
+	
+	// 坐标信息
+	uint8[8] position;
+	
+	// 点阵图数据
+	byte[] data;
+
+	EndCmd[] commands;
+}
+
+// 表示OSD命令执行到此结束
+struct EndCmd{
+	byte command = 0x76;
+}
+
+// 清空flash中数据区
+struct FlashResetCmd{
+	byte command = 0x80;
+}
+
+// 图层属性
+bitfield Property {
+	// [0:3]显示颜色顺序
+	// 0：表示黑色，第一帧就刷给屏幕
+	// 1：表示第二颜色，需要单独发送给屏幕
+	// 2~15：以此类推
+	colorOrder: 4; 
+	
+	// [4:5]图层类别
+	// 0：标准bitmap
+	// 1：字体bitmap
+	// 2：OSD属性bitmap
+	// 3：采用扩展格式，P属性再增加3个字节
+	layerType: 2; 
+	
+	// [6:7] 屏幕方向，只对数字字体有意义
+    // 0,1,2,3分别表示0度，90度，180度，270度
+	direction: 2;
+}
+
+bitfield ExtendProperty{
+	//[0:2] 图层类别
+	//0：标准bitmap
+	//1：字体bitmap
+	//2：OSD属性bitmap
+	layerType: 3;
+	
+	//3~8：保留
+	decimalCount: 4;
+	
+	//[3:6] 小数位数
+    //控制小数部分的位数（FORMAT[0:1]控制是否有小数，及上下标模式）。
+	reserved: 17;
+}

@@ -260,4 +260,33 @@ public class ${struct.className} extends Struct {
                         "cannot decode array whose elements number is unknown.");
 #end
     }
+
+    @Override
+    void format(TextStructFormat structFormat, int level) {
+        structFormat.beginStruct("${struct.className}", level);
+
+#foreach ($field in $struct.fields)
+#if ($field.type.isBasic())
+#if ($field.type.hasArray())
+        structFormat.writeArray("${field.name}", level + 1, this.${field.name}, ${field.type.typeName}.class);
+#else
+        structFormat.write("${field.name}", level + 1, this.${field.name}, ${field.type.typeName}.class);
+#end
+#elseif ($field.type.isString())
+        structFormat.writeString("${field.name}", level + 1, this.${field.name}, ${field.type.arraySize});
+#else
+#if ($field.type.hasArray())
+#if ($field.type.array.fixed)
+        structFormat.writeStructArray("${field.name}", level + 1, this.${field.name});
+#else
+        structFormat.writeList("${field.name}", level + 1, this.${field.name});
+#end
+#else
+        structFormat.writeStruct("${field.name}", this.${field.name}, level + 1);
+#end
+#end
+
+#end
+        structFormat.endStruct("${struct.className}", level);
+    }
 }

@@ -21,13 +21,28 @@ struct Goods {
 // 货架
 struct Shelf {
     // 货架编号
-    int id;
+    int id = 1;
 
     // 货架上陈列的商品数量
-    int displayedGoodsNum;
+    int displayedGoodsNum = 0;
 
     // 货架上陈列的商品
     Goods[displayedGoodsNum] displayedGoods;
+
+    // 变长
+    Goods[] goodsList;
+
+    // 定长
+    Goods[3] goodsArray;
+
+    // 后面的字段
+    string[64] name = "烟台苹果";
+
+    // Color
+    Color color;
+
+    // byte数组
+    byte[26] frame;
 }
 
 // 礼品
