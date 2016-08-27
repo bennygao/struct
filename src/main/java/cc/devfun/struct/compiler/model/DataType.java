@@ -59,7 +59,7 @@ public abstract class DataType {
         sb.append(getName());
         if (hasArray()) {
             sb.append('[');
-            if (getArray().isFixed()) {
+            if (getArray().isFixed() || getArray().isIdentifier()) {
                 sb.append(getArraySize());
             }
             sb.append(']');

@@ -6,7 +6,9 @@
  */
 package ${package};
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
 
 #set ($defaultValueMap = {
     "char"      : "'\0'",

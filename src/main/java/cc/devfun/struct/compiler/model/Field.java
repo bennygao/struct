@@ -11,8 +11,9 @@ import java.util.List;
 public class Field implements Commentable {
     private String name;
     private DataType type;
-    private List<String> comments = new ArrayList<String>();
+    private List<String> comments = new ArrayList<>();
     private DefaultValue defaultValue;
+    private String referenceStruct = null;
 
     public String getName() {
         return name;
@@ -69,5 +70,13 @@ public class Field implements Commentable {
 
     public void setDefaultValue(DefaultValue defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public String getReferenceStruct() {
+        return referenceStruct;
+    }
+
+    public void setReferenceStruct(String referenceStruct) {
+        this.referenceStruct = referenceStruct;
     }
 }

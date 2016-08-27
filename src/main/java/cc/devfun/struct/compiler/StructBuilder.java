@@ -16,7 +16,7 @@ public class StructBuilder extends StructBaseListener {
     private CommonTokenStream tokens;
     private Map<Integer, Token> usedComments;
     private Map<String, Struct> allStructs;
-    private Stack<Struct> structStack;
+    private LinkedList<Struct> structStack;
     private DataType currentType;
     private DefaultValue defaultValue;
     private ArrayDecl currentArray;
@@ -28,7 +28,7 @@ public class StructBuilder extends StructBaseListener {
         this.compiler = compiler;
         this.allStructs = compiler.getAllStructs();
 
-        this.structStack = new Stack<>();
+        this.structStack = new LinkedList<>();
         this.defaultValue = null;
         this.currentArray = null;
         this.usedComments = new HashMap<>();
@@ -244,6 +244,34 @@ public class StructBuilder extends StructBaseListener {
 
         Struct currentStruct = structStack.peek();
         currentStruct.addField(field);
+
+        if (field.getType().hasArray()) {
+            if (field.getType().getArray().isIdentifier()) {
+                if (!field.getType().isStruct()) {
+                    String errmsg = String.format("%s:%d identifier array index only can be supplied to struct.",
+                            src.getName(), ctx.getStart().getLine());
+                    throw new IllegalSemanticException(errmsg);
+                } else {
+                    String identifier = field.getType().getArray().getSize();
+                    Field referenceField = currentStruct.getField(identifier);
+                    if (referenceField == null) {
+                        String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasnot been defined.",
+                                src.getName(), ctx.getStart().getLine(), identifier);
+                        throw new IllegalSemanticException(errmsg);
+                    } else if (!referenceField.getType().canBeArrayLength()) {
+                        String errmsg = String.format("%s:%d data type of \"%s\" cannot be specified to be array index.",
+                                src.getName(), ctx.getStart().getLine(), identifier);
+                        throw new IllegalSemanticException(errmsg);
+                    } else if (referenceField.getReferenceStruct() != null) {
+                        String errmsg = String.format("%s:%d cannot specify field \"%s\" to be array index of more than one struct.",
+                                src.getName(), ctx.getStart().getLine(), identifier);
+                        throw new IllegalSemanticException(errmsg);
+                    } else {
+                        referenceField.setReferenceStruct(field.getName());
+                    }
+                }
+            }
+        }
 
 //        currentType = null;
         currentArray = null;

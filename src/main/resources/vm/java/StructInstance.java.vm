@@ -6,7 +6,9 @@
  */
 package ${package};
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.IOException;
 
 #set ($defaultValueMap = {
     "char"      : "'\0'",
@@ -193,6 +195,9 @@ public class ${struct.className} extends Struct {
         }
 #end
 #else
+#if ($field.referenceStruct)
+        this.${field.name} = (#declareType($field)) this.${field.referenceStruct}.size();
+#end
         write(output, this.${field.name}, ${field.type.typeName}.class);
 #end
 #elseif ($field.type.isString())
@@ -204,9 +209,6 @@ public class ${struct.className} extends Struct {
             this.${field.name}[i].encode(output);
         }
 #else
-#if ($field.type.array.identifier)
-        this.${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this.${field.name}.size();
-#end
         for (Struct __struct : this.${field.name}) {
             __struct.encode(output);
         }
