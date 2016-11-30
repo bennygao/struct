@@ -21,15 +21,16 @@ public class Utils {
 
 
     public String getGetter(String prop) {
-        String firstCh = prop.substring(0, 1);
-        String others = prop.substring(1);
-        return "get" + firstCh.toUpperCase() + others;
+        return "get" + upperFirstChar(prop);
     }
 
     public String getSetter(String prop) {
-        String firstCh = prop.substring(0, 1);
-        String others = prop.substring(1);
-        return "set" + firstCh.toUpperCase() + others;
+        return "set" + upperFirstChar(prop);
+    }
+
+    public String upperFirstChar(String str) {
+        String firstCh = str.substring(0, 1).toUpperCase();
+        return firstCh + str.substring(1);
     }
 
     public String getCStyleIdentifier(String name) {

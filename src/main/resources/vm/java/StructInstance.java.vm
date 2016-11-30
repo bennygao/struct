@@ -6,6 +6,8 @@
  */
 package ${package};
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -24,8 +26,13 @@ import java.io.IOException;
     "char"      : "1",
 	"byte"		: "1",
 	"boolean"	: "1",
+	"uint8"     : "1",
 	"short"		: "2",
+	"int16"     : "2",
+	"uint16"    : "2",
 	"int"		: "4",
+	"int32"     : "4",
+	"uint32"    : "4",
 	"long"		: "8",
 	"float"		: "4",
 	"double"	: "8"
@@ -105,6 +112,16 @@ ${defaultValueMap[${field.type.typeName}]}##
 #end
 #end
 ##
+## 宏: field的读方法
+#macro (readMethod $field)
+read${utils.upperFirstChar(${field.type.name})}##
+#end
+##
+## 宏: field的写方法
+#macro (writeMethod $field)
+write${utils.upperFirstChar(${field.type.name})}##
+#end
+##
 /**
  * struct ${structName}
 #if ($struct.haveComments())
@@ -145,10 +162,10 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.fixedLength)
-        __size += ${typeSizeMap[${field.type.typeName}]} * ${field.type.arraySize};
+        __size += ${typeSizeMap[${field.type.name}]} * ${field.type.arraySize};
 #else
         if (${field.name} != null) {
-            __size += ${typeSizeMap[${field.type.typeName}]} * ${field.name}.length;
+            __size += ${typeSizeMap[${field.type.name}]} * ${field.name}.length;
         }
 #end
 #elseif ($field.type.isString())
@@ -180,17 +197,19 @@ public class ${struct.className} extends Struct {
 
     @Override
     public void encode(OutputStream output) throws IOException {
+        DataOutputStream __dos = getDataOutput(output);
+
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
 #if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            write(output, this.${field.name}[i], ${field.type.typeName}.class);
+            #writeMethod($field)(this.${field.name}[i], __dos);
         }
 #else
         if (${field.name} != null) {
             for (int i = 0; i < ${field.name}.length; ++i) {
-                write(output, this.${field.name}[i], ${field.type.typeName}.class);
+                #writeMethod($field)(this.${field.name}[i], __dos);
             }
         }
 #end
@@ -198,24 +217,24 @@ public class ${struct.className} extends Struct {
 #if ($field.referenceStruct)
         this.${field.name} = (#declareType($field)) this.${field.referenceStruct}.size();
 #end
-        write(output, this.${field.name}, ${field.type.typeName}.class);
+        #writeMethod($field)(this.${field.name}, __dos);
 #end
 #elseif ($field.type.isString())
-        writeString(this.${field.name}, ${field.type.arraySize}, output);
+        writeString(this.${field.name}, ${field.type.arraySize}, __dos);
 #else
 #if ($field.type.hasArray())
 #if ($field.type.array.fixed)
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i].encode(output);
+            this.${field.name}[i].encode(__dos);
         }
 #else
         for (Struct __struct : this.${field.name}) {
-            __struct.encode(output);
+            __struct.encode(__dos);
         }
 #end
 #else
         if (this.${field.name} != null) {
-            this.${field.name}.encode(output);
+            this.${field.name}.encode(__dos);
         }
 #end
 #end
@@ -226,30 +245,32 @@ public class ${struct.className} extends Struct {
     @Override
     public Struct decode(InputStream input) throws IOException {
 #if ($struct.decodable)
+        DataInputStream __dis = getDataInput(input);
+
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i] = read(input, ${field.type.typeName}.class);
+            this.${field.name}[i] = #readMethod($field)(__dis);
         }
 #else
-        this.${field.name} = read(input, ${field.type.typeName}.class);
+        this.${field.name} = #readMethod($field)(__dis);
 #end
 #elseif ($field.type.isString())
-        this.${field.name} = readString(input, ${field.type.arraySize});
+        this.${field.name} = readString(__dis, ${field.type.arraySize});
 #else
 #if ($field.type.hasArray())
 #if ($field.type.isFixedLength())
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
-            this.${field.name}[i].decode(input);
+            this.${field.name}[i].decode(__dis);
         }
 #else
         for (int i = 0; i < this.${field.type.arraySize}; ++i) {
-            this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(input));
+            this.${field.name}.add(($field.type.typeName) new ${field.type.typeName}().decode(__dis));
         }
 #end
 #else
-        this.${field.name}.decode(input);
+        this.${field.name}.decode(__dis);
 #end
 #end
 
@@ -268,9 +289,9 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
-        structFormat.writeArray("${field.name}", level + 1, this.${field.name}, ${field.type.typeName}.class);
+        structFormat.writeArray("${field.name}", level + 1, this.${field.name}, "${field.type.name}");
 #else
-        structFormat.write("${field.name}", level + 1, this.${field.name}, ${field.type.typeName}.class);
+        structFormat.write("${field.name}", level + 1, this.${field.name}, "${field.type.name}");
 #end
 #elseif ($field.type.isString())
         structFormat.writeString("${field.name}", level + 1, this.${field.name}, ${field.type.arraySize});

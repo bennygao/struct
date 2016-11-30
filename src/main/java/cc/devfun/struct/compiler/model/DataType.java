@@ -8,16 +8,15 @@ public abstract class DataType {
     static {
         basicTypeSet.put("byte", "byte");
         basicTypeSet.put("int8", "byte");
-        basicTypeSet.put("uint8", "byte");
+        basicTypeSet.put("uint8", "int");
         basicTypeSet.put("short", "short");
         basicTypeSet.put("int16", "short");
-        basicTypeSet.put("uint16", "short");
+        basicTypeSet.put("uint16", "int");
         basicTypeSet.put("int", "int");
         basicTypeSet.put("int32", "int");
-        basicTypeSet.put("uint32", "int");
+        basicTypeSet.put("uint32", "long");
         basicTypeSet.put("long", "long");
         basicTypeSet.put("int64", "long");
-        basicTypeSet.put("uint64", "long");
         basicTypeSet.put("float", "float");
         basicTypeSet.put("double", "double");
     }

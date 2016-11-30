@@ -4,13 +4,22 @@ struct Base {
     string[16] stringValue = "Hello World!";
 
     // 字节(byte)类型
-    byte byteValue = 0;
+    uint8 byteValue = 0;
+
+    // uint8数组
+    uint8[4] uint8Array;
 
     // 短整型
     short shortValue = 1;
 
+    // uint16
+    uint16 uint16Value = 1;
+
     // 整型
     int intValue = 2;
+
+    // uint32
+    uint32 uint32Value = 2;
 
     // 长整型
     long longValue = 3;
@@ -23,7 +32,4 @@ struct Base {
 
     // 定长整数数组
     int[5] fixedArray;
-
-    // 变长整数数组
-    byte[] varlenArray;
 }

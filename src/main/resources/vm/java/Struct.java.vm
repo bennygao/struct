@@ -29,62 +29,13 @@ public class Struct {
         return 0;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T read(InputStream input, Class<T> clazz) throws IOException {
-        DataInputStream dis = new DataInputStream(input);
-        if (clazz.equals(Character.class) || clazz.equals(char.class)) {
-            return (T) (Character) readChar(dis);
-        } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
-            return (T) (Byte) readByte(dis);
-        } else if (clazz.equals(Boolean.class) || clazz.equals(boolean.class)) {
-            return (T) (Boolean) readBoolean(dis);
-        } else if (clazz.equals(Short.class) || clazz.equals(short.class)) {
-            return (T) (Short) readShort(dis);
-        } else if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
-            return (T) (Integer) readInteger(dis);
-        } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
-            return (T) (Long) readLong(dis);
-        } else if (clazz.equals(Float.class) || clazz.equals(float.class)) {
-            return (T) (Float) readFloat(dis);
-        } else if (clazz.equals(Double.class) || clazz.equals(double.class)) {
-            return (T) (Double) readDouble(dis);
-        } else {
-            throw new UnsupportedOperationException("unsupported read operation on class " + clazz.getName());
-        }
-    }
-
-    public void write(OutputStream output, Object obj, Class<?> clazz) throws IOException {
-        DataOutputStream dos = new DataOutputStream(output);
-        if (clazz.equals(Character.class) || clazz.equals(char.class)) {
-            writeChar((Character) obj, dos);
-        } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
-            writeByte((Byte) obj, dos);
-        } else if (clazz.equals(Boolean.class) || clazz.equals(boolean.class)) {
-            writeBoolean((Boolean) obj, dos);
-        } else if (clazz.equals(Short.class) || clazz.equals(short.class)) {
-            writeShort((Short) obj, dos);
-        } else if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
-            writeInteger((Integer) obj, dos);
-        } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
-            writeLong((Long) obj, dos);
-        } else if (clazz.equals(Float.class) || clazz.equals(float.class)) {
-            writeFloat((Float) obj, dos);
-        } else if (clazz.equals(Double.class) || clazz.equals(double.class)) {
-            writeDouble((Double) obj, dos);
-        } else {
-            throw new UnsupportedOperationException("unsupported write operation on class " + clazz.getName());
-        }
-    }
-
-    public String readString(InputStream input, int len) throws IOException {
-        DataInputStream dis = new DataInputStream(input);
+    public String readString(DataInput dis, int len) throws IOException {
         byte[] bytes = new byte[len];
         dis.readFully(bytes);
         return getString(bytes);
     }
 
-    public void writeString(String value, int len, OutputStream output) throws IOException {
-        DataOutputStream dos = new DataOutputStream(output);
+    public void writeString(String value, int len, DataOutput dos) throws IOException {
         int strlen = isEmpty(value) ? 0 : value.length();
         int wlen = strlen < len ? strlen : len;
         int diff = len - wlen;
@@ -108,12 +59,36 @@ public class Struct {
         }
     }
 
+    protected DataInputStream getDataInput(InputStream input) {
+        if (input instanceof DataInputStream) {
+            return (DataInputStream) input;
+        } else {
+            return new DataInputStream(input);
+        }
+    }
+
+    protected DataOutputStream getDataOutput(OutputStream output) {
+        if (output instanceof DataOutputStream) {
+            return (DataOutputStream) output;
+        } else {
+            return new DataOutputStream(output);
+        }
+    }
+
     public byte readByte(DataInput dis) throws IOException {
         return dis.readByte();
     }
 
     public void writeByte(byte value, DataOutput dos) throws IOException {
         dos.writeByte(value);
+    }
+
+    public int readUint8(DataInput dis) throws IOException {
+        return Byte.toUnsignedInt(readByte(dis));
+    }
+
+    public void writeUint8(int value, DataOutput dos) throws IOException {
+        writeByte((byte) value, dos);
     }
 
     public char readChar(DataInput dis) throws IOException {
@@ -142,14 +117,46 @@ public class Struct {
         dos.writeShort(bits);
     }
 
-    public int readInteger(DataInput dis) throws IOException {
+    public short readInt16(DataInput dis) throws IOException {
+        return readShort(dis);
+    }
+
+    public void writeInt16(short value, DataOutput dos) throws IOException {
+        writeShort(value, dos);
+    }
+
+    public int readUint16(DataInput dis) throws IOException {
+        return Short.toUnsignedInt(readShort(dis));
+    }
+
+    public void writeUint16(int value, DataOutput dos) throws IOException {
+        writeShort((short) value, dos);
+    }
+
+    public int readInt(DataInput dis) throws IOException {
         int bits = dis.readInt();
         return byteOrder == LITTLE_ENDIAN ? Integer.reverseBytes(bits) : bits;
     }
 
-    public void writeInteger(int value, DataOutput dos) throws IOException {
+    public void writeInt(int value, DataOutput dos) throws IOException {
         int bits = byteOrder == LITTLE_ENDIAN ? Integer.reverseBytes(value) : value;
         dos.writeInt(bits);
+    }
+
+    public int readInt32(DataInput dis) throws IOException {
+        return readInt(dis);
+    }
+
+    public void writeInt32(int value, DataOutput dos) throws IOException {
+        writeInt(value, dos);
+    }
+
+    public long readUint32(DataInput dis) throws IOException {
+        return Integer.toUnsignedLong(readInt(dis));
+    }
+
+    public void writeUint32(long value, DataOutput dos) throws IOException {
+        writeInt((int) value, dos);
     }
 
     public long readLong(DataInput dis) throws IOException {
@@ -160,6 +167,14 @@ public class Struct {
     public void writeLong(long value, DataOutput dos) throws IOException {
         long bits = byteOrder == LITTLE_ENDIAN ? Long.reverseBytes(value) : value;
         dos.writeLong(bits);
+    }
+
+    public long readInt64(DataInput dis) throws IOException {
+        return readLong(dis);
+    }
+
+    public void writeInt64(long value, DataOutput dos) throws IOException {
+        writeLong(value, dos);
     }
 
     public float readFloat(DataInput dis) throws IOException {
@@ -324,27 +339,49 @@ public class Struct {
             this.stringBuilder = new StringBuilder();
         }
 
-        private String getValueString(Object obj, Class<?> clazz) {
+        private String getValueString(Object obj, String typeName) {
             if (obj == null) {
                 return "null";
-            } else if (clazz.equals(Character.class) || clazz.equals(char.class)) {
-                return toString((char) obj);
-            } else if (clazz.equals(Byte.class) || clazz.equals(byte.class)) {
-                return toString((byte) obj);
-            } else if (clazz.equals(Boolean.class) || clazz.equals(boolean.class)) {
-                return toString((boolean) obj);
-            } else if (clazz.equals(Short.class) || clazz.equals(short.class)) {
-                return toString((short) obj);
-            } else if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
-                return toString((int) obj);
-            } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
-                return toString((long) obj);
-            } else if (clazz.equals(Float.class) || clazz.equals(float.class)) {
-                return toString((float) obj);
-            } else if (clazz.equals(Double.class) || clazz.equals(double.class)) {
-                return toString((double) obj);
-            } else {
-                throw new UnsupportedOperationException("unsupported write operation on class " + clazz.getName());
+            }
+
+            switch (typeName) {
+                case "char":
+                    return toString((char) obj);
+
+                case "byte":
+                    return toString((byte) obj);
+
+                case "uint8":
+                    return toUint8String((int) obj);
+
+                case "boolean":
+                    return toString((boolean) obj);
+
+                case "short":
+                case "int16":
+                    return toString((short) obj);
+
+                case "uint16":
+                    return toUint16String((int) obj);
+
+                case "int":
+                case "int32":
+                    return toString((int) obj);
+
+                case "uint32":
+                    return toUint32String((long) obj);
+
+                case "long":
+                    return toString((long) obj);
+
+                case "float":
+                    return toString((float) obj);
+
+                case "double":
+                    return toString((double) obj);
+
+                default:
+                    throw new IllegalArgumentException("unknown type name " + typeName);
             }
         }
 
@@ -356,8 +393,8 @@ public class Struct {
             printStream.print(getIdent(level) + "}");
         }
 
-        public void write(String fieldName, int level, Object obj, Class<?> clazz) {
-            String value = getValueString(obj, clazz);
+        public void write(String fieldName, int level, Object obj, String typeName) {
+            String value = getValueString(obj, typeName);
             printStream.println(getIdent(level) + fieldName + " = " + value + ";");
         }
 
@@ -383,7 +420,7 @@ public class Struct {
             }
         }
 
-        public void writeArray(String fieldName, int level, Object array, Class<?> clazz) {
+        public void writeArray(String fieldName, int level, Object array, String typeName) {
             printStream.print(getIdent(level) + fieldName + " = ");
             if (array == null) {
                 printStream.println("null");
@@ -394,7 +431,7 @@ public class Struct {
                 String valueString;
                 for (int i = 0; i < len; ++i) {
                     value = Array.get(array, i);
-                    valueString = getValueString(value, clazz);
+                    valueString = getValueString(value, typeName);
                     if (i > 0) {
                         printStream.print(", ");
                     }
@@ -454,7 +491,7 @@ public class Struct {
         }
 
         public void writeBits(String fieldName, int value, int level, int bitsNum) {
-            printStream.print(getIdent(level) + fieldName + ":" + bitsNum + " = ");
+            printStream.print(getIdent(level) + fieldName + ":" + bitsNum + " = BIN:");
             int mask = 0x01 << (bitsNum - 1);
             for (int i = 0; i < bitsNum; ++i) {
                 printStream.print((mask & value) != 0 ? '1' : '0');
@@ -479,6 +516,10 @@ public class Struct {
             return String.format("%02X", value);
         }
 
+        private String toUint8String(int value) {
+            return String.format("(DEC:%d HEX:%02X)", value, value);
+        }
+
         private String toString(boolean value) {
             return value ? "true" : "false";
         }
@@ -487,7 +528,15 @@ public class Struct {
             return String.format("(DEC:%d HEX:%04X)", value, value);
         }
 
+        private String toUint16String(int value) {
+            return String.format("(DEC:%d HEX:%04X)", value, value);
+        }
+
         private String toString(int value) {
+            return String.format("(DEC:%d HEX:%08X)", value, value);
+        }
+
+        private String toUint32String(long value) {
             return String.format("(DEC:%d HEX:%08X)", value, value);
         }
 
@@ -503,5 +552,4 @@ public class Struct {
             return String.format("%f", value);
         }
     }
-
 }
