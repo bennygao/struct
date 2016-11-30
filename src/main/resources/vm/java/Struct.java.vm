@@ -83,6 +83,14 @@ public class Struct {
         dos.writeByte(value);
     }
 
+    public byte readInt8(DataInput dis) throws IOException {
+        return readByte(dis);
+    }
+
+    public void writeInt8(byte value, DataOutput dos) throws IOException {
+        writeByte(value, dos);
+    }
+
     public int readUint8(DataInput dis) throws IOException {
         return Byte.toUnsignedInt(readByte(dis));
     }

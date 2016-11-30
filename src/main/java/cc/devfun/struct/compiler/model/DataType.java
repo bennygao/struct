@@ -4,22 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DataType {
-    static Map<String, String> basicTypeSet = new HashMap<>();
-    static {
-        basicTypeSet.put("byte", "byte");
-        basicTypeSet.put("int8", "byte");
-        basicTypeSet.put("uint8", "int");
-        basicTypeSet.put("short", "short");
-        basicTypeSet.put("int16", "short");
-        basicTypeSet.put("uint16", "int");
-        basicTypeSet.put("int", "int");
-        basicTypeSet.put("int32", "int");
-        basicTypeSet.put("uint32", "long");
-        basicTypeSet.put("long", "long");
-        basicTypeSet.put("int64", "long");
-        basicTypeSet.put("float", "float");
-        basicTypeSet.put("double", "double");
-    }
+    static Map<String, String> basicTypeSet = new HashMap<String, String>() {{
+        put("char", "char");
+        put("boolean", "boolean");
+        put("byte", "byte");
+        put("int8", "byte");
+        put("uint8", "int");
+        put("short", "short");
+        put("int16", "short");
+        put("uint16", "int");
+        put("int", "int");
+        put("int32", "int");
+        put("uint32", "long");
+        put("long", "long");
+        put("int64", "long");
+        put("float", "float");
+        put("double", "double");
+    }};
 
     private ArrayDecl array = null;
 
