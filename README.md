@@ -11,6 +11,7 @@ struct 协议生成工具
 1.0.3    | 支持变长struct的list，例如：`Goos[] goodsList;`
 1.0.4    | 支持位段；支持嵌套定义struct；支持尾部注释；encode/decode的参数类型改为java.io.OutputStream/java.io.InputStream。
 1.0.5    | 支持定义基本数据类型的变长数组，例如`int[] numbers;`
+1.1.2    | 解决uint16映射成short时，当值超过32767时变为负数的overflow问题，把uint16映射为Java内部的int类型。
 
 ====
 
@@ -45,16 +46,15 @@ bitfield在encode/decode时，会存储在字节中，如果bitfield中各字段
 -------- | ----- | ----------- | --------------
 byte     | 1     | byte        | unsigned char
 int8     | 1     | byte        | int8_t
-uint8    | 1     | byte        | uint8_t
+uint8    | 1     | int         | uint8_t
 short    | 2     | short       | short
 int16    | 2     | short       | int16_t
-uint16   | 2     | short       | uint16_t
+uint16   | 2     | int         | uint16_t
 int      | 4     | int         | int
 int32    | 4     | int         | int32_t
-uint32   | 4     | int         | uint32_t
+uint32   | 4     | long        | uint32_t
 long     | 8     | long        | int64_t
 int64    | 8     | long        | int64_t
-uint64   | 8     | long        | uint64_t
 float    | 4     | float       | float
 double   | 8     | double      | double
 
