@@ -6,7 +6,9 @@
  */
 package ${package};
 
+#if ($struct.decodable)
 import java.io.DataInputStream;
+#end
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
