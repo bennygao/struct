@@ -92,7 +92,7 @@ public class Struct {
     }
 
     public int readUint8(DataInput dis) throws IOException {
-        return Byte.toUnsignedInt(readByte(dis));
+        return toUnsignedInt(readByte(dis));
     }
 
     public void writeUint8(int value, DataOutput dos) throws IOException {
@@ -134,7 +134,7 @@ public class Struct {
     }
 
     public int readUint16(DataInput dis) throws IOException {
-        return Short.toUnsignedInt(readShort(dis));
+        return toUnsignedInt(readShort(dis));
     }
 
     public void writeUint16(int value, DataOutput dos) throws IOException {
@@ -160,7 +160,7 @@ public class Struct {
     }
 
     public long readUint32(DataInput dis) throws IOException {
-        return Integer.toUnsignedLong(readInt(dis));
+        return toUnsignedLong(readInt(dis));
     }
 
     public void writeUint32(long value, DataOutput dos) throws IOException {
@@ -249,6 +249,18 @@ public class Struct {
             }
         }
         return new String(bytes, 0, i);
+    }
+
+    public static int toUnsignedInt(byte x) {
+        return ((int) x) & 0xff;
+    }
+
+    public static int toUnsignedInt(short x) {
+        return ((int) x) & 0xffff;
+    }
+
+    public static long toUnsignedLong(int x) {
+        return ((long) x) & 0xffffffffL;
     }
 
     public class BitInputStream extends InputStream {
