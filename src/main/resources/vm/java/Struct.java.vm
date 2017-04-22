@@ -10,7 +10,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
-public class Struct implements Externalizable {
+public class Struct {
     public final static int LITTLE_ENDIAN = 0;
     public final static int BIG_ENDIAN = 1;
     public static int byteOrder = LITTLE_ENDIAN;
@@ -18,22 +18,10 @@ public class Struct implements Externalizable {
     private final static int TRUE = 1;
     private final static int FALSE = 0;
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        if (out instanceof OutputStream) {
-            encode((OutputStream) out);
-        } else {
-            throw new IllegalArgumentException("out must implements OutputStream");
-        }
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if (in instanceof InputStream) {
-            decode((InputStream) in);
-        } else {
-            throw new IllegalArgumentException("in must implements OutputStream");
-        }
+    public byte[] encodeToByteArray() throws IOException {
+        FixedLengthByteArrayOutputStream output = new FixedLengthByteArrayOutputStream(calcSize());
+        encode(output);
+        return output.getBuffer();
     }
 
     public void encode(OutputStream output) throws IOException {
@@ -588,6 +576,36 @@ public class Struct implements Externalizable {
 
         private String toString(double value) {
             return String.format("%f", value);
+        }
+    }
+
+    public class FixedLengthByteArrayOutputStream extends OutputStream {
+        private byte[] buffer;
+        private int size;
+        private int position;
+
+        public FixedLengthByteArrayOutputStream(int size) {
+            if (size < 0) {
+                throw new IllegalArgumentException("Negative initial size: "
+                        + size);
+            }
+            this.position = 0;
+            this.size = size;
+            this.buffer = new byte[size];
+            Arrays.fill(this.buffer, (byte) 0);
+        }
+
+        public byte[] getBuffer() {
+            return buffer;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            if (position >= size) {
+                throw new IOException("buffer overflow");
+            } else {
+                buffer[position++] = (byte) b;
+            }
         }
     }
 }

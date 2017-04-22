@@ -16,6 +16,9 @@ struct Goods {
 
    // 单价(每500克)
    double unitPrice = 15.05;
+
+   // 泛型
+   Struct generic;
 }
 
 // 货架
