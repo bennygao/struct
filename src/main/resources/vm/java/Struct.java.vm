@@ -342,7 +342,7 @@ public class Struct {
         }
     }
 
-    void format(TextStructFormat structFormat, int level) {
+    protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct(getClass().getCanonicalName(), level);
         structFormat.endStruct(getClass().getCanonicalName(), level);
     }
@@ -593,6 +593,16 @@ public class Struct {
             this.size = size;
             this.buffer = new byte[size];
             Arrays.fill(this.buffer, (byte) 0);
+        }
+
+        public FixedLengthByteArrayOutputStream(byte[] data, int start, int len) {
+            this.buffer = data;
+            this.position = start;
+            this.size = start + len;
+        }
+
+        public FixedLengthByteArrayOutputStream(byte[] data) {
+            this(data, 0, data.length);
         }
 
         public byte[] getBuffer() {

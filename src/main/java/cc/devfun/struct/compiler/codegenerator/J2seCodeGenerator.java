@@ -20,6 +20,7 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         init(ctx.getEncoding());
         VelocityContext vc = new VelocityContext();
         vc.put("package", ctx.getJavaPackage());
+        vc.put("basePackage", ctx.getBasePackage());
         vc.put("createTime", new Date());
         vc.put("utils", Utils.getInstance());
 
@@ -33,22 +34,26 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
 
         Template template;
         Writer writer;
-        String fileName = "Struct.java";
+        String fileName;
 
-        template = Velocity.getTemplate("vm/java/Struct.java.vm");
-        pathname.append(path).append(File.separatorChar).append(fileName);
-        vc.put("fileName", fileName);
-        System.out.print("creating " + pathname.toString() + " ... ");
-        writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
-        template.merge(vc, writer);
-        writer.close();
-        System.out.println("OK");
+        if (ctx.getBasePackage() == null) {
+            fileName ="Struct.java";
+            template = Velocity.getTemplate("vm/java/Struct.java.vm");
+            pathname.append(path).append(File.separatorChar).append(fileName);
+            vc.put("fileName", fileName);
+            System.out.print("creating " + pathname.toString() + " ... ");
+            writer = getSourceWriter(pathname.toString(), ctx.getOutputEncoding());
+            template.merge(vc, writer);
+            writer.close();
+            System.out.println("OK");
+        }
 
         Template structTemplate = Velocity.getTemplate("vm/java/StructInstance.java.vm");
         Template bitfieldTemplate = Velocity.getTemplate("vm/java/BitFieldInstance.java.vm");
         for (Struct struct : ctx.getAllStructs().values()) {
             vc = new VelocityContext();
             vc.put("package", ctx.getJavaPackage());
+            vc.put("basePackage", ctx.getBasePackage());
             vc.put("createTime", new Date());
             vc.put("utils", Utils.getInstance());
 

@@ -113,6 +113,8 @@ public class StructCompiler {
                 .help("Specify charset encoding of struct description file and generated files");
         parser.addArgument("-p", "--package").nargs(1)
                 .help("Specify package of generated Java classes");
+        parser.addArgument("-b", "--base").nargs(1)
+                .help("Specify package of Struct base class");
         parser.addArgument("-d", "--directory").required(true).nargs(1)
                 .help("Specify destination directory");
         parser.addArgument("-f", "--file").required(true).nargs(1)
@@ -151,6 +153,12 @@ public class StructCompiler {
         if (pkg != null) {
             pkg = pkg.substring(1, pkg.length() - 1);
             ctx.setJavaPackage(pkg);
+        }
+
+        String basePackage = ns.getString("base");
+        if (basePackage != null) {
+            basePackage = basePackage.substring(1, basePackage.length() - 1);
+            ctx.setBasePackage(basePackage);
         }
 
         String file = ns.getString("file");

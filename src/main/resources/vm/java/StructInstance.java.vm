@@ -13,6 +13,10 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+#if ($basePackage)
+
+import ${basePackage}.Struct;
+#end
 
 #set ($defaultValueMap = {
     "char"      : "'\0'",
@@ -286,7 +290,7 @@ public class ${struct.className} extends Struct {
     }
 
     @Override
-    void format(TextStructFormat structFormat, int level) {
+    protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct("${struct.className}", level);
 
 #foreach ($field in $struct.fields)

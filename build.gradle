@@ -1,5 +1,5 @@
 group 'cc.devfun'
-version = '1.1.5'
+version = '1.1.6'
 
 apply plugin: 'java'
 
@@ -39,12 +39,5 @@ dependencies {
     compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.7.0'
     compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.3'
+    compile group: 'com.github.rjeschke', name: 'txtmark', version: '0.13'
 }
-
-//sourceSets {
-//    main {
-//        java {
-//            srcDirs = ['src/main/java']
-//        }
-//    }
-//}

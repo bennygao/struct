@@ -13,6 +13,7 @@ public class GeneratorContext {
     private String prefix;
     private File outputDir;
     private String javaPackage;
+    private String basePackage;
     private File defineFile;
     private Map<String, Struct> allStructs;
 
@@ -22,6 +23,7 @@ public class GeneratorContext {
         this.prefix = "";
         this.outputDir = null;
         this.javaPackage = "";
+        this.basePackage = null;
         this.allStructs = null;
     }
 
@@ -87,5 +89,13 @@ public class GeneratorContext {
 
     public void setAllStructs(Map<String, Struct> allStructs) {
         this.allStructs = allStructs;
+    }
+
+    public String getBasePackage() {
+        return basePackage;
+    }
+
+    public void setBasePackage(String basePackage) {
+        this.basePackage = basePackage;
     }
 }
