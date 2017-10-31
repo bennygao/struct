@@ -32,4 +32,10 @@ struct Base {
 
     // 定长整数数组
     int[5] fixedArray;
+
+    // 变长数据长度变量
+    int num;
+
+    // 变长数组
+    int[num] data;
 }

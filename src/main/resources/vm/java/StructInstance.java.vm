@@ -257,6 +257,11 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
+#if ($field.type.array.identifier)
+        if (${field.type.arraySize} > 0) {
+            this.${field.name} = new ${field.type.typeName}[${field.type.arraySize}];
+        }
+#end
         for (int i = 0; i < ${field.type.arraySize}; ++i) {
             this.${field.name}[i] = #readMethod($field)(__dis);
         }
