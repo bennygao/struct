@@ -217,8 +217,12 @@ public class ${struct.className} extends Struct {
         }
 #end
 #else
-#if ($field.referenceStruct)
-        this.${field.name} = (#declareType($field)) this.${field.referenceStruct}.size();
+#if ($field.reference)
+#if ($field.reference.type.basic)
+        this.${field.name} = (#declareType($field)) (this.${field.reference.name} == null ? 0 : this.${field.reference.name}.length);
+#else
+        this.${field.name} = (#declareType($field)) (this.${field.reference.name} == null ? 0 : this.${field.reference.name}.size());
+#end
 #end
         #writeMethod($field)(this.${field.name}, __dos);
 #end

@@ -19,6 +19,10 @@ struct Goods {
 
    // 泛型
    Struct generic;
+
+   int num;
+
+   byte[num] data;
 }
 
 // 货架

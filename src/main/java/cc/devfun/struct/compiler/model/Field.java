@@ -13,7 +13,7 @@ public class Field implements Commentable {
     private DataType type;
     private List<String> comments = new ArrayList<>();
     private DefaultValue defaultValue;
-    private String referenceStruct = null;
+    private Field reference = null;
 
     public String getName() {
         return name;
@@ -72,11 +72,11 @@ public class Field implements Commentable {
         this.defaultValue = defaultValue;
     }
 
-    public String getReferenceStruct() {
-        return referenceStruct;
+    public Field getReference() {
+        return reference;
     }
 
-    public void setReferenceStruct(String referenceStruct) {
-        this.referenceStruct = referenceStruct;
+    public void setReference(Field reference) {
+        this.reference = reference;
     }
 }

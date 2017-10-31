@@ -24,6 +24,13 @@ public class VelocityCodeGenerator {
                 "Velocity Classpath Resource Loader");
         props.setProperty("class.resource.loader.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+        props.setProperty("runtime.log.invalid.references", "false");
+//                "org.apache.velocity.runtime.log.Log4JLogChute");
+//        props.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
+//        props.setProperty("log4j.logger.org.apache.velocity", "ERROR");
+        props.setProperty("runtime.conversion.handler", "none");
+        props.setProperty("space.gobbling", "bc");
         Velocity.init(props);
     }
 
