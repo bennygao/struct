@@ -54,7 +54,7 @@ public class StructBuilder extends StructBaseListener {
 
         int len = c.length();
         if (c.endsWith("*/")) {
-            c = c.substring(0, len -2);
+            c = c.substring(0, len - 2);
         }
 
         return c.trim().split("\\r\\n|\\n");
@@ -245,35 +245,34 @@ public class StructBuilder extends StructBaseListener {
         Struct currentStruct = structStack.peek();
         currentStruct.addField(field);
 
-        if (field.getType().hasArray()) {
-            if (field.getType().getArray().isIdentifier()) {
-                if (!field.getType().isStruct()) {
-                    String errmsg = String.format("%s:%d identifier array index only can be supplied to struct.",
-                            src.getName(), ctx.getStart().getLine());
-                    throw new IllegalSemanticException(errmsg);
-                } else {
-                    String identifier = field.getType().getArray().getSize();
-                    Field referenceField = currentStruct.getField(identifier);
-                    if (referenceField == null) {
-                        String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasnot been defined.",
-                                src.getName(), ctx.getStart().getLine(), identifier);
-                        throw new IllegalSemanticException(errmsg);
-                    } else if (!referenceField.getType().canBeArrayLength()) {
-                        String errmsg = String.format("%s:%d data type of \"%s\" cannot be specified to be array index.",
-                                src.getName(), ctx.getStart().getLine(), identifier);
-                        throw new IllegalSemanticException(errmsg);
-                    } else if (referenceField.getReferenceStruct() != null) {
-                        String errmsg = String.format("%s:%d cannot specify field \"%s\" to be array index of more than one struct.",
-                                src.getName(), ctx.getStart().getLine(), identifier);
-                        throw new IllegalSemanticException(errmsg);
-                    } else {
-                        referenceField.setReferenceStruct(field.getName());
-                    }
-                }
+        DataType fieldType = field.getType();
+        if (fieldType.hasArray() && fieldType.getArray().isIdentifier()) {
+//                if (!field.getType().isStruct()) {
+//                    String errmsg = String.format("%s:%d identifier array index only can be supplied to struct.",
+//                            src.getName(), ctx.getStart().getLine());
+//                    throw new IllegalSemanticException(errmsg);
+//                } else {
+            String identifier = field.getType().getArray().getSize();
+            Field referenceField = currentStruct.getField(identifier);
+            if (referenceField == null) {
+                String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasnot been defined.",
+                        src.getName(), ctx.getStart().getLine(), identifier);
+                throw new IllegalSemanticException(errmsg);
+            } else if (!referenceField.getType().canBeArrayLength()) {
+                String errmsg = String.format("%s:%d data type of \"%s\" cannot be specified to be array index.",
+                        src.getName(), ctx.getStart().getLine(), identifier);
+                throw new IllegalSemanticException(errmsg);
+            } else if (referenceField.getReference() != null) {
+                String errmsg = String.format("%s:%d cannot specify field \"%s\" to be array index of more than one property.",
+                        src.getName(), ctx.getStart().getLine(), identifier);
+                throw new IllegalSemanticException(errmsg);
+            } else {
+                referenceField.setReference(field);
             }
+//                }
+//            }
         }
 
-//        currentType = null;
         currentArray = null;
     }
 
@@ -326,11 +325,12 @@ public class StructBuilder extends StructBaseListener {
         // 2. stringType 仅支持定长数组[5], 而且必须有长度指定。长度指的是字符串的长度,而不是String的数组;
         // 3. structType 支持所有3中类型, [5] [] [num];
         if (currentArray != null) {
-            if (currentType.isBasic() && currentArray.isIdentifier()) {
-                String errmsg = String.format("%s:%d array index of baisc type cannot be identifer.",
-                        src.getName(), ctx.getStart().getLine());
-                throw new IllegalSemanticException(errmsg);
-            } else if (currentType.isString() && !currentArray.isFixed()) {
+//            if (currentType.isBasic() && currentArray.isIdentifier()) {
+//                String errmsg = String.format("%s:%d array index of baisc type cannot be identifer.",
+//                        src.getName(), ctx.getStart().getLine());
+//                throw new IllegalSemanticException(errmsg);
+//            } else
+            if (currentType.isString() && !currentArray.isFixed()) {
                 String errmsg = String.format("%s:%d length of string must be number.",
                         src.getName(), ctx.getStart().getLine());
                 throw new IllegalSemanticException(errmsg);

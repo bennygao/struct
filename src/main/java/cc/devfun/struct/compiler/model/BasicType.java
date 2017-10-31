@@ -53,6 +53,6 @@ public class BasicType extends DataType {
 
     @Override
     public boolean isDecodable() {
-        return !hasArray() || getArray().isFixed();
+        return !(hasArray() && getArray().isVarlen());
     }
 }

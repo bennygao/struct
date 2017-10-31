@@ -1,0 +1,15 @@
+struct model {
+    int ID;
+    string[10] name;
+}
+
+struct VarBasicArray {
+    int mn;
+    model[mn] models;
+
+    // 变长数据长度变量
+    int num;
+
+    // 变长数组
+    byte[num] data;
+}
