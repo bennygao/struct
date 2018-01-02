@@ -12,10 +12,12 @@ public class Struct implements Commentable {
     private List<String> comments = new LinkedList<>();
     private Location definedLocation;
     private Map<String, Struct> dependency;
+    private boolean included;
 
-    public Struct(String name) {
+    public Struct(String name, boolean included) {
         this.name = name;
         this.resolved = false;
+        this.included = included;
         this.dependency = new HashMap<>();
         this.definedLocation = new Location();
     }
@@ -138,5 +140,9 @@ public class Struct implements Commentable {
         pw.println("}");
         pw.close();
         return sw.toString();
+    }
+
+    public boolean isIncluded() {
+        return included;
     }
 }

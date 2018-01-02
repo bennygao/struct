@@ -14,7 +14,9 @@ public class GeneratorContext {
     private File outputDir;
     private String javaPackage;
     private File defineFile;
+    private boolean skipIncludes;
     private Map<String, Struct> allStructs;
+    private int includeLevel;
 
     public GeneratorContext() {
         this.encoding = "utf8";
@@ -23,6 +25,7 @@ public class GeneratorContext {
         this.outputDir = null;
         this.javaPackage = "";
         this.allStructs = null;
+        this.includeLevel = 0;
     }
 
     public String getEncoding() {
@@ -87,5 +90,25 @@ public class GeneratorContext {
 
     public void setAllStructs(Map<String, Struct> allStructs) {
         this.allStructs = allStructs;
+    }
+
+    public boolean isSkipIncludes() {
+        return skipIncludes;
+    }
+
+    public void setSkipIncludes(boolean skipIncludes) {
+        this.skipIncludes = skipIncludes;
+    }
+
+    public void increaseIncludeLevel() {
+        ++includeLevel;
+    }
+
+    public void decreaseIncludeLevel() {
+        --includeLevel;
+    }
+
+    public int getIncludeLevel() {
+        return includeLevel;
     }
 }

@@ -28,7 +28,7 @@ public class StructCompiler {
         parsedFiles = new HashSet<>();
         searchPath = new ArrayList<>();
         allStructs = new LinkedHashMap<>();
-        Struct struct = new Struct("Struct");
+        Struct struct = new Struct("Struct", false);
         struct.setResolved();
         allStructs.put(struct.getName(), struct);
     }
@@ -41,7 +41,11 @@ public class StructCompiler {
         return parsedFiles;
     }
 
-    public Map<String, Struct> parse(String fileName) throws Exception {
+    public boolean isIncluded() {
+        return generatorContext.getIncludeLevel() > 0;
+    }
+
+    private Map<String, Struct> parse(String fileName) throws Exception {
         File defineFile;
         if (fileName.startsWith("/")) {
             defineFile = new File(fileName);
@@ -59,6 +63,15 @@ public class StructCompiler {
             }
 
             throw new IllegalSemanticException("struct description file not exist: " + fileName);
+        }
+    }
+
+    public Map<String, Struct> parseIncluded(String fileName) throws Exception {
+        generatorContext.increaseIncludeLevel();
+        try {
+            return parse(fileName);
+        } finally {
+            generatorContext.decreaseIncludeLevel();
         }
     }
 
@@ -117,6 +130,9 @@ public class StructCompiler {
                 .help("Specify destination directory");
         parser.addArgument("-f", "--file").required(true).nargs(1)
                 .help("Specify struct description file");
+        parser.addArgument("-s", "--skip-includes").required(false).nargs("*")
+                .help("Skipping creation of included Struct");
+
         Namespace ns = null;
         try {
             ns = parser.parseArgs(args);
@@ -127,6 +143,8 @@ public class StructCompiler {
 
         GeneratorContext ctx = new GeneratorContext();
         CodeGeneratorFactory factory;
+
+        ctx.setSkipIncludes(ns.getAttrs().containsKey("skip_includes"));
 
         String target = ns.getString("target");
         if ("java".equalsIgnoreCase(target)) {

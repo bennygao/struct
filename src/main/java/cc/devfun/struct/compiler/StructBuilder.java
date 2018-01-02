@@ -107,7 +107,7 @@ public class StructBuilder extends StructBaseListener {
         try {
             String str = ctx.getChild(1).getText();
             String fileName = str.substring(1, str.length() - 1);
-            compiler.parse(fileName);
+            compiler.parseIncluded(fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -143,9 +143,9 @@ public class StructBuilder extends StructBaseListener {
         Struct currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
             if (ctx instanceof StructParser.StructContext) {
-                currentStruct = new Struct(typeName);
+                currentStruct = new Struct(typeName, compiler.isIncluded());
             } else {
-                currentStruct = new BitField(typeName);
+                currentStruct = new BitField(typeName, compiler.isIncluded());
             }
             allStructs.put(typeName, currentStruct);
         } else if (currentStruct.isResolved()) {
@@ -155,7 +155,7 @@ public class StructBuilder extends StructBaseListener {
         } else {
             // issue#1 [BUG] 1.0.5 struct定义文件中bitfield先引用后定义时，会把bitfield生成成为普通Struct。
             if (ctx instanceof StructParser.BitfieldContext) {
-                currentStruct = new BitField(typeName);
+                currentStruct = new BitField(typeName, compiler.isIncluded());
                 allStructs.put(typeName, currentStruct);
             }
         }
@@ -295,7 +295,7 @@ public class StructBuilder extends StructBaseListener {
         String typeName = ctx.getChild(0).getText();
         Struct struct = allStructs.get(typeName);
         if (struct == null) {
-            struct = new Struct(typeName);
+            struct = new Struct(typeName, compiler.isIncluded());
             allStructs.put(typeName, struct);
         }
 
