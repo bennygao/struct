@@ -20,33 +20,35 @@ public class StructParser extends Parser {
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
-		T__24=25, T__25=26, Identifier=27, DecimalLiteral=28, HexLiteral=29, StringLiteral=30, 
-		FloatingPointLiteral=31, WS=32, IGNORED_COMMENT=33, SL_COMMENT=34, COMMENT=35;
+		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, Identifier=30, DecimalLiteral=31, 
+		HexLiteral=32, StringLiteral=33, FloatingPointLiteral=34, WS=35, IGNORED_COMMENT=36, 
+		SL_COMMENT=37, COMMENT=38;
 	public static final int
 		RULE_prog = 0, RULE_include = 1, RULE_clazz = 2, RULE_bitfield = 3, RULE_bits = 4, 
 		RULE_struct = 5, RULE_field = 6, RULE_type = 7, RULE_defaultValue = 8, 
 		RULE_floatDefaultValue = 9, RULE_numberDefaultValue = 10, RULE_decimalValue = 11, 
 		RULE_stringDefaultValue = 12, RULE_basicType = 13, RULE_stringType = 14, 
-		RULE_structType = 15, RULE_array = 16, RULE_varlenArray = 17, RULE_fixedArray = 18, 
-		RULE_identifierArray = 19;
+		RULE_structType = 15, RULE_genericType = 16, RULE_array = 17, RULE_varlenArray = 18, 
+		RULE_fixedArray = 19, RULE_identifierArray = 20;
 	public static final String[] ruleNames = {
 		"prog", "include", "clazz", "bitfield", "bits", "struct", "field", "type", 
 		"defaultValue", "floatDefaultValue", "numberDefaultValue", "decimalValue", 
-		"stringDefaultValue", "basicType", "stringType", "structType", "array", 
-		"varlenArray", "fixedArray", "identifierArray"
+		"stringDefaultValue", "basicType", "stringType", "structType", "genericType", 
+		"array", "varlenArray", "fixedArray", "identifierArray"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'import'", "';'", "'bitfield'", "'{'", "'}'", "':'", "'struct'", 
 		"'='", "'+'", "'-'", "'byte'", "'int8'", "'uint8'", "'short'", "'int16'", 
 		"'uint16'", "'int'", "'int32'", "'uint32'", "'long'", "'int64'", "'float'", 
-		"'double'", "'string'", "'['", "']'"
+		"'double'", "'string'", "'Struct'", "'('", "')'", "'['", "']'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, "Identifier", "DecimalLiteral", "HexLiteral", "StringLiteral", 
-		"FloatingPointLiteral", "WS", "IGNORED_COMMENT", "SL_COMMENT", "COMMENT"
+		null, null, null, null, null, null, "Identifier", "DecimalLiteral", "HexLiteral", 
+		"StringLiteral", "FloatingPointLiteral", "WS", "IGNORED_COMMENT", "SL_COMMENT", 
+		"COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -131,31 +133,31 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(43);
+			setState(45);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__0) {
 				{
 				{
-				setState(40);
+				setState(42);
 				include();
 				}
 				}
-				setState(45);
+				setState(47);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(47); 
+			setState(49); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(46);
+				setState(48);
 				clazz();
 				}
 				}
-				setState(49); 
+				setState(51); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==T__2 || _la==T__6 );
@@ -194,11 +196,11 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
-			match(T__0);
-			setState(52);
-			match(StringLiteral);
 			setState(53);
+			match(T__0);
+			setState(54);
+			match(StringLiteral);
+			setState(55);
 			match(T__1);
 			}
 		}
@@ -238,19 +240,19 @@ public class StructParser extends Parser {
 		ClazzContext _localctx = new ClazzContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_clazz);
 		try {
-			setState(57);
+			setState(59);
 			switch (_input.LA(1)) {
 			case T__6:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(55);
+				setState(57);
 				struct();
 				}
 				break;
 			case T__2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(56);
+				setState(58);
 				bitfield();
 				}
 				break;
@@ -298,27 +300,27 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(59);
-			match(T__2);
-			setState(60);
-			match(Identifier);
 			setState(61);
+			match(T__2);
+			setState(62);
+			match(Identifier);
+			setState(63);
 			match(T__3);
-			setState(63); 
+			setState(65); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(62);
+				setState(64);
 				bits();
 				}
 				}
-				setState(65); 
+				setState(67); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Identifier );
-			setState(67);
+			setState(69);
 			match(T__4);
 			}
 		}
@@ -360,22 +362,22 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(69);
-			match(Identifier);
-			setState(70);
-			match(T__5);
 			setState(71);
-			match(DecimalLiteral);
+			match(Identifier);
+			setState(72);
+			match(T__5);
 			setState(73);
+			match(DecimalLiteral);
+			setState(75);
 			_la = _input.LA(1);
 			if (_la==T__7) {
 				{
-				setState(72);
+				setState(74);
 				numberDefaultValue();
 				}
 			}
 
-			setState(75);
+			setState(77);
 			match(T__1);
 			}
 		}
@@ -419,27 +421,27 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(77);
-			match(T__6);
-			setState(78);
-			match(Identifier);
 			setState(79);
+			match(T__6);
+			setState(80);
+			match(Identifier);
+			setState(81);
 			match(T__3);
-			setState(81); 
+			setState(83); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(80);
+				setState(82);
 				field();
 				}
 				}
-				setState(83); 
+				setState(85); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__6) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << Identifier))) != 0) );
-			setState(85);
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__6) | (1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23) | (1L << T__24) | (1L << Identifier))) != 0) );
+			setState(87);
 			match(T__4);
 			}
 		}
@@ -483,20 +485,20 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(87);
+			setState(89);
 			type();
-			setState(88);
-			match(Identifier);
 			setState(90);
+			match(Identifier);
+			setState(92);
 			_la = _input.LA(1);
 			if (_la==T__7) {
 				{
-				setState(89);
+				setState(91);
 				defaultValue();
 				}
 			}
 
-			setState(92);
+			setState(94);
 			match(T__1);
 			}
 		}
@@ -527,6 +529,9 @@ public class StructParser extends Parser {
 		public ClazzContext clazz() {
 			return getRuleContext(ClazzContext.class,0);
 		}
+		public GenericTypeContext genericType() {
+			return getRuleContext(GenericTypeContext.class,0);
+		}
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -546,7 +551,7 @@ public class StructParser extends Parser {
 		enterRule(_localctx, 14, RULE_type);
 		int _la;
 		try {
-			setState(109);
+			setState(112);
 			switch (_input.LA(1)) {
 			case T__10:
 			case T__11:
@@ -563,13 +568,13 @@ public class StructParser extends Parser {
 			case T__22:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(94);
-				basicType();
 				setState(96);
+				basicType();
+				setState(98);
 				_la = _input.LA(1);
-				if (_la==T__24) {
+				if (_la==T__27) {
 					{
-					setState(95);
+					setState(97);
 					array();
 					}
 				}
@@ -579,22 +584,22 @@ public class StructParser extends Parser {
 			case T__23:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(98);
+				setState(100);
 				stringType();
-				setState(99);
+				setState(101);
 				array();
 				}
 				break;
 			case Identifier:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(101);
-				structType();
 				setState(103);
+				structType();
+				setState(105);
 				_la = _input.LA(1);
-				if (_la==T__24) {
+				if (_la==T__27) {
 					{
-					setState(102);
+					setState(104);
 					array();
 					}
 				}
@@ -605,17 +610,24 @@ public class StructParser extends Parser {
 			case T__6:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(105);
-				clazz();
 				setState(107);
+				clazz();
+				setState(109);
 				_la = _input.LA(1);
-				if (_la==T__24) {
+				if (_la==T__27) {
 					{
-					setState(106);
+					setState(108);
 					array();
 					}
 				}
 
+				}
+				break;
+			case T__24:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(111);
+				genericType();
 				}
 				break;
 			default:
@@ -661,27 +673,27 @@ public class StructParser extends Parser {
 		DefaultValueContext _localctx = new DefaultValueContext(_ctx, getState());
 		enterRule(_localctx, 16, RULE_defaultValue);
 		try {
-			setState(114);
+			setState(117);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(111);
+				setState(114);
 				numberDefaultValue();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(112);
+				setState(115);
 				stringDefaultValue();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(113);
+				setState(116);
 				floatDefaultValue();
 				}
 				break;
@@ -720,9 +732,9 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(116);
+			setState(119);
 			match(T__7);
-			setState(117);
+			setState(120);
 			match(FloatingPointLiteral);
 			}
 		}
@@ -760,24 +772,24 @@ public class StructParser extends Parser {
 		NumberDefaultValueContext _localctx = new NumberDefaultValueContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_numberDefaultValue);
 		try {
-			setState(123);
+			setState(126);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(119);
+				setState(122);
 				match(T__7);
-				setState(120);
+				setState(123);
 				match(HexLiteral);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(121);
+				setState(124);
 				match(T__7);
-				setState(122);
+				setState(125);
 				decimalValue();
 				}
 				break;
@@ -817,11 +829,11 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(126);
+			setState(129);
 			_la = _input.LA(1);
 			if (_la==T__8 || _la==T__9) {
 				{
-				setState(125);
+				setState(128);
 				_la = _input.LA(1);
 				if ( !(_la==T__8 || _la==T__9) ) {
 				_errHandler.recoverInline(this);
@@ -831,7 +843,7 @@ public class StructParser extends Parser {
 				}
 			}
 
-			setState(128);
+			setState(131);
 			match(DecimalLiteral);
 			}
 		}
@@ -868,9 +880,9 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(130);
+			setState(133);
 			match(T__7);
-			setState(131);
+			setState(134);
 			match(StringLiteral);
 			}
 		}
@@ -907,7 +919,7 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(133);
+			setState(136);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__10) | (1L << T__11) | (1L << T__12) | (1L << T__13) | (1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -948,7 +960,7 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(135);
+			setState(138);
 			match(T__23);
 			}
 		}
@@ -985,8 +997,51 @@ public class StructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(137);
+			setState(140);
 			match(Identifier);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class GenericTypeContext extends ParserRuleContext {
+		public TerminalNode DecimalLiteral() { return getToken(StructParser.DecimalLiteral, 0); }
+		public GenericTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_genericType; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof StructListener ) ((StructListener)listener).enterGenericType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof StructListener ) ((StructListener)listener).exitGenericType(this);
+		}
+	}
+
+	public final GenericTypeContext genericType() throws RecognitionException {
+		GenericTypeContext _localctx = new GenericTypeContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_genericType);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(142);
+			match(T__24);
+			setState(143);
+			match(T__25);
+			setState(144);
+			match(DecimalLiteral);
+			setState(145);
+			match(T__26);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1026,29 +1081,29 @@ public class StructParser extends Parser {
 
 	public final ArrayContext array() throws RecognitionException {
 		ArrayContext _localctx = new ArrayContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_array);
+		enterRule(_localctx, 34, RULE_array);
 		try {
-			setState(142);
+			setState(150);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(139);
+				setState(147);
 				varlenArray();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(140);
+				setState(148);
 				fixedArray();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(141);
+				setState(149);
 				identifierArray();
 				}
 				break;
@@ -1082,14 +1137,14 @@ public class StructParser extends Parser {
 
 	public final VarlenArrayContext varlenArray() throws RecognitionException {
 		VarlenArrayContext _localctx = new VarlenArrayContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_varlenArray);
+		enterRule(_localctx, 36, RULE_varlenArray);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(144);
-			match(T__24);
-			setState(145);
-			match(T__25);
+			setState(152);
+			match(T__27);
+			setState(153);
+			match(T__28);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1121,16 +1176,16 @@ public class StructParser extends Parser {
 
 	public final FixedArrayContext fixedArray() throws RecognitionException {
 		FixedArrayContext _localctx = new FixedArrayContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_fixedArray);
+		enterRule(_localctx, 38, RULE_fixedArray);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(147);
-			match(T__24);
-			setState(148);
+			setState(155);
+			match(T__27);
+			setState(156);
 			match(DecimalLiteral);
-			setState(149);
-			match(T__25);
+			setState(157);
+			match(T__28);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1162,16 +1217,16 @@ public class StructParser extends Parser {
 
 	public final IdentifierArrayContext identifierArray() throws RecognitionException {
 		IdentifierArrayContext _localctx = new IdentifierArrayContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_identifierArray);
+		enterRule(_localctx, 40, RULE_identifierArray);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(151);
-			match(T__24);
-			setState(152);
+			setState(159);
+			match(T__27);
+			setState(160);
 			match(Identifier);
-			setState(153);
-			match(T__25);
+			setState(161);
+			match(T__28);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1186,47 +1241,50 @@ public class StructParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3%\u009e\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3(\u00a6\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
-		"\4\23\t\23\4\24\t\24\4\25\t\25\3\2\7\2,\n\2\f\2\16\2/\13\2\3\2\6\2\62"+
-		"\n\2\r\2\16\2\63\3\3\3\3\3\3\3\3\3\4\3\4\5\4<\n\4\3\5\3\5\3\5\3\5\6\5"+
-		"B\n\5\r\5\16\5C\3\5\3\5\3\6\3\6\3\6\3\6\5\6L\n\6\3\6\3\6\3\7\3\7\3\7\3"+
-		"\7\6\7T\n\7\r\7\16\7U\3\7\3\7\3\b\3\b\3\b\5\b]\n\b\3\b\3\b\3\t\3\t\5\t"+
-		"c\n\t\3\t\3\t\3\t\3\t\3\t\5\tj\n\t\3\t\3\t\5\tn\n\t\5\tp\n\t\3\n\3\n\3"+
-		"\n\5\nu\n\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\5\f~\n\f\3\r\5\r\u0081\n\r"+
-		"\3\r\3\r\3\16\3\16\3\16\3\17\3\17\3\20\3\20\3\21\3\21\3\22\3\22\3\22\5"+
-		"\22\u0091\n\22\3\23\3\23\3\23\3\24\3\24\3\24\3\24\3\25\3\25\3\25\3\25"+
-		"\3\25\2\2\26\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(\2\4\3\2\13\f"+
-		"\3\2\r\31\u009c\2-\3\2\2\2\4\65\3\2\2\2\6;\3\2\2\2\b=\3\2\2\2\nG\3\2\2"+
-		"\2\fO\3\2\2\2\16Y\3\2\2\2\20o\3\2\2\2\22t\3\2\2\2\24v\3\2\2\2\26}\3\2"+
-		"\2\2\30\u0080\3\2\2\2\32\u0084\3\2\2\2\34\u0087\3\2\2\2\36\u0089\3\2\2"+
-		"\2 \u008b\3\2\2\2\"\u0090\3\2\2\2$\u0092\3\2\2\2&\u0095\3\2\2\2(\u0099"+
-		"\3\2\2\2*,\5\4\3\2+*\3\2\2\2,/\3\2\2\2-+\3\2\2\2-.\3\2\2\2.\61\3\2\2\2"+
-		"/-\3\2\2\2\60\62\5\6\4\2\61\60\3\2\2\2\62\63\3\2\2\2\63\61\3\2\2\2\63"+
-		"\64\3\2\2\2\64\3\3\2\2\2\65\66\7\3\2\2\66\67\7 \2\2\678\7\4\2\28\5\3\2"+
-		"\2\29<\5\f\7\2:<\5\b\5\2;9\3\2\2\2;:\3\2\2\2<\7\3\2\2\2=>\7\5\2\2>?\7"+
-		"\35\2\2?A\7\6\2\2@B\5\n\6\2A@\3\2\2\2BC\3\2\2\2CA\3\2\2\2CD\3\2\2\2DE"+
-		"\3\2\2\2EF\7\7\2\2F\t\3\2\2\2GH\7\35\2\2HI\7\b\2\2IK\7\36\2\2JL\5\26\f"+
-		"\2KJ\3\2\2\2KL\3\2\2\2LM\3\2\2\2MN\7\4\2\2N\13\3\2\2\2OP\7\t\2\2PQ\7\35"+
-		"\2\2QS\7\6\2\2RT\5\16\b\2SR\3\2\2\2TU\3\2\2\2US\3\2\2\2UV\3\2\2\2VW\3"+
-		"\2\2\2WX\7\7\2\2X\r\3\2\2\2YZ\5\20\t\2Z\\\7\35\2\2[]\5\22\n\2\\[\3\2\2"+
-		"\2\\]\3\2\2\2]^\3\2\2\2^_\7\4\2\2_\17\3\2\2\2`b\5\34\17\2ac\5\"\22\2b"+
-		"a\3\2\2\2bc\3\2\2\2cp\3\2\2\2de\5\36\20\2ef\5\"\22\2fp\3\2\2\2gi\5 \21"+
-		"\2hj\5\"\22\2ih\3\2\2\2ij\3\2\2\2jp\3\2\2\2km\5\6\4\2ln\5\"\22\2ml\3\2"+
-		"\2\2mn\3\2\2\2np\3\2\2\2o`\3\2\2\2od\3\2\2\2og\3\2\2\2ok\3\2\2\2p\21\3"+
-		"\2\2\2qu\5\26\f\2ru\5\32\16\2su\5\24\13\2tq\3\2\2\2tr\3\2\2\2ts\3\2\2"+
-		"\2u\23\3\2\2\2vw\7\n\2\2wx\7!\2\2x\25\3\2\2\2yz\7\n\2\2z~\7\37\2\2{|\7"+
-		"\n\2\2|~\5\30\r\2}y\3\2\2\2}{\3\2\2\2~\27\3\2\2\2\177\u0081\t\2\2\2\u0080"+
-		"\177\3\2\2\2\u0080\u0081\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\7\36"+
-		"\2\2\u0083\31\3\2\2\2\u0084\u0085\7\n\2\2\u0085\u0086\7 \2\2\u0086\33"+
-		"\3\2\2\2\u0087\u0088\t\3\2\2\u0088\35\3\2\2\2\u0089\u008a\7\32\2\2\u008a"+
-		"\37\3\2\2\2\u008b\u008c\7\35\2\2\u008c!\3\2\2\2\u008d\u0091\5$\23\2\u008e"+
-		"\u0091\5&\24\2\u008f\u0091\5(\25\2\u0090\u008d\3\2\2\2\u0090\u008e\3\2"+
-		"\2\2\u0090\u008f\3\2\2\2\u0091#\3\2\2\2\u0092\u0093\7\33\2\2\u0093\u0094"+
-		"\7\34\2\2\u0094%\3\2\2\2\u0095\u0096\7\33\2\2\u0096\u0097\7\36\2\2\u0097"+
-		"\u0098\7\34\2\2\u0098\'\3\2\2\2\u0099\u009a\7\33\2\2\u009a\u009b\7\35"+
-		"\2\2\u009b\u009c\7\34\2\2\u009c)\3\2\2\2\21-\63;CKU\\bimot}\u0080\u0090";
+		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\3\2\7\2.\n\2\f\2\16\2\61\13\2"+
+		"\3\2\6\2\64\n\2\r\2\16\2\65\3\3\3\3\3\3\3\3\3\4\3\4\5\4>\n\4\3\5\3\5\3"+
+		"\5\3\5\6\5D\n\5\r\5\16\5E\3\5\3\5\3\6\3\6\3\6\3\6\5\6N\n\6\3\6\3\6\3\7"+
+		"\3\7\3\7\3\7\6\7V\n\7\r\7\16\7W\3\7\3\7\3\b\3\b\3\b\5\b_\n\b\3\b\3\b\3"+
+		"\t\3\t\5\te\n\t\3\t\3\t\3\t\3\t\3\t\5\tl\n\t\3\t\3\t\5\tp\n\t\3\t\5\t"+
+		"s\n\t\3\n\3\n\3\n\5\nx\n\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\5\f\u0081\n"+
+		"\f\3\r\5\r\u0084\n\r\3\r\3\r\3\16\3\16\3\16\3\17\3\17\3\20\3\20\3\21\3"+
+		"\21\3\22\3\22\3\22\3\22\3\22\3\23\3\23\3\23\5\23\u0099\n\23\3\24\3\24"+
+		"\3\24\3\25\3\25\3\25\3\25\3\26\3\26\3\26\3\26\3\26\2\2\27\2\4\6\b\n\f"+
+		"\16\20\22\24\26\30\32\34\36 \"$&(*\2\4\3\2\13\f\3\2\r\31\u00a4\2/\3\2"+
+		"\2\2\4\67\3\2\2\2\6=\3\2\2\2\b?\3\2\2\2\nI\3\2\2\2\fQ\3\2\2\2\16[\3\2"+
+		"\2\2\20r\3\2\2\2\22w\3\2\2\2\24y\3\2\2\2\26\u0080\3\2\2\2\30\u0083\3\2"+
+		"\2\2\32\u0087\3\2\2\2\34\u008a\3\2\2\2\36\u008c\3\2\2\2 \u008e\3\2\2\2"+
+		"\"\u0090\3\2\2\2$\u0098\3\2\2\2&\u009a\3\2\2\2(\u009d\3\2\2\2*\u00a1\3"+
+		"\2\2\2,.\5\4\3\2-,\3\2\2\2.\61\3\2\2\2/-\3\2\2\2/\60\3\2\2\2\60\63\3\2"+
+		"\2\2\61/\3\2\2\2\62\64\5\6\4\2\63\62\3\2\2\2\64\65\3\2\2\2\65\63\3\2\2"+
+		"\2\65\66\3\2\2\2\66\3\3\2\2\2\678\7\3\2\289\7#\2\29:\7\4\2\2:\5\3\2\2"+
+		"\2;>\5\f\7\2<>\5\b\5\2=;\3\2\2\2=<\3\2\2\2>\7\3\2\2\2?@\7\5\2\2@A\7 \2"+
+		"\2AC\7\6\2\2BD\5\n\6\2CB\3\2\2\2DE\3\2\2\2EC\3\2\2\2EF\3\2\2\2FG\3\2\2"+
+		"\2GH\7\7\2\2H\t\3\2\2\2IJ\7 \2\2JK\7\b\2\2KM\7!\2\2LN\5\26\f\2ML\3\2\2"+
+		"\2MN\3\2\2\2NO\3\2\2\2OP\7\4\2\2P\13\3\2\2\2QR\7\t\2\2RS\7 \2\2SU\7\6"+
+		"\2\2TV\5\16\b\2UT\3\2\2\2VW\3\2\2\2WU\3\2\2\2WX\3\2\2\2XY\3\2\2\2YZ\7"+
+		"\7\2\2Z\r\3\2\2\2[\\\5\20\t\2\\^\7 \2\2]_\5\22\n\2^]\3\2\2\2^_\3\2\2\2"+
+		"_`\3\2\2\2`a\7\4\2\2a\17\3\2\2\2bd\5\34\17\2ce\5$\23\2dc\3\2\2\2de\3\2"+
+		"\2\2es\3\2\2\2fg\5\36\20\2gh\5$\23\2hs\3\2\2\2ik\5 \21\2jl\5$\23\2kj\3"+
+		"\2\2\2kl\3\2\2\2ls\3\2\2\2mo\5\6\4\2np\5$\23\2on\3\2\2\2op\3\2\2\2ps\3"+
+		"\2\2\2qs\5\"\22\2rb\3\2\2\2rf\3\2\2\2ri\3\2\2\2rm\3\2\2\2rq\3\2\2\2s\21"+
+		"\3\2\2\2tx\5\26\f\2ux\5\32\16\2vx\5\24\13\2wt\3\2\2\2wu\3\2\2\2wv\3\2"+
+		"\2\2x\23\3\2\2\2yz\7\n\2\2z{\7$\2\2{\25\3\2\2\2|}\7\n\2\2}\u0081\7\"\2"+
+		"\2~\177\7\n\2\2\177\u0081\5\30\r\2\u0080|\3\2\2\2\u0080~\3\2\2\2\u0081"+
+		"\27\3\2\2\2\u0082\u0084\t\2\2\2\u0083\u0082\3\2\2\2\u0083\u0084\3\2\2"+
+		"\2\u0084\u0085\3\2\2\2\u0085\u0086\7!\2\2\u0086\31\3\2\2\2\u0087\u0088"+
+		"\7\n\2\2\u0088\u0089\7#\2\2\u0089\33\3\2\2\2\u008a\u008b\t\3\2\2\u008b"+
+		"\35\3\2\2\2\u008c\u008d\7\32\2\2\u008d\37\3\2\2\2\u008e\u008f\7 \2\2\u008f"+
+		"!\3\2\2\2\u0090\u0091\7\33\2\2\u0091\u0092\7\34\2\2\u0092\u0093\7!\2\2"+
+		"\u0093\u0094\7\35\2\2\u0094#\3\2\2\2\u0095\u0099\5&\24\2\u0096\u0099\5"+
+		"(\25\2\u0097\u0099\5*\26\2\u0098\u0095\3\2\2\2\u0098\u0096\3\2\2\2\u0098"+
+		"\u0097\3\2\2\2\u0099%\3\2\2\2\u009a\u009b\7\36\2\2\u009b\u009c\7\37\2"+
+		"\2\u009c\'\3\2\2\2\u009d\u009e\7\36\2\2\u009e\u009f\7!\2\2\u009f\u00a0"+
+		"\7\37\2\2\u00a0)\3\2\2\2\u00a1\u00a2\7\36\2\2\u00a2\u00a3\7 \2\2\u00a3"+
+		"\u00a4\7\37\2\2\u00a4+\3\2\2\2\21/\65=EMW^dkorw\u0080\u0083\u0098";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

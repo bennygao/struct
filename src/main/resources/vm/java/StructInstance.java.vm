@@ -110,7 +110,7 @@ ${defaultValueMap[${field.type.typeName}]}##
         this.${field.name} = new java.util.LinkedList<${field.type.typeName}>();
 #end
 #else
-        this.${field.name} = new ${field.type.typeName}();
+        this.${field.name} = new ${field.type.typeName}(${field.type.constructArguments});
 #end
 #end
 #end
@@ -153,6 +153,12 @@ public class ${struct.className} extends Struct {
 
 #if ($field.type.settable)
     public void ${utils.getSetter($field.name)}(#declareType($field) $field.name) {
+#if ($field.type.isStruct() && $field.type.constructArguments != "")
+        if ($field.name != null && ${field.name}.calcSize() != $field.type.constructArguments) {
+            throw new IllegalArgumentException("length of generic Struct mismatch");
+        }
+
+#end
         this.${field.name} = ${field.name};
     }
 

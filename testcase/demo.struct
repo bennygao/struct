@@ -6,6 +6,11 @@
 import "base.struct";
 import "extension.struct";
 
+struct AGeneric {
+    short cmd;
+    int len;
+}
+
 /* 商品 */
 struct Goods {
     // 商品ID
@@ -18,7 +23,7 @@ struct Goods {
    double unitPrice = 15.05;
 
    // 泛型
-   Struct generic;
+   Struct(6) generic;
 
    int num;
 

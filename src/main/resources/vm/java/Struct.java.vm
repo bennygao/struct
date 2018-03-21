@@ -18,6 +18,20 @@ public class Struct {
     private final static int TRUE = 1;
     private final static int FALSE = 0;
 
+    private byte[] data;
+
+    public Struct() {
+        this.data = null;
+    }
+
+    public Struct(int len) {
+        if (len < 0) {
+            throw new IllegalArgumentException("illegal length of generic Struct: " + len);
+        }
+
+        this.data = new byte[len];
+    }
+
     public byte[] encodeToByteArray() throws IOException {
         FixedLengthByteArrayOutputStream output = new FixedLengthByteArrayOutputStream(calcSize());
         encode(output);
@@ -25,16 +39,26 @@ public class Struct {
     }
 
     public void encode(OutputStream output) throws IOException {
+        if (this.data != null) {
+            output.write(this.data);
+        }
     }
 
     public Struct decode(InputStream input) throws IOException {
+        if (this.data != null) {
+            input.read(this.data);
+        }
+
         return this;
     }
 
     public int calcSize() {
-        return 0;
+        return this.data == null ? 0 : this.data.length;
     }
 
+    /*************************************************************************
+     * public read/write methods
+     *************************************************************************/
     public String readString(DataInput dis, int len) throws IOException {
         byte[] bytes = new byte[len];
         dis.readFully(bytes);
@@ -344,6 +368,9 @@ public class Struct {
 
     protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct(getClass().getCanonicalName(), level);
+        if (this.data != null) {
+            structFormat.writeArray("data", level + 1, this.data, "byte");
+        }
         structFormat.endStruct(getClass().getCanonicalName(), level);
     }
 

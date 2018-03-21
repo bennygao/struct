@@ -168,6 +168,16 @@ public interface StructListener extends ParseTreeListener {
 	 */
 	void exitStructType(StructParser.StructTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link StructParser#genericType}.
+	 * @param ctx the parse tree
+	 */
+	void enterGenericType(StructParser.GenericTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StructParser#genericType}.
+	 * @param ctx the parse tree
+	 */
+	void exitGenericType(StructParser.GenericTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link StructParser#array}.
 	 * @param ctx the parse tree
 	 */

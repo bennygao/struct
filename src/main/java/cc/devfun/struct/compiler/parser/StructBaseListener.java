@@ -208,6 +208,18 @@ public class StructBaseListener implements StructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGenericType(StructParser.GenericTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGenericType(StructParser.GenericTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArray(StructParser.ArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
