@@ -295,7 +295,7 @@ public class ${struct.className} extends Struct {
     }
 
     @Override
-    void format(TextStructFormat structFormat, int level) {
+    protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct("${struct.className}", level);
 
 #foreach ($field in $struct.fields)

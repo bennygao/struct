@@ -89,6 +89,14 @@ structType
     : Identifier
     ;
 
+/*
+ * 基类Struct类型，Struct为关键字，同时必须以Struct(6)的方式指定字节长度。
+ */
+/*
+genericType
+    : 'Struct' '(' DecimalLiteral ')'
+    ;
+*/
 array
     : varlenArray
     | fixedArray

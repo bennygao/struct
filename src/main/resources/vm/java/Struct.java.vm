@@ -342,7 +342,7 @@ public class Struct {
         }
     }
 
-    void format(TextStructFormat structFormat, int level) {
+    protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct(getClass().getCanonicalName(), level);
         structFormat.endStruct(getClass().getCanonicalName(), level);
     }

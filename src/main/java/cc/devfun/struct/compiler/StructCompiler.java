@@ -144,7 +144,7 @@ public class StructCompiler {
         GeneratorContext ctx = new GeneratorContext();
         CodeGeneratorFactory factory;
 
-        ctx.setSkipIncludes(ns.getAttrs().containsKey("skip_includes"));
+        ctx.setSkipIncludes(ns.getAttrs().get("skip_includes") != null);
 
         String target = ns.getString("target");
         if ("java".equalsIgnoreCase(target)) {
