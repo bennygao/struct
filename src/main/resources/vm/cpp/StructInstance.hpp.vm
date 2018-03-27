@@ -1,0 +1,150 @@
+#set ($defaultValueMap = {
+    "char"      : "'\0\",
+	"byte"		: "(uint8_t) 0",
+	"boolean"	: "true",
+	"int8"      : "(int8_t) 0",
+	"uint8"     : "(uint8_t) 0",
+	"short"		: "(int16_t) 0",
+	"int16"     : "(int16_t) 0",
+	"uint16"    : "(uint16_t) 0",
+	"int"		: "(int32_t) 0",
+	"int32"     : "(int32_t) 0",
+	"uint32"    : "(uint32_t) 0",
+	"long"		: "(int64_t) 0",
+	"int64"		: "(int64_t) 0",
+	"uint64"	: "(uint64_t) 0",
+	"float"		: "(float) 0.00",
+	"double"	: "(double) 0.00"
+})
+#set ($typeSizeMap = {
+    "char"      : "1",
+	"byte"		: "1",
+	"boolean"	: "1",
+	"int8"      : "1",
+	"uint8"     : "1",
+	"short"		: "2",
+	"int16"     : "2",
+	"uint16"    : "2",
+	"int"		: "4",
+	"int32"     : "4",
+	"uint32"    : "4",
+	"long"		: "8",
+	"float"		: "4",
+	"double"	: "8"
+})
+#set ($typeOfCpp = {
+    "char"      : "char",
+	"byte"		: "uint8_t",
+	"boolean"	: "bool",
+	"int8"      : "int8_t",
+	"uint8"     : "uint8_t",
+	"short"		: "int16_t",
+	"int16"     : "int16_t",
+	"uint16"    : "uint16_t",
+	"int"		: "int32_t",
+	"int32"     : "int32_t",
+	"uint32"    : "uint32_t",
+	"long"		: "int64_t",
+	"int64"		: "int64_t",
+	"uint64"	: "uint64_t",
+	"float"		: "float",
+	"double"	: "double"
+})
+## 宏: 生成field的类型
+#macro (declareType $field)
+    #if ($field.type.isBasic())
+        #if ($field.type.hasArray() && !$field.type.isString())
+    structpp::varray<$typeOfCpp[${field.type.name}]>##
+        #else
+    $typeOfCpp[${field.type.name}]##
+        #end
+    #elseif ($field.type.isString())
+    structpp::varray<char>##
+    #else
+        #if ($field.type.hasArray())
+    std::vector<${field.type.typeName} *>##
+        #else
+    ${field.type.typeName}*##
+        #end
+    #end
+#end
+##
+## 宏: 生成属性定义
+#macro (declareField $field)
+#if ($field.haveComments())
+#foreach ($line in $field.comments)
+    // $line
+#end
+#end
+    #declareType($field) ${field.name}; // prototype: ${field.type.prototype}
+#end
+##
+## 宏: 生成field的缺省值
+#macro (defaultValue $field)
+#if ($field.defaultValue)
+($typeOfCpp[${field.type.name}]) ${field.defaultValue.value}##
+#elseif ($field.type.isString())
+null##
+#else
+${defaultValueMap[${field.type.typeName}]}##
+#end
+#end
+##
+## 宏: 为field赋初值
+#macro (initField $field)
+#if ($field.type.isBasic())
+#if ($field.type.hasArray())
+#if ($field.type.fixedLength)
+        this->${field.name} = new ${field.type.typeName}[${field.type.arraySize}];
+        java.util.Arrays.fill(this.${field.name}, ${defaultValueMap[${field.type.typeName}]});
+#else
+        this->${field.name} = null;
+#end
+#else
+        this->$field.name = #defaultValue($field);
+#end
+#elseif ($field.type.isString())
+        this->$field.name = #defaultValue($field);
+#else
+#if ($field.type.hasArray())
+#if ($field.type.isFixedLength())
+        this->${field.name} = new ${field.type.typeName}[${field.type.arraySize}];
+        for (int i = 0; i < ${field.type.arraySize}; ++i) {
+            this->${field.name}[i] = new ${field.type.typeName}();
+        }
+#else
+        this->${field.name} = new java.util.LinkedList<${field.type.typeName}>();
+#end
+#else
+        this->${field.name} = new ${field.type.typeName}(${field.type.constructArguments});
+#end
+#end
+#end
+##
+
+///////////////////////////////////////////////////////////////
+// struct ${structName}
+#if ($struct.haveComments())
+//
+#foreach ($line in $struct.comments)
+// ${line}
+#end
+#end
+class ${struct.className} : public structpp::Struct {
+public:
+    static ${struct.className} *instance(void) {
+		return new ${struct.className}();
+	}
+
+#foreach ($field in $struct.fields)
+#declareField($field)
+
+#end
+private:
+    ${struct.className}(void) {
+#foreach ($field in $struct.fields)
+#initField($field)
+
+#end
+    }
+};

@@ -78,6 +78,7 @@ basicType
     | 'uint32'
     | 'long'
     | 'int64'
+    | 'uint64'
     | 'float'
     | 'double'
     ;

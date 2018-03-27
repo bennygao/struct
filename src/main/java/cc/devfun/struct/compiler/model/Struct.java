@@ -4,8 +4,13 @@ import cc.devfun.struct.compiler.Utils;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Struct implements Commentable {
+    private final static AtomicInteger UID = new AtomicInteger(0);
+    public final static Struct generic = new Struct("Struct", false);
+
+    private int uid;
     private String name;
     private boolean resolved = false;
     private Map<String, Field> fields = new LinkedHashMap<>();
@@ -14,12 +19,25 @@ public class Struct implements Commentable {
     private Map<String, Struct> dependency;
     private boolean included;
 
-    public Struct(String name, boolean included) {
+    public static Struct create(String name, boolean include) {
+        if (generic.getName().equalsIgnoreCase(name)) {
+            return generic;
+        } else {
+            return new Struct(name, include);
+        }
+    }
+
+    protected Struct(String name, boolean included) {
+        this.uid = UID.getAndIncrement();
         this.name = name;
         this.resolved = false;
         this.included = included;
         this.dependency = new HashMap<>();
         this.definedLocation = new Location();
+    }
+
+    public int getUid() {
+        return this.uid;
     }
 
     public boolean isDecodable() {

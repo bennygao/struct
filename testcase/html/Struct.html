@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<title>Messages Definition</title>
+<style type="text/css">
+<!--
+body {
+    margin: auto 100px auto 100px;
+    font-family: Menlo, monospace, 'trebuchet MS', 'Lucida sans', Arial;
+    font-size: 14px;
+    color: #444;
+}
+
+hr {
+    height:1px;
+    border:none;
+    border-top:1px solid #cccccc;
+}
+
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+
+.bordered {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;
+}
+
+.bordered tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+
+.bordered td, .bordered th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.bordered th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+
+.bordered td:first-child, .bordered th:first-child {
+    border-left: none;
+}
+
+.bordered th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+
+.bordered th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+
+.bordered th:only-child{
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+.bordered tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+
+.bordered tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
+}
+
+-->
+</style>
+</head>
+
+<body>
+<hr />
+<A name="Base"><!-- --></A>
+<h1>
+	Base
+</h1>
+<p>(base.struct:2)</p>
+	<p>演示基本数据类型</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>string[16]</p></td>
+	<td><p>stringValue</p></td>
+	<td><p>"Hello World!"</p></td>
+	<td><p>字符串类型,长度16字节。</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>byte</p></td>
+	<td><p>byteValue</p></td>
+	<td><p>0</p></td>
+	<td><p>字节(byte)类型</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>short</p></td>
+	<td><p>shortValue</p></td>
+	<td><p>1</p></td>
+	<td><p>短整型</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>intValue</p></td>
+	<td><p>2</p></td>
+	<td><p>整型</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>long</p></td>
+	<td><p>longValue</p></td>
+	<td><p>3</p></td>
+	<td><p>长整型</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>float</p></td>
+	<td><p>floatValue</p></td>
+	<td><p>1.11</p></td>
+	<td><p>浮点数</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>double</p></td>
+	<td><p>doubleValue</p></td>
+	<td><p>3.1415926</p></td>
+	<td><p>双精度浮点数</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int[5]</p></td>
+	<td><p>fixedArray</p></td>
+	<td><p>0</p></td>
+	<td><p>定长整数数组</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int[]</p></td>
+	<td><p>varlenArray</p></td>
+	<td><p>0</p></td>
+	<td><p>变长整数数组</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Color"><!-- --></A>
+<h1>
+	Color
+</h1>
+<p>(extension.struct:8)</p>
+	<p>颜色
+位0-3 颜色透明度
+位4-7 颜色值</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int:4</p></td>
+	<td><p>transparency</p></td>
+	<td><p>0</p></td>
+	<td><p>透明度, 0为不透明, 15为全透明。</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int:4</p></td>
+	<td><p>color</p></td>
+	<td><p>0</p></td>
+	<td><p>颜色值</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="CtrlAndSID"><!-- --></A>
+<h1>
+	CtrlAndSID
+</h1>
+<p>(extension.struct:34)</p>
+	<p>任务控制字</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int:3</p></td>
+	<td><p>ctrl</p></td>
+	<td><p>0</p></td>
+	<td><p>任务类型标识</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int:4</p></td>
+	<td><p>SID</p></td>
+	<td><p>0</p></td>
+	<td><p>Session ID</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int:17</p></td>
+	<td><p>reserved</p></td>
+	<td><p>0</p></td>
+	<td><p>保留</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Gift"><!-- --></A>
+<h1>
+	Gift
+</h1>
+<p>(demo.struct:34)</p>
+	<p>礼品</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>id</p></td>
+	<td><p>0</p></td>
+	<td><p>礼品ID</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#Goods">Goods</a></p></td>
+	<td><p>goods</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>礼品赠送的商品</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Goods"><!-- --></A>
+<h1>
+	Goods
+</h1>
+<p>(demo.struct:10)</p>
+	<p>商品</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>id</p></td>
+	<td><p>1</p></td>
+	<td><p>商品ID</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>string[64]</p></td>
+	<td><p>name</p></td>
+	<td><p>"烟台苹果"</p></td>
+	<td><p>商品名称</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>double</p></td>
+	<td><p>unitPrice</p></td>
+	<td><p>15.05</p></td>
+	<td><p>单价(每500克)</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="ImageLayer"><!-- --></A>
+<h1>
+	ImageLayer
+</h1>
+<p>(extension.struct:14)</p>
+	<p>图层</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p><a href="Struct.html#Point">Point</a></p></td>
+	<td><p>leftTop</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>左上角坐标</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#Size">Size</a></p></td>
+	<td><p>size</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>图层大小</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#Color">Color</a></p></td>
+	<td><p>color</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>图层颜色</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="MixedGroup"><!-- --></A>
+<h1>
+	MixedGroup
+</h1>
+<p>(extension.struct:41)</p>
+	<p>混杂模式</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>uint16</p></td>
+	<td><p>power</p></td>
+	<td><p>0</p></td>
+	<td><p>发射功率</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>uint8</p></td>
+	<td><p>channel</p></td>
+	<td><p>0</p></td>
+	<td><p>通讯信道;</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>uint16</p></td>
+	<td><p>num</p></td>
+	<td><p>0</p></td>
+	<td><p>后续数据包(Packet)个数</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#Packet">Packet</a>[num]</p></td>
+	<td><p>packets</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>由num指定个数的多个数据包</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Packet"><!-- --></A>
+<h1>
+	Packet
+</h1>
+<p>(extension.struct:46)</p>
+	<p>数据包</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>byte[4]</p></td>
+	<td><p>eslId</p></td>
+	<td><p>0</p></td>
+	<td><p>ESL ID</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>byte[26]</p></td>
+	<td><p>data</p></td>
+	<td><p>0</p></td>
+	<td><p>数据</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Point"><!-- --></A>
+<h1>
+	Point
+</h1>
+<p>(extension.struct:16)</p>
+	<p>坐标</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>x</p></td>
+	<td><p>0</p></td>
+	<td><p>x轴坐标</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>y</p></td>
+	<td><p>0</p></td>
+	<td><p>y轴坐标</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Shelf"><!-- --></A>
+<h1>
+	Shelf
+</h1>
+<p>(demo.struct:22)</p>
+	<p>货架</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>id</p></td>
+	<td><p>0</p></td>
+	<td><p>货架编号</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>displayedGoodsNum</p></td>
+	<td><p>0</p></td>
+	<td><p>货架上陈列的商品数量</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#Goods">Goods</a>[displayedGoodsNum]</p></td>
+	<td><p>displayedGoods</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>货架上陈列的商品</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Size"><!-- --></A>
+<h1>
+	Size
+</h1>
+<p>(extension.struct:22)</p>
+	<p>尺寸</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>width</p></td>
+	<td><p>0</p></td>
+	<td><p>宽度</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p>int</p></td>
+	<td><p>height</p></td>
+	<td><p>0</p></td>
+	<td><p>高度</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr />
+<A name="Task"><!-- --></A>
+<h1>
+	Task
+</h1>
+<p>(extension.struct:32)</p>
+	<p>任务</p>
+
+	
+
+<table class="bordered">
+  <thead>
+    <tr>
+      <th scope="col">Data Type</th>
+      <th scope="col">Field Name</th>
+      <th scope="col">Default</th>
+      <th width="50%" scope="col">Description</th>
+    </tr>
+  </thead>
+    <tr valign="top">
+	<td><p><a href="Struct.html#CtrlAndSID">CtrlAndSID</a></p></td>
+	<td><p>ctrlAndSID</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td><p>任务控制字和SessionID</p>
+</td>
+  </tr>
+  <tr valign="top">
+	<td><p><a href="Struct.html#MixedGroup">MixedGroup</a></p></td>
+	<td><p>mixedGroup</p></td>
+	<td><p>&nbsp;
+</p></td>
+	<td></td>
+  </tr>
+  <tr valign="top">
+	<td><p>uint16</p></td>
+	<td><p>crc16</p></td>
+	<td><p>0</p></td>
+	<td><p>CCITT-CRC16</p>
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>

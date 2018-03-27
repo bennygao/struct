@@ -1,0 +1,30 @@
+
+///////////////////////////////////////////////////////////////
+// struct instance factory
+class ${utils.upperFirstChar($package)}StructFactory : public structpp::StructFactory {
+private:
+    std::map<std::string, int> map;
+
+public:
+    ${utils.upperFirstChar($package)}StructFactory(void) {
+#foreach ($struct in $allStructs)
+        map.insert(std::pair<std::string, int>("${struct.name}", ${struct.uid}));
+#end
+    }
+
+    virtual structpp::Struct *create(const std::string sname) override {
+        int id = map.at(sname);
+        switch (id) {
+#foreach ($struct in $allStructs)
+            case ${struct.uid}: return ${struct.name}::instance();
+#end
+            default:
+                return NULL;
+        }
+    }
+};
+
+
+} /* namespace ${package} */
+
+#endif /* __struct_hpp__ */

@@ -1,0 +1,15 @@
+#ifndef __struct_${package}__
+\#define __struct_${package}__
+
+\#include <iostream>
+\#include <sstream>
+\#include <map>
+\#include <vector>
+\#include "struct.hpp"
+
+namespace ${package} {
+
+#foreach ($struct in $allStructs)
+class ${struct.name};
+#end
+

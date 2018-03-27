@@ -4,7 +4,7 @@ public class GenericType extends StructType {
     private int len;
 
     public GenericType(int len) {
-        super(new Struct("Struct", false));
+        super(Struct.generic);
         this.len = len;
     }
 

@@ -143,7 +143,7 @@ public class StructBuilder extends StructBaseListener {
         Struct currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
             if (ctx instanceof StructParser.StructContext) {
-                currentStruct = new Struct(typeName, compiler.isIncluded());
+                currentStruct = Struct.create(typeName, compiler.isIncluded());
             } else {
                 currentStruct = new BitField(typeName, compiler.isIncluded());
             }
@@ -247,15 +247,10 @@ public class StructBuilder extends StructBaseListener {
 
         DataType fieldType = field.getType();
         if (fieldType.hasArray() && fieldType.getArray().isIdentifier()) {
-//                if (!field.getType().isStruct()) {
-//                    String errmsg = String.format("%s:%d identifier array index only can be supplied to struct.",
-//                            src.getName(), ctx.getStart().getLine());
-//                    throw new IllegalSemanticException(errmsg);
-//                } else {
             String identifier = field.getType().getArray().getSize();
             Field referenceField = currentStruct.getField(identifier);
             if (referenceField == null) {
-                String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasnot been defined.",
+                String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasn't been defined.",
                         src.getName(), ctx.getStart().getLine(), identifier);
                 throw new IllegalSemanticException(errmsg);
             } else if (!referenceField.getType().canBeArrayLength()) {
@@ -269,8 +264,6 @@ public class StructBuilder extends StructBaseListener {
             } else {
                 referenceField.setReference(field);
             }
-//                }
-//            }
         }
 
         currentArray = null;
@@ -295,7 +288,7 @@ public class StructBuilder extends StructBaseListener {
         String typeName = ctx.getChild(0).getText();
         Struct struct = allStructs.get(typeName);
         if (struct == null) {
-            struct = new Struct(typeName, compiler.isIncluded());
+            struct = Struct.create(typeName, compiler.isIncluded());
             allStructs.put(typeName, struct);
         }
 

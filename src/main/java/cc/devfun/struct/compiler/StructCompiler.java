@@ -1,6 +1,7 @@
 package cc.devfun.struct.compiler;
 
 import cc.devfun.struct.compiler.codegenerator.CCodeGeneratorFactory;
+import cc.devfun.struct.compiler.codegenerator.CppCodeGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.HtmlGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.J2seCodeGeneratorFactory;
 import cc.devfun.struct.compiler.model.Struct;
@@ -28,7 +29,7 @@ public class StructCompiler {
         parsedFiles = new HashSet<>();
         searchPath = new ArrayList<>();
         allStructs = new LinkedHashMap<>();
-        Struct struct = new Struct("Struct", false);
+        Struct struct = Struct.create("Struct", false);
         struct.setResolved();
         allStructs.put(struct.getName(), struct);
     }
@@ -120,7 +121,7 @@ public class StructCompiler {
                 .defaultHelp(true)
                 .description("Compile C style struct to generating Java C or HTML.");
         parser.addArgument("-t", "--target")
-                .choices("java", "c", "html").required(true)
+                .choices("java", "cpp", "c", "html").required(true)
                 .help("Specify target language");
         parser.addArgument("-e", "--encoding").setDefault("utf8")
                 .help("Specify charset encoding of struct description file and generated files");
@@ -151,6 +152,8 @@ public class StructCompiler {
             factory = new J2seCodeGeneratorFactory();
         } else if ("c".equalsIgnoreCase(target)) {
             factory = new CCodeGeneratorFactory();
+        } else if ("cpp".equalsIgnoreCase(target)) {
+            factory = new CppCodeGeneratorFactory();
         } else {
             factory = new HtmlGeneratorFactory();
         }
