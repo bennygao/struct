@@ -9,25 +9,6 @@ struct AGeneric {
     int len;
 }
 
-/* 商品 */
-struct Goods {
-    // 商品ID
-    int id = 1;
-
-   // 商品名称
-   string[64] name = "烟台苹果";
-
-   // 单价(每500克)
-   double unitPrice = 15.05;
-
-   // 泛型
-   Struct(6) generic;
-
-   int num;
-
-   byte[num] data;
-}
-
 // 货架
 struct Shelf {
     // 货架编号
@@ -50,6 +31,9 @@ struct Shelf {
 
     // byte数组
     byte[26] frame;
+
+    // 礼品
+    Gift gift;
 }
 
 // 礼品
@@ -59,4 +43,23 @@ struct Gift {
 
     // 礼品赠送的商品
     Goods goods;
+}
+
+/* 商品 */
+struct Goods {
+    // 商品ID
+    int id = 1;
+
+   // 商品名称
+   string[64] name = "烟台苹果";
+
+   // 单价(每500克)
+   double unitPrice = 15.05;
+
+   // 泛型
+   Struct(6) generic;
+
+   int num;
+
+   byte[num] data;
 }

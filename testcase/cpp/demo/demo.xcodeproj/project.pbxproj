@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5E0E110E206A3AAA00B6B381 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E0E110D206A3AAA00B6B381 /* main.cpp */; };
+		5E0E1118206B199A00B6B381 /* democpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E0E1117206B199A00B6B381 /* democpp.cpp */; };
+		5E0E111B206B3ECB00B6B381 /* structpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E0E1119206B3ECB00B6B381 /* structpp.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,8 +27,10 @@
 /* Begin PBXFileReference section */
 		5E0E110A206A3AAA00B6B381 /* demo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = demo; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E0E110D206A3AAA00B6B381 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		5E0E1114206A3AC800B6B381 /* struct.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = struct.hpp; sourceTree = "<group>"; };
 		5E0E1116206A48D600B6B381 /* democpp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = democpp.hpp; sourceTree = "<group>"; };
+		5E0E1117206B199A00B6B381 /* democpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = democpp.cpp; sourceTree = "<group>"; };
+		5E0E1119206B3ECB00B6B381 /* structpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = structpp.cpp; sourceTree = "<group>"; };
+		5E0E111A206B3ECB00B6B381 /* structpp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = structpp.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,9 +63,11 @@
 		5E0E110C206A3AAA00B6B381 /* demo */ = {
 			isa = PBXGroup;
 			children = (
+				5E0E1117206B199A00B6B381 /* democpp.cpp */,
 				5E0E1116206A48D600B6B381 /* democpp.hpp */,
 				5E0E110D206A3AAA00B6B381 /* main.cpp */,
-				5E0E1114206A3AC800B6B381 /* struct.hpp */,
+				5E0E1119206B3ECB00B6B381 /* structpp.cpp */,
+				5E0E111A206B3ECB00B6B381 /* structpp.hpp */,
 			);
 			path = demo;
 			sourceTree = "<group>";
@@ -123,6 +129,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E0E1118206B199A00B6B381 /* democpp.cpp in Sources */,
+				5E0E111B206B3ECB00B6B381 /* structpp.cpp in Sources */,
 				5E0E110E206A3AAA00B6B381 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

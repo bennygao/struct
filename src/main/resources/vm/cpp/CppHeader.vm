@@ -1,0 +1,4 @@
+\#include "${include}"
+
+using namespace structpp;
+using namespace ${package};

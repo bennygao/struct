@@ -8,6 +8,10 @@ public class GenericType extends StructType {
         this.len = len;
     }
 
+    public int getLen() {
+        return len;
+    }
+
     @Override
     public String getPrototype() {
         return String.format("Struct(%d)", len);

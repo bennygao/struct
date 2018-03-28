@@ -7,11 +7,21 @@
 //
 
 #include <iostream>
-#include "struct.hpp"
+#include "structpp.hpp"
 #include "democpp.hpp"
 
+using namespace structpp;
+using namespace demo;
+using namespace std;
+
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    Shelf *shelf = Shelf::instance();
+    cout << shelf->size() << endl;
+    shelf->print(cout);
+    
+    stringstream ss;
+    BinaryStructEncoder encoder(&ss);
+    shelf->encode(encoder);
+    cout << ss.tellp() << endl;
     return 0;
 }

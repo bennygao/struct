@@ -47,7 +47,7 @@ namespace structpp {
             memset(m_array, 0, sizeof(T) * m_size);
         }
 
-        varray() {
+        varray(void) {
             m_array = NULL;
             m_size = 0;
         }
@@ -62,23 +62,18 @@ namespace structpp {
 
         varray<T>& operator=(const char *text) {
             size_t text_len = strlen(text);
-            memcpy(m_array, text, m_size > text_len ? text_len : m_size);
+            size_t bufsize = bytes();
+            memcpy(m_array, text, bufsize > text_len ? text_len : bufsize);
             return *this;
         }
 
         void resize(size_t size) {
-            if (m_size == size) {
-                return;
-            } else if (m_array != NULL) {
-                delete[] m_array;
-                m_array = NULL;
+            if (m_size != size) {
+                clear();
+                if ((m_size = size) > 0) {
+                    m_array = new T[size];
+                }
             }
-
-            if (size > 0) {
-                m_array = new T[size];
-            }
-
-            m_size = size;
         }
 
         size_t size() {
@@ -111,11 +106,11 @@ namespace structpp {
     class StructDecoder;
 
     class Struct {
-    public:
+    private:
         size_t len;
         char *data;
 
-        Struct(size_t len = 0) {
+        Struct(size_t len) {
             this->len = len;
             if (len > 0) {
                 this->data = new char[len];
@@ -124,13 +119,24 @@ namespace structpp {
             }
         }
 
+    protected:
+        Struct(void) {
+            this->len = 0;
+            this->data = NULL;
+        }
+
+    public:
+        static Struct *instance(int len) {
+            return new Struct(len);
+        }
+
         ~Struct(void) {
             if (this->data != NULL) {
                 delete[] this->data;
             }
         }
 
-        size_t size(void) {
+        virtual size_t size(void) {
             return this->len;
         }
 
@@ -502,3 +508,4 @@ namespace structpp {
 
 } /* namespace structpp */
 #endif /* __struct_hpp__ */
+

@@ -54,16 +54,19 @@ public class StructuredGlobbingResourceLoader extends ClasspathResourceLoader {
                 if ((line = readLine()) == null) {
                     return -1;
                 } else {
-                    int start = -1, firstChar = -1;
+                    int start = -1, firstChar = -1, secondChar = -1;
                     for (int i = 0; i < line.length; ++i) {
                         if (!isSpace(line[i])) {
                             firstChar = line[i];
+                            if (i < line.length - 1) {
+                                secondChar = line[i + 1];
+                            }
                             start = i;
                             break;
                         }
                     }
 
-                    if (firstChar == '#' && start > 0) {
+                    if (firstChar == '#' && secondChar != '#' && start > 0) {
                         position = start;
                     } else {
                         position = 0;
