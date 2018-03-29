@@ -16,7 +16,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     Shelf *shelf = Shelf::instance();
-    cout << shelf->size() << endl;
+    cout << shelf->calcsize() << endl;
     shelf->print(cout);
     
     stringstream ss;

@@ -62,13 +62,14 @@ public:
 	}
 
     virtual ~${struct.className}();
-	virtual size_t size(void) override;
+	virtual size_t calcsize(void) override;
+	virtual void read(structpp::StructDecoder &decoder) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 
 #foreach ($field in $struct.fields)
 #declareField($field)
-
 #end
+
 private:
     ${struct.className}(void);
 };

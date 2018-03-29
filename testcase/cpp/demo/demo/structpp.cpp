@@ -111,9 +111,9 @@ StructEncoder::StructEncoder(void)
 
 void StructEncoder::write_struct(Struct *pp, const std::string prototype, const std::string propname)
 {
-    begin_write_struct(prototype, propname);
+    begin_write_struct(pp, prototype, propname);
     pp->write(*this);
-    end_write_struct(prototype, propname);
+    end_write_struct(pp, prototype, propname);
 }
 
 void StructEncoder::write_vector(void *pv, const std::string prototype, const std::string propname)
@@ -122,7 +122,7 @@ void StructEncoder::write_vector(void *pv, const std::string prototype, const st
     
     std::vector<Struct *> *vec = (std::vector<Struct *> *) pv;
     std::stringstream ss;
-    for (int i = 0; i < vec->size(); ++i) {
+    for (size_t i = 0; i < vec->size(); ++i) {
         ss.str("");
         ss << '[' << i << ']';
         Struct *s = (*vec)[i];
@@ -167,9 +167,10 @@ Struct::Struct(size_t len)
     this->data.resize(len);
 }
 
-Struct::Struct(std::string name)
+Struct::Struct(std::string name, StructClass clazz)
 {
     this->name = name;
+    this->clazz = clazz;
 }
 
 Struct::~Struct()
@@ -177,7 +178,7 @@ Struct::~Struct()
 
 }
 
-size_t Struct::size(void)
+size_t Struct::calcsize(void)
 {
     return this->data.bytes();
 }
@@ -200,8 +201,14 @@ void Struct::print(std::ostream &os)
     encode(encoder);
 }
 
-void Struct::encode(StructEncoder &encoder) {
+void Struct::encode(StructEncoder &encoder)
+{
     encoder.write_struct(this, name, "");
+}
+
+void Struct::decode(StructDecoder &decoder)
+{
+    decoder.read_struct(this);
 }
 
 void TextStructEncoder::indent()
@@ -252,21 +259,21 @@ TextStructEncoder::TextStructEncoder(std::ostream *output)
     this->level = 0;
 }
 
-void TextStructEncoder::begin_write_struct(const std::string prototype, const std::string propname)
+void TextStructEncoder::begin_write_struct(Struct *pp, const std::string prototype, const std::string propname)
 {
     indent();
     *output << prototype << ' ' << propname << " = {" << std::endl;
     ++level;
 }
 
-void TextStructEncoder::end_write_struct(const std::string prototype, const std::string propname)
+void TextStructEncoder::end_write_struct(Struct *pp, const std::string prototype, const std::string propname)
 {
     --level;
     indent();
     *output << "}" << std::endl;
 }
 
-void TextStructEncoder::write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, int index)
+void TextStructEncoder::write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index)
 {
     std::stringstream ss;
     tostr(dtype, pp, ss);
@@ -288,7 +295,7 @@ void TextStructEncoder::write_string(void *pa, const std::string prototype, cons
     varray<char> *va = (varray<char> *) pa;
     char *array = va->array();
     if (va->size() > 0) {
-        int stop;
+        size_t stop;
         for (stop = 0; stop < va->size() && array[stop] != 0; ++stop);
         if (stop > 0) {
             str.append(array, 0, stop);
@@ -341,9 +348,11 @@ int BinaryStructEncoder::put_bytes(const void *ptr, int start, int len)
 BinaryStructEncoder::BinaryStructEncoder(std::ostream *output)
 {
     this->output = output;
+    this->bits8 = 0;
+    this->index = 0;
 }
 
-void BinaryStructEncoder::write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, int index)
+void BinaryStructEncoder::write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index)
 {
     switch (dtype) {
         case dt_byte:
@@ -369,5 +378,46 @@ void BinaryStructEncoder::write_basic(void *pp, const std::string prototype, con
             break;
         default:
             throw std::invalid_argument("unsupported basic data type");
+    }
+}
+
+void BinaryStructEncoder::write_string(void *pa, const std::string prototype, const std::string propname)
+{
+    varray<char> *va = (varray<char> *) pa;
+    output->write(va->array(), va->size());
+}
+
+void BinaryStructEncoder::begin_write_struct(Struct *pp, const std::string prototype, const std::string propname)
+{
+    if (pp->struct_class() == sc_bitfield) {
+        this->bits8 = 0;
+        this->index = 0;
+    }
+}
+
+void BinaryStructEncoder::end_write_struct(Struct *pp, const std::string prototype, const std::string propname)
+{
+    if (pp->struct_class() == sc_bitfield) {
+        if (this->index > 0) {
+            this->bits8 <<= 8 - this->index;
+            this->output->put(this->bits8);
+            this->bits8 = 0;
+            this->index = 0;
+        }
+    }
+}
+
+void BinaryStructEncoder::write_bitfield(uint32_t fv, int nbits, const std::string propname)
+{
+    uint32_t bitmask;
+    for (uint32_t mask = 1 << (nbits - 1); mask > 0; mask >>= 1) {
+        bitmask = (mask & fv) == 0 ? 0 : 1;
+        bits8 = (bits8 << 1) | bitmask;
+        ++index;
+        if (index == 8) {
+            output->put(bits8);
+            bits8 = 0;
+            index = 0;
+        }
     }
 }

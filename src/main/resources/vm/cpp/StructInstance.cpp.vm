@@ -110,7 +110,7 @@
 // ${line}
 #end
 #end
-${struct.className}::${struct.className}(void) : Struct("${struct.className}")
+${struct.className}::${struct.className}(void) : Struct("${struct.className}", sc_struct)
 {
 #foreach ($field in $struct.fields)
 #initField($field)
@@ -118,7 +118,23 @@ ${struct.className}::${struct.className}(void) : Struct("${struct.className}")
 #end
 }
 
-size_t ${struct.className}::size(void)
+${struct.className}::~${struct.className}()
+{
+#foreach ($field in $struct.fields)
+    #if ($field.type.isStruct())## Struct
+        #if ($field.type.hasArray())
+    for (size_t i = 0; i < this->${field.name}.size(); ++i) {
+        delete this->${field.name}[i];
+    }
+        #else
+    delete this->${field.name};
+        #end
+
+    #end
+#end
+}
+
+size_t ${struct.className}::calcsize(void)
 {
     size_t __size = 0;
 
@@ -134,25 +150,25 @@ size_t ${struct.className}::size(void)
     #else
         #if ($field.type.hasArray())
             #if ($field.type.array.fixed)
-    for (int i = 0; i < ${field.type.arraySize}; ++i) {
-        __size += this->${field.name}[i]->size();
+    for (size_t i = 0; i < ${field.type.arraySize}; ++i) {
+        __size += this->${field.name}[i]->calcsize();
     }
             #else
                 #if ($field.type.array.identifier)
     this->${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this->${field.name}.size();
                 #end
-    for (int i = 0; i < this->${field.name}.size(); ++i) {
-        __size += this->${field.name}[i]->size();
+    for (size_t i = 0; i < this->${field.name}.size(); ++i) {
+        __size += this->${field.name}[i]->calcsize();
     }
             #end
         #else
     if (this->${field.name} != NULL) {
-        __size += this->${field.name}->size();
+        __size += this->${field.name}->calcsize();
     }
         #end
     #end
-
 #end
+
     return __size;
 }
 
@@ -181,18 +197,7 @@ void ${struct.className}::write(structpp::StructEncoder &encoder)
 #end
 }
 
-${struct.className}::~${struct.className}()
+void ${struct.className}::read(structpp::StructDecoder &decoder)
 {
-#foreach ($field in $struct.fields)
-    #if ($field.type.isStruct())## Struct
-        #if ($field.type.hasArray())
-    for (int i = 0; i < this->${field.name}.size(); ++i) {
-        delete this->${field.name}[i];
-    }
-        #else
-    delete this->${field.name};
-        #end
-
-    #end
-#end
 }
+

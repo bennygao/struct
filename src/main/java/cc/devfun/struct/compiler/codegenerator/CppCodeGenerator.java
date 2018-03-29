@@ -31,13 +31,15 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
 
         String hppName = getBaseName(ctx) + ".hpp";
         File hppFile = new File(ctx.getOutputDir(), hppName);
+        System.out.print("creating " + hppFile.getCanonicalPath() + " ... ");
+
         Writer writer = getSourceWriter(hppFile, ctx.getOutputEncoding());
         Template headerTemplate = Velocity.getTemplate("vm/cpp/HppHeader.vm");
         headerTemplate.merge(vcSummary, writer);
 
         Template template;
         Template structTemplate = Velocity.getTemplate("vm/cpp/StructInstance.hpp.vm");
-//        Template bitfieldTemplate = Velocity.getTemplate("vm/java/BitFieldInstance.java.vm");
+        Template bitfieldTemplate = Velocity.getTemplate("vm/cpp/BitFieldInstance.hpp.vm");
         for (Struct struct : allStructs) {
             if (struct.isIncluded() && ctx.isSkipIncludes()) {
                 continue;
@@ -51,8 +53,7 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
             vc.put("structName", struct.getName());
 
             if (struct.isBitfield()) {
-//                template = bitfieldTemplate;
-                continue;
+                template = bitfieldTemplate;
             } else {
                 template = structTemplate;
             }
@@ -78,13 +79,15 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
         vcSummary.put("include", hppName);
 
         File cppFile = new File(ctx.getOutputDir(), cppName);
+        System.out.print("creating " + cppFile.getCanonicalPath() + " ... ");
+
         Writer writer = getSourceWriter(cppFile, ctx.getOutputEncoding());
         Template headerTemplate = Velocity.getTemplate("vm/cpp/CppHeader.vm");
         headerTemplate.merge(vcSummary, writer);
 
         Template template;
         Template structTemplate = Velocity.getTemplate("vm/cpp/StructInstance.cpp.vm");
-//        Template bitfieldTemplate = Velocity.getTemplate("vm/java/BitFieldInstance.java.vm");
+        Template bitfieldTemplate = Velocity.getTemplate("vm/cpp/BitFieldInstance.cpp.vm");
         for (Struct struct : allStructs) {
             if (struct.isIncluded() && ctx.isSkipIncludes()) {
                 continue;
@@ -98,8 +101,7 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
             vc.put("structName", struct.getName());
 
             if (struct.isBitfield()) {
-//                template = bitfieldTemplate;
-                continue;
+                template = bitfieldTemplate;
             } else {
                 template = structTemplate;
             }
@@ -126,7 +128,6 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
 
         List<Struct> structList = ctx.getAllStructs().values().stream()
                 .filter(s -> !"Struct".equalsIgnoreCase(s.getName()))
-                .filter(s -> !s.isIncluded())
                 .collect(Collectors.toList());
         generateHpp(ctx, structList);
         generateCpp(ctx, structList);

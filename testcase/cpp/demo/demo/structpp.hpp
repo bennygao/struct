@@ -14,6 +14,7 @@
 #include <sstream>
 #include <vector>
 #include <typeinfo>
+#include <string.h>
 
 namespace structpp {
     typedef enum {
@@ -30,6 +31,11 @@ namespace structpp {
         dt_vector,
         dt_array
     } DataType;
+    
+    typedef enum {
+        sc_struct,
+        sc_bitfield
+    } StructClass;
     
     template<typename T> class varray {
     private:
@@ -169,17 +175,13 @@ namespace structpp {
     public:
         StructEncoder(void);
         
-        inline bool basic_type(DataType type) {
-            return type == dt_byte || type == dt_boolean || type == dt_short
-            || type == dt_int || type == dt_long || type == dt_float
-            || type == dt_double;
-        }
-        
-        virtual void begin_write_struct(const std::string prototype, const std::string propname) {}
-        virtual void end_write_struct(const std::string prototype, const std::string propname) {}
+        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
+        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
         virtual void write_struct(Struct *pp, const std::string prototype, const std::string propname);
         
-        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, int index) = 0;
+        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) = 0;
+        
+        virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) {}
         
         virtual void begin_write_vector(void *pv, const std::string prototype, const std::string propname) {};
         virtual void end_write_vector(void *pv, const std::string prototype, const std::string propname) {};
@@ -192,7 +194,7 @@ namespace structpp {
             size_t len = p->size();
             begin_write_array(len, prototype, propname);
             T v;
-            for (int i = 0; i < len; ++i) {
+            for (size_t i = 0; i < len; ++i) {
                 v = (*p)[i];
                 write_basic(&v, prototype, propname, dtype, dt_array, i);
             }
@@ -206,12 +208,13 @@ namespace structpp {
     class Struct {
     private:
         std::string name;
+        StructClass clazz;
         varray<uint8_t> data;
         
         Struct(size_t len);
         
     protected:
-        Struct(std::string name);
+        Struct(std::string name, StructClass clazz);
         
     public:
         static Struct *instance(int len) {
@@ -224,13 +227,18 @@ namespace structpp {
             return this->name;
         }
         
-        virtual size_t size(void);
+        inline StructClass struct_class(void) {
+            return this->clazz;
+        }
+        
+        virtual size_t calcsize(void);
         virtual void print(std::ostream &os);
         
         virtual void write(StructEncoder &encoder);
         virtual void read(StructDecoder &decoder);
         
         virtual void encode(StructEncoder &encoder);
+        virtual void decode(StructDecoder &decoder);
     };
     
     class TextStructEncoder : public StructEncoder {
@@ -244,9 +252,9 @@ namespace structpp {
     public:
         TextStructEncoder(std::ostream *output);
         
-        virtual void begin_write_struct(const std::string prototype, const std::string propname) override;
-        virtual void end_write_struct(const std::string prototype, const std::string propname) override;
-        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, int index) override;
+        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
         virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
         virtual void begin_write_array(size_t len, const std::string prototype, const std::string propname) override;
         virtual void end_write_array(size_t len, const std::string prototype, const std::string propname) override;
@@ -257,6 +265,8 @@ namespace structpp {
     class BinaryStructEncoder : public StructEncoder {
     private:
         std::ostream *output;
+        uint8_t bits8;
+        int index;
         
         int put_bytes(const void *ptr, int start, int len);
         
@@ -267,15 +277,13 @@ namespace structpp {
     public:
         BinaryStructEncoder(std::ostream *output);
         
-        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, int index) override;
-        virtual void write_string(void *pa, const std::string prototype, const std::string propname) override {
-            varray<char> *va = (varray<char> *) pa;
-            put_bytes(va->array(), 0, (int) va->bytes());
-        }
+        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
+        virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) override;
+        virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
     };
     
 } /* namespace structpp */
 
 #endif /* __struct_hpp__ */
-
-

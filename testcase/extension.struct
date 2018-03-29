@@ -74,6 +74,6 @@ bitfield Property {
 
 bitfield ExtendProperty{
 	layerType: 3;
-	decimalCount: 4;
-	reserved: 17;
+	decimalCount: 6;
+	reserved: 7;
 }

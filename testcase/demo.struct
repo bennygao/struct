@@ -55,6 +55,9 @@ struct Shelf {
 
     // byte数组
     byte[26] frame;
+
+    // 礼品
+    Gift gift;
 }
 
 // 礼品
