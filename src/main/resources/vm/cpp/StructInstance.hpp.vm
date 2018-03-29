@@ -61,6 +61,7 @@ public:
 		return new ${struct.className}();
 	}
 
+    virtual ~${struct.className}();
 	virtual size_t size(void) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 

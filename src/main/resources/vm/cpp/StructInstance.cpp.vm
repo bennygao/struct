@@ -180,3 +180,19 @@ void ${struct.className}::write(structpp::StructEncoder &encoder)
 
 #end
 }
+
+${struct.className}::~${struct.className}()
+{
+#foreach ($field in $struct.fields)
+    #if ($field.type.isStruct())## Struct
+        #if ($field.type.hasArray())
+    for (int i = 0; i < this->${field.name}.size(); ++i) {
+        delete this->${field.name}[i];
+    }
+        #else
+    delete this->${field.name};
+        #end
+
+    #end
+#end
+}

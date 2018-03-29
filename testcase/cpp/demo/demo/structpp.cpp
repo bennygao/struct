@@ -172,9 +172,9 @@ Struct::Struct(std::string name)
     this->name = name;
 }
 
-Struct::~Struct(void)
+Struct::~Struct()
 {
-    
+
 }
 
 size_t Struct::size(void)
@@ -255,9 +255,6 @@ TextStructEncoder::TextStructEncoder(std::ostream *output)
 void TextStructEncoder::begin_write_struct(const std::string prototype, const std::string propname)
 {
     indent();
-//    if (propname != "") {
-//        *output << propname << " = ";
-//    }
     *output << prototype << ' ' << propname << " = {" << std::endl;
     ++level;
 }

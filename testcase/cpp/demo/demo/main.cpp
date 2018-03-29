@@ -23,5 +23,7 @@ int main(int argc, const char * argv[]) {
     BinaryStructEncoder encoder(&ss);
     shelf->encode(encoder);
     cout << ss.tellp() << endl;
+    
+    delete shelf;
     return 0;
 }

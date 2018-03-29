@@ -218,7 +218,7 @@ namespace structpp {
             return new Struct(len);
         }
         
-        ~Struct(void);
+        virtual ~Struct();
 
         inline std::string& struct_name(void) {
             return this->name;
@@ -275,6 +275,7 @@ namespace structpp {
     };
     
 } /* namespace structpp */
+
 #endif /* __struct_hpp__ */
 
 

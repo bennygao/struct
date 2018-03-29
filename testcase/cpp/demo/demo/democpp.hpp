@@ -23,6 +23,7 @@ public:
 		return new AGeneric();
 	}
 
+    virtual ~AGeneric();
 	virtual size_t size(void) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 
@@ -44,6 +45,7 @@ public:
 		return new Shelf();
 	}
 
+    virtual ~Shelf();
 	virtual size_t size(void) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 
@@ -85,6 +87,7 @@ public:
 		return new Goods();
 	}
 
+    virtual ~Goods();
 	virtual size_t size(void) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 
@@ -118,6 +121,7 @@ public:
 		return new Gift();
 	}
 
+    virtual ~Gift();
 	virtual size_t size(void) override;
 	virtual void write(structpp::StructEncoder &encoder) override;
 

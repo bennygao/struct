@@ -34,6 +34,11 @@ void AGeneric::write(structpp::StructEncoder &encoder)
 
 }
 
+AGeneric::~AGeneric()
+{
+    std::cerr << "destroy AGeneric" << std::endl;
+}
+
 ///////////////////////////////////////////////////////////////
 // struct Shelf
 //
@@ -120,6 +125,25 @@ void Shelf::write(structpp::StructEncoder &encoder)
 
 }
 
+Shelf::~Shelf()
+{
+    std::cerr << "destroy Shelf" << std::endl;
+    for (int i = 0; i < this->displayedGoods.size(); ++i) {
+        delete this->displayedGoods[i];
+    }
+
+    for (int i = 0; i < this->goodsList.size(); ++i) {
+        delete this->goodsList[i];
+    }
+
+    for (int i = 0; i < this->goodsArray.size(); ++i) {
+        delete this->goodsArray[i];
+    }
+
+    delete this->gift;
+
+}
+
 ///////////////////////////////////////////////////////////////
 // struct Goods
 //
@@ -184,6 +208,13 @@ void Goods::write(structpp::StructEncoder &encoder)
 
 }
 
+Goods::~Goods()
+{
+    std::cerr << "destroy Goods" << std::endl;
+    delete this->generic;
+
+}
+
 ///////////////////////////////////////////////////////////////
 // struct Gift
 //
@@ -216,5 +247,12 @@ void Gift::write(structpp::StructEncoder &encoder)
     encoder.write_basic(&this->id, "int", "id", dt_int, dt_none, 0);
 
     encoder.write_struct(this->goods, "Goods", "goods");
+
+}
+
+Gift::~Gift()
+{
+    std::cerr << "destroy Gift" << std::endl;
+    delete this->goods;
 
 }
