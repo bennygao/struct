@@ -120,6 +120,7 @@ ${struct.className}::${struct.className}(void) : Struct("${struct.className}", s
 
 ${struct.className}::~${struct.className}()
 {
+    std::cerr << "destroy ${struct.className}" << std::endl;
 #foreach ($field in $struct.fields)
     #if ($field.type.isStruct())## Struct
         #if ($field.type.hasArray())
@@ -199,5 +200,32 @@ void ${struct.className}::write(structpp::StructEncoder &encoder)
 
 void ${struct.className}::read(structpp::StructDecoder &decoder)
 {
+#if ($struct.decodable)
+    #foreach ($field in $struct.fields)
+        #if ($field.type.isBasic())
+            #if ($field.type.hasArray())
+                #if ($field.type.array.identifier)
+    if (${field.type.arraySize} < 0) {
+        throw std::invalid_argument("array size identifier cannot be negative");
+    }
+                #end
+    decoder.read_array(&this->${field.name}, $dataTypeEnum[${field.type.name}], (size_t) ${field.type.arraySize});
+            #else
+    decoder.read_basic(&this->${field.name}, $dataTypeEnum[${field.type.name}]);
+            #end
+        #elseif ($field.type.isString())
+    decoder.read_string(&this->${field.name});
+        #else
+            #if ($field.type.hasArray())
+    decoder.read_vector(&this->${field.name}, "${field.type.name}", ${field.type.arraySize});
+            #else
+    decoder.read_struct(this->${field.name});
+            #end
+        #end
+
+    #end
+#else
+    throw std::invalid_argument("cannot decode unknown size array");
+#end
 }
 

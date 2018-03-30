@@ -55,6 +55,7 @@ namespace structpp {
         }
         
         ~varray() {
+            std::cerr << "destroy varray" << std::endl;
             clear();
         }
         
@@ -88,6 +89,18 @@ namespace structpp {
                     delete[] m_array;
                 }
             }
+        }
+        
+        void print(std::ostream &output) {
+            uint8_t *byteptr = (uint8_t *) m_array;
+            output << std::dec << bytes() << '[';
+            for (size_t i = 0; i < bytes(); ++i) {
+                if (i > 0) {
+                    output << ' ';
+                }
+                output << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (uint32_t) byteptr[i];
+            }
+            output << ']';
         }
         
         size_t size() {
@@ -153,13 +166,19 @@ namespace structpp {
         StructDecoder(StructFactory *factory);
         
         virtual void read_basic(void *pp, DataType dtype) = 0;
-        virtual void read_struct(Struct *s);
+        virtual void read_string(void *pp) = 0;
+        virtual void read_bitfield(uint32_t *pp, int nbits) = 0;
         virtual void read_vector(void *pv, const std::string sname, size_t num);
         virtual void read_array(void *pa, DataType dtype, size_t num);
         
+        virtual void begin_read_struct(void) = 0;
+        virtual void end_read_struct(void) = 0;
+        virtual void read_struct(Struct *s);
+        
         template<typename T> void read_array_elements(varray<T> *va, DataType dtype, size_t num) {
+            va->resize(num);
             T value;
-            for (size_t i = 0; i < num; ++i) {
+            for (size_t i = 0; i < va->size(); ++i) {
                 read_basic(&value, dtype);
                 (*va)[i] = value;
             }
@@ -169,6 +188,8 @@ namespace structpp {
     class BinaryStructDecoder : public StructDecoder {
     private:
         std::istream *input;
+        uint8_t bits8;
+        int index;
         
         int get_bytes(const void *ptr, int start, int len);
         
@@ -182,12 +203,16 @@ namespace structpp {
         BinaryStructDecoder(std::istream *input, StructFactory *factory);
         
         virtual void read_basic(void *pp, DataType dtype) override;
+        virtual void read_string(void *pp) override;
+        virtual void read_bitfield(uint32_t *pp, int nbits) override;
+        virtual void begin_read_struct(void) override;
+        virtual void end_read_struct(void) override;
     };
     
     class StructEncoder : public StructIO {
     public:
         StructEncoder(void);
-        
+
         virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
         virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
         virtual void write_struct(Struct *pp, const std::string prototype, const std::string propname);
@@ -246,11 +271,13 @@ namespace structpp {
         
         virtual size_t calcsize(void);
         virtual void print(std::ostream &os);
-        
         virtual void write(StructEncoder &encoder);
         virtual void read(StructDecoder &decoder);
         
+        virtual void encode(std::ostream &output);
         virtual void encode(StructEncoder &encoder);
+        
+        virtual void decode(std::istream &input, StructFactory &factory);
         virtual void decode(StructDecoder &decoder);
     };
     

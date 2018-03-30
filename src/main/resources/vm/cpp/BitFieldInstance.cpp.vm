@@ -44,6 +44,9 @@ size_t ${struct.className}::calcsize(void)
 
 void ${struct.className}::read(structpp::StructDecoder &decoder)
 {
+#foreach ($field in $struct.fields)
+    decoder.read_bitfield(&this->${field.name}, ${field.type.arraySize});
+#end
 }
 
 void ${struct.className}::write(structpp::StructEncoder &encoder)

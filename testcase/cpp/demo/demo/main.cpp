@@ -7,23 +7,21 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "structpp.hpp"
-#include "democpp.hpp"
+#include "demo.hpp"
 
 using namespace structpp;
 using namespace demo;
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+    ifstream input("/Users/gaobo/Desktop/Hanshows/struct/testcase/data.bin");
     Shelf *shelf = Shelf::instance();
-    cout << shelf->calcsize() << endl;
+    DemoStructFactory factory;
+    shelf->decode(input, factory);
+    cout << "size=" << shelf->calcsize() << " tellg=" << input.tellg() << endl;
     shelf->print(cout);
-    
-    stringstream ss;
-    BinaryStructEncoder encoder(&ss);
-    shelf->encode(encoder);
-    cout << ss.tellp() << endl;
-    
     delete shelf;
     return 0;
 }

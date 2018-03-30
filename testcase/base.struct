@@ -1,41 +1,44 @@
 // 演示基本数据类型
-struct Base {
+struct Goods {
+    // 整型
+    int id = 1;
+
+    // SKU
+    string[16] sku = "0123456789ABCDEF";
+
     // 字符串类型,长度16字节。
-    string[16] stringValue = "Hello World!";
+    string[16] name = "小苹果";
 
     // 字节(byte)类型
-    uint8 byteValue = 0;
+    uint8 nfc = 0;
 
     // uint8数组
-    uint8[4] uint8Array;
+    uint8[4] nfcID;
 
     // 短整型
-    short shortValue = 1;
+    short weight = 1;
 
     // uint16
-    uint16 uint16Value = 1;
-
-    // 整型
-    int intValue = 2;
+    uint16 count = 1;
 
     // uint32
-    uint32 uint32Value = 2;
+    uint32 gbcode = 2;
 
     // 长整型
-    long longValue = 3;
+    long productDate = 3;
 
     // 浮点数
-    float floatValue = 1.11;
+    float unitPrice = 1.11;
 
     // 双精度浮点数
-    double doubleValue = 3.1415926;
+    double netPrice = 3.1415926;
 
     // 定长整数数组
-    int[5] fixedArray;
+    int[5] properties;
 
     // 变长数据长度变量
     int num;
 
     // 变长数组
-    int[num] data;
+    int[num] attach;
 }

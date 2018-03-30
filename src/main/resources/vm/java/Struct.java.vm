@@ -66,26 +66,15 @@ public class Struct {
     }
 
     public void writeString(String value, int len, DataOutput dos) throws IOException {
-        int strlen = isEmpty(value) ? 0 : value.length();
-        int wlen = strlen < len ? strlen : len;
-        int diff = len - wlen;
-
-        if (wlen > 0) {
-            byte[] bytes = value.getBytes();
-            dos.write(bytes, 0, wlen);
+        if (isEmpty(value)) {
+            return;
         }
 
-        if (diff > 0) {
-            byte[] buf = new byte[64];
-            Arrays.fill(buf, (byte) 0);
-            int cnt = diff / buf.length;
-            int mod = diff % buf.length;
-            for (int i = 0; i < cnt; ++i) {
-                dos.write(buf);
-            }
-            if (mod > 0) {
-                dos.write(buf, 0, mod);
-            }
+        byte[] bytes = value.getBytes();
+        int written = Math.min(bytes.length, len);
+        dos.write(bytes, 0, written);
+        for (int i = written; i < len; ++i) {
+            dos.write(0);
         }
     }
 
