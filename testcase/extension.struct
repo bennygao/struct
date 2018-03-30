@@ -6,8 +6,8 @@
 // 位0-3 颜色透明度
 // 位4-7 颜色值
 bitfield Color {
-    transparency:4; // 透明度, 0为不透明, 15为全透明。
-    color:4; // 颜色值
+    transparency:4 = 1; // 透明度, 0为不透明, 15为全透明。
+    color:4 = 8; // 颜色值
 }
 
 // 图层

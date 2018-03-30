@@ -64,6 +64,7 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
         Template footerTemplate = Velocity.getTemplate("vm/cpp/HppFooter.vm");
         footerTemplate.merge(vcSummary, writer);
         writer.close();
+        System.out.println("OK");
     }
 
     private void generateCpp(GeneratorContext ctx, Collection<Struct> allStructs) throws Exception {
@@ -112,6 +113,7 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
         Template footerTemplate = Velocity.getTemplate("vm/cpp/CppFooter.vm");
         footerTemplate.merge(vcSummary, writer);
         writer.close();
+        System.out.println("OK");
     }
 
     @Override

@@ -119,8 +119,8 @@ void Base::read(structpp::StructDecoder &decoder)
 // 位4-7 颜色值
 Color::Color(void) : Struct("Color", sc_bitfield)
 {
-    this->transparency = 0;
-    this->color = 0;
+    this->transparency = 1;
+    this->color = 8;
 }
 
 Color::~Color()

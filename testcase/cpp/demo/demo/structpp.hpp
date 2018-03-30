@@ -70,9 +70,22 @@ namespace structpp {
         
         void resize(size_t size) {
             if (m_size != size) {
-                clear();
+                T* current = m_array;
+                size_t current_size = m_size;
+                
                 if ((m_size = size) > 0) {
                     m_array = new T[size];
+                    memset(m_array, 0, sizeof(T) * m_size);
+                } else {
+                    m_array = NULL;
+                }
+                
+                if (current != NULL && m_array != NULL) {
+                    memcpy(m_array, current, (current_size < m_size ? current_size : m_size) * sizeof(T));
+                }
+                
+                if (current != NULL) {
+                    delete[] m_array;
                 }
             }
         }
@@ -255,6 +268,7 @@ namespace structpp {
         virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
         virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
         virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
+        virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) override;
         virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
         virtual void begin_write_array(size_t len, const std::string prototype, const std::string propname) override;
         virtual void end_write_array(size_t len, const std::string prototype, const std::string propname) override;

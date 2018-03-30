@@ -222,14 +222,14 @@ void TextStructEncoder::tostr(DataType dtype, void *pp, std::ostream &ss)
 {
     switch (dtype) {
         case dt_byte:
-            ss << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << *(CAST_PTR(uint8_t, pp));
+            ss << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << (uint32_t) *(CAST_PTR(uint8_t, pp));
             break;
         case dt_boolean:
             ss << ((*CAST_PTR(bool, pp)) ? "true" : "false");
             break;
         case dt_short:
             ss << "(DEC:" << std::dec << *CAST_PTR(int16_t, pp)
-            << " HEX:" << std::uppercase << std::setw(4) << std::setfill('0') << *CAST_PTR(int16_t, pp)
+            << " HEX:" << std::uppercase << std::setw(4) << std::setfill('0') << (uint32_t) *CAST_PTR(int16_t, pp)
             << ")";
             break;
         case dt_int:
@@ -271,6 +271,18 @@ void TextStructEncoder::end_write_struct(Struct *pp, const std::string prototype
     --level;
     indent();
     *output << "}" << std::endl;
+}
+
+void TextStructEncoder::write_bitfield(uint32_t fv, int nbits, const std::string propname)
+{
+    indent();
+    *output << propname << ':' << nbits << " = BIN:";
+    uint32_t mask = 0x01 << (nbits - 1);
+    for (int i = 0; i < nbits; ++i) {
+        *output << ((mask & fv) != 0 ? '1' : '0');
+        mask >>= 1;
+    }
+    *output << std::endl;
 }
 
 void TextStructEncoder::write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index)

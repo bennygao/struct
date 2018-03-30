@@ -383,7 +383,7 @@ public class Struct {
     }
 
     public class TextStructFormat {
-        private final static String IDENT = "    ";
+        private final static String INDENT = "    ";
         private PrintStream printStream;
         private StringBuilder stringBuilder;
 
@@ -443,12 +443,12 @@ public class Struct {
         }
 
         public void endStruct(String structName, int level) {
-            printStream.print(getIdent(level) + "}");
+            printStream.print(getIndent(level) + "}");
         }
 
         public void write(String fieldName, int level, Object obj, String typeName) {
             String value = getValueString(obj, typeName);
-            printStream.println(getIdent(level) + fieldName + " = " + value + ";");
+            printStream.println(getIndent(level) + fieldName + " = " + value + ";");
         }
 
         public void writeString(String fieldName, int level, String str, int len) {
@@ -460,11 +460,11 @@ public class Struct {
             } else {
                 value = str;
             }
-            printStream.println(getIdent(level) + fieldName + " = " + "\"" + value + "\";");
+            printStream.println(getIndent(level) + fieldName + " = " + "\"" + value + "\";");
         }
 
         public void writeStruct(String fieldName, Struct struct, int level) {
-            printStream.print(getIdent(level) + fieldName + " = ");
+            printStream.print(getIndent(level) + fieldName + " = ");
             if (struct == null) {
                 printStream.println("{}");
             } else {
@@ -474,7 +474,7 @@ public class Struct {
         }
 
         public void writeArray(String fieldName, int level, Object array, String typeName) {
-            printStream.print(getIdent(level) + fieldName + " = ");
+            printStream.print(getIndent(level) + fieldName + " = ");
             if (array == null) {
                 printStream.println("null");
             } else {
@@ -495,7 +495,7 @@ public class Struct {
         }
 
         public void writeList(String fieldName, int level, List<? extends Struct> list) {
-            printStream.print(getIdent(level) + fieldName + " = ");
+            printStream.print(getIndent(level) + fieldName + " = ");
             if (list == null) {
                 printStream.println("null;");
             } else if (list.size() == 0) {
@@ -507,18 +507,18 @@ public class Struct {
                     if (count > 0) {
                         printStream.println(", ");
                     }
-                    printStream.print(getIdent(level + 1));
+                    printStream.print(getIndent(level + 1));
                     printStream.print(String.format("[%d]:", count));
                     struct.format(this, level + 1);
                     ++ count;
                 }
                 printStream.println();
-                printStream.println(getIdent(level) + "];");
+                printStream.println(getIndent(level) + "];");
             }
         }
 
         public void writeStructArray(String fieldName, int level, Object array) {
-            printStream.print(getIdent(level) + fieldName + " = ");
+            printStream.print(getIndent(level) + fieldName + " = ");
             if (array == null) {
                 printStream.println("null");
             } else {
@@ -532,19 +532,19 @@ public class Struct {
                         if (i > 0) {
                             printStream.println(", ");
                         }
-                        printStream.print(getIdent(level + 1));
+                        printStream.print(getIndent(level + 1));
                         struct = (Struct) Array.get(array, i);
                         printStream.print(String.format("[%d]:", i));
                         struct.format(this, level + 1);
                     }
                     printStream.println();
-                    printStream.println(getIdent(level) + "];");
+                    printStream.println(getIndent(level) + "];");
                 }
             }
         }
 
         public void writeBits(String fieldName, int value, int level, int bitsNum) {
-            printStream.print(getIdent(level) + fieldName + ":" + bitsNum + " = BIN:");
+            printStream.print(getIndent(level) + fieldName + ":" + bitsNum + " = BIN:");
             int mask = 0x01 << (bitsNum - 1);
             for (int i = 0; i < bitsNum; ++i) {
                 printStream.print((mask & value) != 0 ? '1' : '0');
@@ -553,10 +553,10 @@ public class Struct {
             printStream.println(";");
         }
 
-        private String getIdent(int level) {
+        private String getIndent(int level) {
             stringBuilder.setLength(0);
             for (int i = 0; i < level; ++i) {
-                stringBuilder.append(IDENT);
+                stringBuilder.append(INDENT);
             }
             return stringBuilder.toString();
         }
