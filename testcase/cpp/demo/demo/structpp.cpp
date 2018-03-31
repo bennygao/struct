@@ -104,7 +104,7 @@ int BinaryStructDecoder::get_bytes(const void *ptr, int start, int len)
 {
     uint8_t *byte_ptr = (uint8_t *) ptr;
     input->read((char*) (byte_ptr + start), len);
-    reverse_byte_order(byte_ptr, 0, len);
+    reverse_byte_order(byte_ptr, start, len);
     return len;
 }
 
@@ -458,7 +458,7 @@ void TextStructEncoder::end_write_vector(void *pv, const std::string prototype, 
 int BinaryStructEncoder::put_bytes(const void *ptr, int start, int len)
 {
     uint8_t *byte_ptr = (uint8_t *) ptr;
-    reverse_byte_order(byte_ptr, 0, len);
+    reverse_byte_order(byte_ptr, start, len);
     output->write((char*) (byte_ptr + start), len);
     return len;
 }
@@ -535,35 +535,5 @@ void BinaryStructEncoder::write_bitfield(uint32_t fv, int nbits, const std::stri
             this->bits8 = 0;
             this->index = 0;
         }
-    }
-}
-
-void BinaryStructEncoder::write_array(void *pa, const std::string prototype, const std::string propname, DataType dtype)
-{
-    switch (dtype) {
-        case dt_byte:
-            write_array_elements<uint8_t>((varray<uint8_t> *) pa, prototype, propname, dtype);
-            break;
-        case dt_boolean:
-            write_array_elements<bool>((varray<bool> *) pa, prototype, propname, dtype);
-            break;
-        case dt_short:
-            write_array_elements<uint16_t>((varray<uint16_t> *) pa, prototype, propname, dtype);
-            break;
-        case dt_int:
-            write_array_elements<uint32_t>((varray<uint32_t> *) pa, prototype, propname, dtype);
-            break;
-        case dt_long:
-            write_array_elements<uint64_t>((varray<uint64_t> *) pa, prototype, propname, dtype);
-            break;
-        case dt_float:
-            write_array_elements<float>((varray<float> *) pa, prototype, propname, dtype);
-            break;
-        case dt_double:
-            write_array_elements<double>((varray<double> *) pa, prototype, propname, dtype);
-            break;
-        default:
-            throw std::invalid_argument("unsupported data type of array element");
-            break;
     }
 }

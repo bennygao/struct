@@ -1,10 +1,5 @@
-//
 //  main.cpp
 //  demo
-//
-//  Created by 高波 on 2018/3/27.
-//  Copyright © 2018年 高波. All rights reserved.
-//
 
 #include <iostream>
 #include <sstream>
@@ -33,6 +28,15 @@ int main(int argc, const char * argv[]) {
     shelf->encode(ss);
     cout << "total:" << StructInstanceCounter::active_num() << endl;
     cout << StructInstanceCounter::tostr();
+    
+    ofstream output("/tmp/cpp.out", ios::binary | ios::trunc);
+    if (!output.is_open()) {
+        cerr << "open /tmp/cpp.out failed" << endl;
+        return -2;
+    }
+    shelf->encode(output);
+    output.close();
+    
     delete shelf;
     cout << StructInstanceCounter::tostr();
     return 0;

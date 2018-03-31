@@ -412,14 +412,6 @@ namespace structpp {
         virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
         virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) override;
         virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
-        virtual void write_array(void *pa, const std::string prototype, const std::string propname, DataType dtype) override;
-        
-        template<typename T> void write_array_elements(varray<T> *p, const std::string prototype, const std::string propname, DataType dtype) {
-            size_t len = p->bytes();
-            if (len > 0) {
-                output->write((char *) p->array(), len);
-            }
-        }
     };
     
 } /* namespace structpp */
