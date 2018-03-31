@@ -1,10 +1,21 @@
-//
-//  struct.hpp
-//  cppstruct
-//
-//  Created by 高波 on 2018/3/26.
-//  Copyright © 2018年 高波. All rights reserved.
-//
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 #ifndef __structpp_hpp__
 #define __structpp_hpp__
@@ -14,7 +25,12 @@
 #include <sstream>
 #include <vector>
 #include <typeinfo>
+#include <map>
+
 #include <string.h>
+#include <pthread.h>
+
+#define GENERIC_STRUCT_NAME "structpp::Struct"
 
 namespace structpp {
     typedef enum {
@@ -37,6 +53,82 @@ namespace structpp {
         sc_bitfield
     } StructClass;
     
+    class ReentrantLock {
+    private:
+        pthread_mutex_t mutex;
+        
+    public:
+        ReentrantLock(void) {
+            mutex = PTHREAD_MUTEX_INITIALIZER;
+            pthread_mutexattr_t mta;
+            pthread_mutexattr_init(&mta);
+            pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE); // Let same thread can lock repeatedly
+            pthread_mutex_init(&mutex, &mta);
+        }
+        
+        virtual ~ReentrantLock() {
+            pthread_mutex_destroy(&mutex);
+        }
+        
+        virtual void lock(void) {
+            pthread_mutex_lock(&mutex);
+        }
+        
+        virtual void unlock(void) {
+            pthread_mutex_unlock(&mutex);
+        }
+    };
+    
+    class StructInstanceCounter {
+    private:
+        static std::map<std::string, int> counter;
+        static ReentrantLock lock;
+        
+    public:
+        static void onStructConstructed(const std::string name) {
+            lock.lock();
+            std::map<std::string, int>::iterator iter = counter.find(name);
+            if (iter == counter.end()) {
+                counter.insert(std::pair<std::string, int>(name, 1));
+            } else {
+                iter->second += 1;
+            }
+            lock.unlock();
+        }
+        
+        static void onStructDestructed(const std::string name) {
+            lock.lock();
+            std::map<std::string, int>::iterator iter = counter.find(name);
+            if (iter == counter.end()) {
+                counter.insert(std::pair<std::string, int>(name, 0));
+            } else {
+                iter->second -= 1;
+            }
+            lock.unlock();
+        }
+        
+        static size_t active_num(void) {
+            lock.lock();
+            size_t total = 0;
+            for (std::map<std::string, int>::iterator iter = counter.begin(); iter != counter.end(); ++iter) {
+                total += iter->second;
+            }
+            lock.unlock();
+            return total;
+        }
+        
+        static std::string tostr(void) {
+            lock.lock();
+            std::stringstream ss;
+            for (std::map<std::string, int>::iterator iter = counter.begin(); iter != counter.end(); ++iter) {
+                ss << iter->first << " : " << iter->second << std::endl;
+            }
+            std::string str = ss.str();
+            lock.unlock();
+            return str;
+        }
+    };
+    
     template<typename T> class varray {
     private:
         T* m_array;
@@ -50,13 +142,14 @@ namespace structpp {
         }
         
         varray(void) {
+            StructInstanceCounter::onStructConstructed("structpp::varray");
             m_array = NULL;
             m_size = 0;
         }
         
         ~varray() {
-            std::cerr << "destroy varray" << std::endl;
             clear();
+            StructInstanceCounter::onStructDestructed("structpp::varray");
         }
         
         T& operator[](size_t index) {
@@ -213,9 +306,9 @@ namespace structpp {
     public:
         StructEncoder(void);
 
-        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
-        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) {}
-        virtual void write_struct(Struct *pp, const std::string prototype, const std::string propname);
+        virtual void begin_write_struct(Struct *pp, const std::string propname) {}
+        virtual void end_write_struct(Struct *pp, const std::string propname) {}
+        virtual void write_struct(Struct *pp, const std::string propname);
         
         virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) = 0;
         
@@ -249,15 +342,11 @@ namespace structpp {
         StructClass clazz;
         varray<uint8_t> data;
         
-        Struct(size_t len);
-        
     protected:
         Struct(std::string name, StructClass clazz);
         
     public:
-        static Struct *instance(int len) {
-            return new Struct(len);
-        }
+        Struct(size_t len);
         
         virtual ~Struct();
 
@@ -292,8 +381,8 @@ namespace structpp {
     public:
         TextStructEncoder(std::ostream *output);
         
-        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
-        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void begin_write_struct(Struct *pp, const std::string propname) override;
+        virtual void end_write_struct(Struct *pp, const std::string propname) override;
         virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
         virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) override;
         virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
@@ -318,11 +407,19 @@ namespace structpp {
     public:
         BinaryStructEncoder(std::ostream *output);
         
-        virtual void begin_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
-        virtual void end_write_struct(Struct *pp, const std::string prototype, const std::string propname) override;
+        virtual void begin_write_struct(Struct *pp, const std::string propname) override;
+        virtual void end_write_struct(Struct *pp, const std::string propname) override;
         virtual void write_basic(void *pp, const std::string prototype, const std::string propname, DataType dtype, DataType ctype, size_t index) override;
         virtual void write_bitfield(uint32_t fv, int nbits, const std::string propname) override;
         virtual void write_string(void *pa, const std::string prototype, const std::string propname) override;
+        virtual void write_array(void *pa, const std::string prototype, const std::string propname, DataType dtype) override;
+        
+        template<typename T> void write_array_elements(varray<T> *p, const std::string prototype, const std::string propname, DataType dtype) {
+            size_t len = p->bytes();
+            if (len > 0) {
+                output->write((char *) p->array(), len);
+            }
+        }
     };
     
 } /* namespace structpp */

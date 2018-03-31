@@ -1,65 +1,15 @@
-#set ($typeOfCpp = {
-    "char"      : "char",
-	"byte"		: "uint8_t",
-	"boolean"	: "bool",
-	"int8"      : "int8_t",
-	"uint8"     : "uint8_t",
-	"short"		: "int16_t",
-	"int16"     : "int16_t",
-	"uint16"    : "uint16_t",
-	"int"		: "int32_t",
-	"int32"     : "int32_t",
-	"uint32"    : "uint32_t",
-	"long"		: "int64_t",
-	"int64"		: "int64_t",
-	"uint64"	: "uint64_t",
-	"float"		: "float",
-	"double"	: "double"
-})
-## 宏: 生成field的类型
-#macro (declareType $field)
-    #if ($field.type.isBasic())
-        #if ($field.type.hasArray() && !$field.type.isString())
-structpp::varray<$typeOfCpp[${field.type.name}]>##
-        #else
-$typeOfCpp[${field.type.name}]##
-        #end
-    #elseif ($field.type.isString())
-structpp::varray<char>##
-    #else
-        #if ($field.type.hasArray())
-std::vector<${field.type.typeName} *>##
-        #else
-${field.type.typeName}*##
-        #end
-    #end
-#end
-##
-## 宏: 生成属性定义
-#macro (declareField $field)
-#if ($field.haveComments())
-#foreach ($line in $field.comments)
-    // $line
-#end
-#end
-    ##
-    #declareType($field) ${field.name}; // prototype: ${field.type.prototype}
-#end
-##
+#parse("vm/cpp/macro.vm")
 
 ///////////////////////////////////////////////////////////////
 // struct ${structName}
 #if ($struct.haveComments())
-//
 #foreach ($line in $struct.comments)
 // ${line}
 #end
 #end
 class ${struct.className} : public structpp::Struct {
 public:
-    static ${struct.className} *instance(void) {
-		return new ${struct.className}();
-	}
+    ${struct.className}(void);
 
     virtual ~${struct.className}();
 	virtual size_t calcsize(void) override;
@@ -69,7 +19,4 @@ public:
 #foreach ($field in $struct.fields)
 #declareField($field)
 #end
-
-private:
-    ${struct.className}(void);
 };

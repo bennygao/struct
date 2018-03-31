@@ -16,7 +16,7 @@ public:
         int id = map.at(sname);
         switch (id) {
 #foreach ($struct in $allStructs)
-            case ${struct.uid}: return ${struct.name}::instance();
+            case ${struct.uid}: return new ${struct.name}();
 #end
             default:
                 return NULL;

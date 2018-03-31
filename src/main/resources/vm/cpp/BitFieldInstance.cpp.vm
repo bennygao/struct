@@ -1,27 +1,16 @@
-## 宏: 生成field的缺省值
-#macro (defaultValueOfBits $field)
-    #if ($field.defaultValue)
-${field.defaultValue.value}##
-    #else
-0##
-    #end
-#end
-## 宏: 为field赋初值
-#macro (initBits $field)
-    this->${field.name} = #defaultValueOfBits($field);
-#end
-##
+#parse("vm/cpp/macro.vm")
 
 ///////////////////////////////////////////////////////////////
 // bitfield ${structName}
 #if ($struct.haveComments())
-//
 #foreach ($line in $struct.comments)
 // ${line}
 #end
 #end
 ${struct.className}::${struct.className}(void) : Struct("${struct.className}", sc_bitfield)
 {
+    StructInstanceCounter::onStructConstructed("${package}::${struct.className}");
+
 #foreach ($field in $struct.fields)
 #initBits($field)
 #end
@@ -29,6 +18,7 @@ ${struct.className}::${struct.className}(void) : Struct("${struct.className}", s
 
 ${struct.className}::~${struct.className}()
 {
+    StructInstanceCounter::onStructDestructed("${package}::${struct.className}");
 }
 
 size_t ${struct.className}::calcsize(void)

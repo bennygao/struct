@@ -1,9 +1,9 @@
 package demo;
 
-import demo.test.Color;
-import demo.test.ExtendProperty;
-import demo.test.Goods;
-import demo.test.Shelf;
+import demo.struct.Color;
+import demo.struct.ExtendProperty;
+import demo.struct.Goods;
+import demo.struct.Shelf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;

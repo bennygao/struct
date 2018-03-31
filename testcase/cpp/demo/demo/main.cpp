@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include "structpp.hpp"
 #include "demo.hpp"
@@ -16,12 +17,23 @@ using namespace demo;
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    ifstream input("/Users/gaobo/Desktop/Hanshows/struct/testcase/data.bin");
-    Shelf *shelf = Shelf::instance();
+    ifstream input("/tmp/data.bin");
+    if (!input.is_open()) {
+        cerr << "/tmp/data.bin not existed" << endl;
+        return -1;
+    }
+    
+    Shelf *shelf = new Shelf();
     DemoStructFactory factory;
     shelf->decode(input, factory);
     cout << "size=" << shelf->calcsize() << " tellg=" << input.tellg() << endl;
     shelf->print(cout);
+    
+    stringstream ss;
+    shelf->encode(ss);
+    cout << "total:" << StructInstanceCounter::active_num() << endl;
+    cout << StructInstanceCounter::tostr();
     delete shelf;
+    cout << StructInstanceCounter::tostr();
     return 0;
 }

@@ -1,3 +1,5 @@
+#parse("vm/license.vm")
+
 #ifndef __struct_${package}__
 \#define __struct_${package}__
 
@@ -12,4 +14,3 @@ namespace ${package} {
 #foreach ($struct in $allStructs)
 class ${struct.name};
 #end
-

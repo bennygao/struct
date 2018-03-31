@@ -1,17 +1,15 @@
+#parse("vm/cpp/macro.vm")
 
 ///////////////////////////////////////////////////////////////
 // bitfield ${structName}
 #if ($struct.haveComments())
-//
 #foreach ($line in $struct.comments)
 // ${line}
 #end
 #end
 class ${struct.className} : public structpp::Struct {
 public:
-    static ${struct.className} *instance(void) {
-		return new ${struct.className}();
-	}
+    ${struct.className}(void);
 
     virtual ~${struct.className}();
 	virtual size_t calcsize(void) override;
@@ -21,7 +19,4 @@ public:
 #foreach ($field in $struct.fields)
     uint32_t ${field.name}; // ${field.type.arraySize} bits
 #end
-
-private:
-    ${struct.className}(void);
 };

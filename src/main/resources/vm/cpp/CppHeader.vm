@@ -1,4 +1,6 @@
-\#include "${include}"
+#parse("vm/license.vm")
+
+\#include "${baseName}.hpp"
 
 using namespace structpp;
 using namespace ${package};
