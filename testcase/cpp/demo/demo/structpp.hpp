@@ -239,14 +239,32 @@ namespace structpp {
             big_endian = ((uint8_t *) &v)[0] == 0x01 ? true : false;
         }
         
+        void convert_byte_order(uint8_t *ptr, int start, int len) {
+            if (big_endian) {
+                reverse_byte_order(ptr, start, len);
+            }
+        }
+
         void reverse_byte_order(uint8_t *ptr, int start, int len) {
-            if (len > 1 && big_endian) {
+            if (len > 1) {
                 uint8_t v;
                 for (int i = 0, j = len - 1, half = len >> 1; i < half; ++i, --j) {
                     v = ptr[i + start];
                     ptr[i + start] = ptr[j + start];
                     ptr[j + start] = v;
                 }
+            }
+        }
+
+        void to_big_endian(uint8_t *ptr, int start, int len) {
+            if (!big_endian) {
+                reverse_byte_order(ptr, start, len);
+            }
+        }
+
+        void to_little_endian(uint8_t *ptr, int start, int len) {
+            if (big_endian) {
+                reverse_byte_order(ptr, start, len);
             }
         }
     };

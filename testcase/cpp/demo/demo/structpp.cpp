@@ -104,7 +104,7 @@ int BinaryStructDecoder::get_bytes(const void *ptr, int start, int len)
 {
     uint8_t *byte_ptr = (uint8_t *) ptr;
     input->read((char*) (byte_ptr + start), len);
-    reverse_byte_order(byte_ptr, start, len);
+    convert_byte_order(byte_ptr, start, len);
     return len;
 }
 
@@ -330,17 +330,17 @@ void TextStructEncoder::tostr(DataType dtype, void *pp, std::ostream &ss)
             break;
         case dt_short:
             ss << "(DEC:" << std::dec << *CAST_PTR(int16_t, pp)
-            << " HEX:" << std::uppercase << std::setw(4) << std::setfill('0') << (uint32_t) *CAST_PTR(int16_t, pp)
+            << " HEX:" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << (uint32_t) *CAST_PTR(int16_t, pp)
             << ")";
             break;
         case dt_int:
             ss << "(DEC:" << std::dec << *CAST_PTR(int32_t, pp)
-            << " HEX:" << std::uppercase << std::setw(8) << std::setfill('0') << *CAST_PTR(int32_t, pp)
+            << " HEX:" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << *CAST_PTR(int32_t, pp)
             << ")";
             break;
         case dt_long:
             ss << "(DEC:" << std::dec << *CAST_PTR(int64_t, pp)
-            << " HEX:" << std::uppercase << std::setw(16) << std::setfill('0') << *CAST_PTR(int64_t, pp)
+            << " HEX:" << std::hex << std::uppercase << std::setw(16) << std::setfill('0') << *CAST_PTR(int64_t, pp)
             << ")";
             break;
         case dt_float:
@@ -458,7 +458,7 @@ void TextStructEncoder::end_write_vector(void *pv, const std::string prototype, 
 int BinaryStructEncoder::put_bytes(const void *ptr, int start, int len)
 {
     uint8_t *byte_ptr = (uint8_t *) ptr;
-    reverse_byte_order(byte_ptr, start, len);
+    convert_byte_order(byte_ptr, start, len);
     output->write((char*) (byte_ptr + start), len);
     return len;
 }
@@ -537,3 +537,4 @@ void BinaryStructEncoder::write_bitfield(uint32_t fv, int nbits, const std::stri
         }
     }
 }
+
