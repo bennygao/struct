@@ -40,7 +40,6 @@ type
     | stringType array
     | structType array?
     | clazz array?
-    | genericType array?
     ;
 
 defaultValue
@@ -78,7 +77,6 @@ basicType
     | 'uint32'
     | 'long'
     | 'int64'
-    | 'uint64'
     | 'float'
     | 'double'
     ;
@@ -89,13 +87,6 @@ stringType
 
 structType
     : Identifier
-    ;
-
-/*
- * 基类Struct类型，Struct为关键字，同时必须以Struct(6)的方式指定字节长度。
- */
-genericType
-    : 'Struct' '(' DecimalLiteral ')'
     ;
 
 array

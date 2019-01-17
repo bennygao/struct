@@ -32,7 +32,7 @@ struct Shelf {
     byte[26] frame;
 
     // 基类Struct, 字节长度6
-    Struct(6) generic;
+    Struct generic;
 }
 
 // 礼品

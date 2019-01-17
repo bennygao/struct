@@ -36,12 +36,16 @@ struct Htpv4Group {
     uint8 rfPower;
     uint8 duration;
     uint8 slot;
-    uint16 eslNum;
-    byte[32] reserved;
     Htpv4Esl esls;
 }
 
+struct EslPacket {
+    byte[26] data;
+}
+
 struct Htpv4Esl {
+    uint16 eslNum;
+    byte[32] reserved;
     byte[4] masterId;
     uint8 channel;
     uint8 power;
@@ -68,13 +72,13 @@ struct Htpv4Esl {
             uint8 times;
             struct SleepEslIds {
                 byte[8] eslId;
-            }[] sleepEslIds;
+            }[sleepEslNum] sleepEslIds;
         }htpv4SleepEsl;
 
         uint16 subsessionPacketNum;
         uint16 packetNum;
         uint8 packetLen;
         byte[32] reserved;
-        Struct(26)[] packages;
-    }[] htpv4EslData;
+        EslPacket[packetNum] packets;
+    }[eslNum] htpv4EslData;
 }
