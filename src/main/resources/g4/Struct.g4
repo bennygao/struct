@@ -40,7 +40,7 @@ type
     | stringType array
     | structType array?
     | clazz array?
-    | genericType
+    | genericType array?
     ;
 
 defaultValue

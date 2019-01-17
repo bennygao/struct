@@ -22,10 +22,10 @@ public class VelocityCodeGenerator {
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.description",
                 "Velocity Classpath Resource Loader");
-//        props.setProperty("class.resource.loader.class",
-//                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         props.setProperty("class.resource.loader.class",
-                "cc.devfun.struct.compiler.codegenerator.StructuredGlobbingResourceLoader");
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+//        props.setProperty("class.resource.loader.class",
+//                "cc.devfun.struct.compiler.codegenerator.StructuredGlobbingResourceLoader");
         props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
         props.setProperty("runtime.log.invalid.references", "false");
 //                "org.apache.velocity.runtime.log.Log4JLogChute");

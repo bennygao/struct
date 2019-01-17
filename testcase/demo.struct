@@ -43,3 +43,14 @@ struct Gift {
     // 礼品赠送的商品
     Goods goods;
 }
+
+struct Array {
+    int len;
+    uint8[len] bytes;
+    int size;
+    byte[size] md5;
+    byte[16] fixed;
+    int num;
+    int[num] aaa;
+    int[16] bbb;
+}
