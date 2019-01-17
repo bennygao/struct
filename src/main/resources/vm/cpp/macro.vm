@@ -1,0 +1,164 @@
+#set ($defaultValueMap = {
+    "char"      : "'\0",
+	"byte"		: "(uint8_t) 0",
+	"boolean"	: "true",
+	"int8"      : "(int8_t) 0",
+	"uint8"     : "(uint8_t) 0",
+	"short"		: "(int16_t) 0",
+	"int16"     : "(int16_t) 0",
+	"uint16"    : "(uint16_t) 0",
+	"int"		: "(int32_t) 0",
+	"int32"     : "(int32_t) 0",
+	"uint32"    : "(uint32_t) 0",
+	"long"		: "(int64_t) 0",
+	"int64"		: "(int64_t) 0",
+	"uint64"	: "(uint64_t) 0",
+	"float"		: "(float) 0.00",
+	"double"	: "(double) 0.00"
+})
+#set ($typeSizeMap = {
+    "char"      : "1",
+	"byte"		: "1",
+	"boolean"	: "1",
+	"int8"      : "1",
+	"uint8"     : "1",
+	"short"		: "2",
+	"int16"     : "2",
+	"uint16"    : "2",
+	"int"		: "4",
+	"int32"     : "4",
+	"uint32"    : "4",
+	"long"		: "8",
+	"int64"		: "8",
+	"uint64"	: "8",
+	"float"		: "4",
+	"double"	: "8"
+})
+#set ($typeOfCpp = {
+    "char"      : "char",
+	"byte"		: "uint8_t",
+	"boolean"	: "bool",
+	"int8"      : "int8_t",
+	"uint8"     : "uint8_t",
+	"short"		: "int16_t",
+	"int16"     : "int16_t",
+	"uint16"    : "uint16_t",
+	"int"		: "int32_t",
+	"int32"     : "int32_t",
+	"uint32"    : "uint32_t",
+	"long"		: "int64_t",
+	"int64"		: "int64_t",
+	"uint64"	: "uint64_t",
+	"float"		: "float",
+	"double"	: "double"
+})
+#set ($dataTypeEnum = {
+    "string"    : "dt_string",
+	"byte"		: "dt_byte",
+	"boolean"	: "dt_boolean",
+	"int8"      : "dt_byte",
+	"uint8"     : "dt_byte",
+	"short"		: "dt_short",
+	"int16"     : "dt_short",
+	"uint16"    : "dt_short",
+	"int"		: "dt_int",
+	"int32"     : "dt_int",
+	"uint32"    : "dt_int",
+	"long"		: "dt_long",
+	"int64"		: "dt_long",
+	"uint64"	: "dt_long",
+	"float"		: "dt_float",
+	"double"	: "dt_double"
+})
+#set ($typeOfCpp = {
+    "char"      : "char",
+	"byte"		: "uint8_t",
+	"boolean"	: "bool",
+	"int8"      : "int8_t",
+	"uint8"     : "uint8_t",
+	"short"		: "int16_t",
+	"int16"     : "int16_t",
+	"uint16"    : "uint16_t",
+	"int"		: "int32_t",
+	"int32"     : "int32_t",
+	"uint32"    : "uint32_t",
+	"long"		: "int64_t",
+	"int64"		: "int64_t",
+	"uint64"	: "uint64_t",
+	"float"		: "float",
+	"double"	: "double"
+})
+## 宏: 为field赋初值
+#macro (initField $field)
+    // initialize ${field.name}
+    #if ($field.type.isBasic())## 基本类型
+        #if ($field.type.hasArray())## 数组
+            #if ($field.type.fixedLength)## 定长数组
+    this->${field.name}.resize(${field.type.arraySize});
+            #end
+        #else## 单个基本类型变量
+    this->$field.name = ${defaultValueMap[${field.type.name}]};
+        #end
+    #elseif ($field.type.isString())## 字符串类型
+    this->${field.name}.resize(${field.type.arraySize});
+        #if ($field.defaultValue)## 有预设定的初始值
+    this->$field.name = ${field.defaultValue.value};
+        #end
+    #else## struct类型
+        #if ($field.type.hasArray())## struct数组
+            #if ($field.type.isFixedLength())## 定长数组
+    for (int i = 0; i < ${field.type.arraySize}; ++i) {
+        this->${field.name}.push_back(new ${field.type.typeName}());
+    }
+            #end
+        #elseif ($field.type.typeName == "Struct")
+    this->${field.name} = new ${field.type.typeName}($field.type.len);
+        #else
+    this->${field.name} = new ${field.type.typeName}();
+        #end
+    #end
+#end
+##
+## 宏: 生成field的类型
+#macro (declareType $field)
+    #if ($field.type.isBasic())
+        #if ($field.type.hasArray() && !$field.type.isString())
+structpp::varray<$typeOfCpp[${field.type.name}]>##
+        #else
+$typeOfCpp[${field.type.name}]##
+        #end
+    #elseif ($field.type.isString())
+structpp::varray<char>##
+    #else
+        #if ($field.type.hasArray())
+std::vector<${field.type.typeName} *>##
+        #else
+${field.type.typeName}*##
+        #end
+    #end
+#end
+##
+## 宏: 生成属性定义
+#macro (declareField $field)
+#if ($field.haveComments())
+#foreach ($line in $field.comments)
+    // $line
+#end
+#end
+    ##
+    #declareType($field) ${field.name}; // prototype: ${field.type.prototype}
+#end
+##
+## 宏: 生成field的缺省值
+#macro (defaultValueOfBits $field)
+    #if ($field.defaultValue)
+${field.defaultValue.value}##
+    #else
+0##
+    #end
+#end
+## 宏: 为field赋初值
+#macro (initBits $field)
+    this->${field.name} = #defaultValueOfBits($field);
+#end
+##

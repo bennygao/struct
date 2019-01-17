@@ -1,5 +1,5 @@
 group 'cc.devfun'
-version = '1.1.6'
+version = '2.1.1'
 
 apply plugin: 'java'
 
@@ -40,4 +40,5 @@ dependencies {
     compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.7.0'
     compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.3'
     compile group: 'com.github.rjeschke', name: 'txtmark', version: '0.13'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 }

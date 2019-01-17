@@ -28,12 +28,7 @@ public class HtmlGenerator extends VelocityCodeGenerator implements
         Map<String, Struct> allStructs = ctx.getAllStructs();
         allStructs.remove("Struct");
         list.addAll(allStructs.values());
-        Collections.sort(list, new Comparator<Struct>() {
-            @Override
-            public int compare(Struct o1, Struct o2) {
-                return o1.getTypeName().compareTo(o2.getTypeName());
-            }
-        });
+        Collections.sort(list, Comparator.comparing(Struct::getTypeName));
         vc.put("allStructs", list);
 
         Template template;

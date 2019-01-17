@@ -1,0 +1,23 @@
+SYSROOT=/usr/local/arm-root
+CC=$(SYSROOT)/bin/arm-linux-gnueabihf-g++
+ARM_INC_DIR=-I$(SYSROOT)/arm-linux-gnueabihf/libc/usr/include
+ARM_LIB_DIR=-L$(SYSROOT)/arm-linux-gnueabihf/libc/usr/lib
+
+RM=rm
+ECHO=echo
+
+OBJS=democpp.o main.o structpp.o
+CFLAGS=-std=c++11 -O3 -Wall -I. -I$(ARM_INC_DIR) -c
+LDFLAGS=$(ARM_LIB_DIR) -lpthread
+TARGET=demo
+
+all: $(TARGET)
+
+.cpp.o:
+	$(CC) $(CFLAGS) -c $<
+
+$(TARGET): $(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+clean:
+	$(RM) -f $(OBJS) $(TARGET)

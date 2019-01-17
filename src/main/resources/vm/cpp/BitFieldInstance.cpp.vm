@@ -1,0 +1,47 @@
+#parse("vm/cpp/macro.vm")
+
+///////////////////////////////////////////////////////////////
+// bitfield ${structName}
+#if ($struct.haveComments())
+#foreach ($line in $struct.comments)
+// ${line}
+#end
+#end
+${struct.className}::${struct.className}(void) : Struct("${struct.className}", sc_bitfield)
+{
+    StructInstanceCounter::onStructConstructed("${package}::${struct.className}");
+
+#foreach ($field in $struct.fields)
+#initBits($field)
+#end
+}
+
+${struct.className}::~${struct.className}()
+{
+    StructInstanceCounter::onStructDestructed("${package}::${struct.className}");
+}
+
+size_t ${struct.className}::calcsize(void)
+{
+    size_t __size = 0;
+
+#foreach ($field in $struct.fields)
+    __size += ${field.type.arraySize};
+#end
+
+    return (__size + 7) >> 3;
+}
+
+void ${struct.className}::read(structpp::StructDecoder &decoder)
+{
+#foreach ($field in $struct.fields)
+    decoder.read_bitfield(&this->${field.name}, ${field.type.arraySize});
+#end
+}
+
+void ${struct.className}::write(structpp::StructEncoder &encoder)
+{
+#foreach ($field in $struct.fields)
+    encoder.write_bitfield(this->${field.name}, ${field.type.arraySize}, "${field.name}");
+#end
+}

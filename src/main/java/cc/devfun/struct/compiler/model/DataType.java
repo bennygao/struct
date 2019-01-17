@@ -18,6 +18,7 @@ public abstract class DataType {
         put("uint32", "long");
         put("long", "long");
         put("int64", "long");
+        put("uint64", "long");
         put("float", "float");
         put("double", "double");
     }};

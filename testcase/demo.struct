@@ -6,23 +6,9 @@
 import "base.struct";
 import "extension.struct";
 
-/* 商品 */
-struct Goods {
-    // 商品ID
-    int id = 1;
-
-   // 商品名称
-   string[64] name = "烟台苹果";
-
-   // 单价(每500克)
-   double unitPrice = 15.05;
-
-   // 泛型
-   Struct generic;
-
-   int num;
-
-   byte[num] data;
+struct AGeneric {
+    short cmd;
+    int len;
 }
 
 // 货架
@@ -36,20 +22,17 @@ struct Shelf {
     // 货架上陈列的商品
     Goods[displayedGoodsNum] displayedGoods;
 
-    // 变长
-    Goods[] goodsList;
-
     // 定长
-    Goods[3] goodsArray;
+    Color[3] colors;
 
     // 后面的字段
-    string[64] name = "烟台苹果";
-
-    // Color
-    Color color;
+    string[64] name = "(EAST-2)东侧第2排";
 
     // byte数组
     byte[26] frame;
+
+    // 基类Struct, 字节长度6
+    Struct generic;
 }
 
 // 礼品
@@ -59,4 +42,15 @@ struct Gift {
 
     // 礼品赠送的商品
     Goods goods;
+}
+
+struct Array {
+    int len;
+    uint8[len] bytes;
+    int size;
+    byte[size] md5;
+    byte[16] fixed;
+    int num;
+    int[num] aaa;
+    int[16] bbb;
 }

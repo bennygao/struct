@@ -1,6 +1,7 @@
 package cc.devfun.struct.compiler;
 
 import cc.devfun.struct.compiler.codegenerator.CCodeGeneratorFactory;
+import cc.devfun.struct.compiler.codegenerator.CppCodeGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.HtmlGeneratorFactory;
 import cc.devfun.struct.compiler.codegenerator.J2seCodeGeneratorFactory;
 import cc.devfun.struct.compiler.model.Struct;
@@ -28,7 +29,7 @@ public class StructCompiler {
         parsedFiles = new HashSet<>();
         searchPath = new ArrayList<>();
         allStructs = new LinkedHashMap<>();
-        Struct struct = new Struct("Struct");
+        Struct struct = Struct.create("Struct", false);
         struct.setResolved();
         allStructs.put(struct.getName(), struct);
     }
@@ -41,7 +42,11 @@ public class StructCompiler {
         return parsedFiles;
     }
 
-    public Map<String, Struct> parse(String fileName) throws Exception {
+    public boolean isIncluded() {
+        return generatorContext.getIncludeLevel() > 0;
+    }
+
+    private Map<String, Struct> parse(String fileName) throws Exception {
         File defineFile;
         if (fileName.startsWith("/")) {
             defineFile = new File(fileName);
@@ -59,6 +64,15 @@ public class StructCompiler {
             }
 
             throw new IllegalSemanticException("struct description file not exist: " + fileName);
+        }
+    }
+
+    public Map<String, Struct> parseIncluded(String fileName) throws Exception {
+        generatorContext.increaseIncludeLevel();
+        try {
+            return parse(fileName);
+        } finally {
+            generatorContext.decreaseIncludeLevel();
         }
     }
 
@@ -107,7 +121,7 @@ public class StructCompiler {
                 .defaultHelp(true)
                 .description("Compile C style struct to generating Java C or HTML.");
         parser.addArgument("-t", "--target")
-                .choices("java", "c", "html").required(true)
+                .choices("java", "cpp", "c", "html").required(true)
                 .help("Specify target language");
         parser.addArgument("-e", "--encoding").setDefault("utf8")
                 .help("Specify charset encoding of struct description file and generated files");
@@ -119,6 +133,9 @@ public class StructCompiler {
                 .help("Specify destination directory");
         parser.addArgument("-f", "--file").required(true).nargs(1)
                 .help("Specify struct description file");
+        parser.addArgument("-s", "--skip-includes").required(false).nargs("*")
+                .help("Skipping creation of included Struct");
+
         Namespace ns = null;
         try {
             ns = parser.parseArgs(args);
@@ -130,11 +147,15 @@ public class StructCompiler {
         GeneratorContext ctx = new GeneratorContext();
         CodeGeneratorFactory factory;
 
+        ctx.setSkipIncludes(ns.getAttrs().get("skip_includes") != null);
+
         String target = ns.getString("target");
         if ("java".equalsIgnoreCase(target)) {
             factory = new J2seCodeGeneratorFactory();
         } else if ("c".equalsIgnoreCase(target)) {
             factory = new CCodeGeneratorFactory();
+        } else if ("cpp".equalsIgnoreCase(target)) {
+            factory = new CppCodeGeneratorFactory();
         } else {
             factory = new HtmlGeneratorFactory();
         }

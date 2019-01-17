@@ -41,4 +41,8 @@ public class StructType extends DataType {
     public boolean isDecodable() {
         return !(hasArray() && getArray().isVarlen());
     }
+
+    public String getConstructArguments() {
+        return "";
+    }
 }

@@ -107,7 +107,7 @@ public class StructBuilder extends StructBaseListener {
         try {
             String str = ctx.getChild(1).getText();
             String fileName = str.substring(1, str.length() - 1);
-            compiler.parse(fileName);
+            compiler.parseIncluded(fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -143,9 +143,9 @@ public class StructBuilder extends StructBaseListener {
         Struct currentStruct = allStructs.get(typeName);
         if (currentStruct == null) {
             if (ctx instanceof StructParser.StructContext) {
-                currentStruct = new Struct(typeName);
+                currentStruct = Struct.create(typeName, compiler.isIncluded());
             } else {
-                currentStruct = new BitField(typeName);
+                currentStruct = new BitField(typeName, compiler.isIncluded());
             }
             allStructs.put(typeName, currentStruct);
         } else if (currentStruct.isResolved()) {
@@ -155,7 +155,7 @@ public class StructBuilder extends StructBaseListener {
         } else {
             // issue#1 [BUG] 1.0.5 struct定义文件中bitfield先引用后定义时，会把bitfield生成成为普通Struct。
             if (ctx instanceof StructParser.BitfieldContext) {
-                currentStruct = new BitField(typeName);
+                currentStruct = new BitField(typeName, compiler.isIncluded());
                 allStructs.put(typeName, currentStruct);
             }
         }
@@ -247,15 +247,10 @@ public class StructBuilder extends StructBaseListener {
 
         DataType fieldType = field.getType();
         if (fieldType.hasArray() && fieldType.getArray().isIdentifier()) {
-//                if (!field.getType().isStruct()) {
-//                    String errmsg = String.format("%s:%d identifier array index only can be supplied to struct.",
-//                            src.getName(), ctx.getStart().getLine());
-//                    throw new IllegalSemanticException(errmsg);
-//                } else {
             String identifier = field.getType().getArray().getSize();
             Field referenceField = currentStruct.getField(identifier);
             if (referenceField == null) {
-                String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasnot been defined.",
+                String errmsg = String.format("%s:%d identifier \"%s\" which specified to be array index hasn't been defined.",
                         src.getName(), ctx.getStart().getLine(), identifier);
                 throw new IllegalSemanticException(errmsg);
             } else if (!referenceField.getType().canBeArrayLength()) {
@@ -269,8 +264,6 @@ public class StructBuilder extends StructBaseListener {
             } else {
                 referenceField.setReference(field);
             }
-//                }
-//            }
         }
 
         currentArray = null;
@@ -295,7 +288,7 @@ public class StructBuilder extends StructBaseListener {
         String typeName = ctx.getChild(0).getText();
         Struct struct = allStructs.get(typeName);
         if (struct == null) {
-            struct = new Struct(typeName);
+            struct = Struct.create(typeName, compiler.isIncluded());
             allStructs.put(typeName, struct);
         }
 
@@ -303,6 +296,27 @@ public class StructBuilder extends StructBaseListener {
         currentType = structType;
         super.exitStructType(ctx);
     }
+//
+//    @Override public void exitGenericType(StructParser.GenericTypeContext ctx) {
+//        int len;
+//        String lv = ctx.getChild(2).getText();
+//        try {
+//            len = Integer.parseInt(lv);
+//        } catch (Exception e) {
+//            String errmsg = String.format("%s:%d illegal length value \"%s\" of generic Struct.",
+//                    src.getName(), ctx.getStart().getLine(), lv);
+//            throw new IllegalSemanticException(errmsg);
+//        }
+//
+//        if (len <= 0) {
+//            String errmsg = String.format("%s:%d illegal length value %d of generic Struct.",
+//                    src.getName(), ctx.getStart().getLine(), len);
+//            throw new IllegalSemanticException(errmsg);
+//        }
+//
+//        currentType = new GenericType(len);
+//    }
+
 
     @Override
     public void enterArray(StructParser.ArrayContext ctx) {

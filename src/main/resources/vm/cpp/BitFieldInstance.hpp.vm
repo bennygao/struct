@@ -1,0 +1,22 @@
+#parse("vm/cpp/macro.vm")
+
+///////////////////////////////////////////////////////////////
+// bitfield ${structName}
+#if ($struct.haveComments())
+#foreach ($line in $struct.comments)
+// ${line}
+#end
+#end
+class ${struct.className} : public structpp::Struct {
+public:
+    ${struct.className}(void);
+
+    virtual ~${struct.className}();
+	virtual size_t calcsize(void) override;
+	virtual void read(structpp::StructDecoder &decoder) override;
+	virtual void write(structpp::StructEncoder &encoder) override;
+
+#foreach ($field in $struct.fields)
+    uint32_t ${field.name}; // ${field.type.arraySize} bits
+#end
+};

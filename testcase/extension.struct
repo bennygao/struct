@@ -6,8 +6,8 @@
 // 位0-3 颜色透明度
 // 位4-7 颜色值
 bitfield Color {
-    transparency:4; // 透明度, 0为不透明, 15为全透明。
-    color:4; // 颜色值
+    transparency:3 = 7; // 透明度, 0为不透明, 15为全透明。
+    color:9 = 1; // 颜色值
 }
 
 // 图层
@@ -74,6 +74,6 @@ bitfield Property {
 
 bitfield ExtendProperty{
 	layerType: 3;
-	decimalCount: 4;
-	reserved: 17;
+	decimalCount: 6;
+	reserved: 7;
 }

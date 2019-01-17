@@ -1,0 +1,131 @@
+#parse("vm/cpp/macro.vm")
+
+///////////////////////////////////////////////////////////////
+// struct ${structName}
+#if ($struct.haveComments())
+#foreach ($line in $struct.comments)
+// ${line}
+#end
+#end
+${struct.className}::${struct.className}(void) : Struct("${struct.className}", sc_struct)
+{
+    StructInstanceCounter::onStructConstructed("${package}::${struct.className}");
+
+#foreach ($field in $struct.fields)
+#initField($field)
+
+#end
+}
+
+${struct.className}::~${struct.className}()
+{
+#foreach ($field in $struct.fields)
+    #if ($field.type.isStruct())## Struct
+        #if ($field.type.hasArray())
+    for (size_t i = 0; i < this->${field.name}.size(); ++i) {
+        delete this->${field.name}[i];
+    }
+        #else
+    delete this->${field.name};
+        #end
+
+    #end
+#end
+
+    StructInstanceCounter::onStructDestructed("${package}::${struct.className}");
+}
+
+size_t ${struct.className}::calcsize(void)
+{
+    size_t __size = 0;
+
+#foreach ($field in $struct.fields)
+    #if ($field.type.isBasic())
+        #if ($field.type.fixedLength)
+    __size += ${typeSizeMap[${field.type.name}]} * ${field.type.arraySize};
+        #else
+    __size += ${typeSizeMap[${field.type.name}]} * this->${field.name}.size();
+        #end
+    #elseif ($field.type.isString())
+    __size += ${field.type.arraySize};
+    #else
+        #if ($field.type.hasArray())
+            #if ($field.type.array.fixed)
+    for (size_t i = 0; i < ${field.type.arraySize}; ++i) {
+        __size += this->${field.name}[i]->calcsize();
+    }
+            #else
+                #if ($field.type.array.identifier)
+    this->${field.type.arraySize} = (#declareType($struct.getField($field.type.arraySize))) this->${field.name}.size();
+                #end
+    for (size_t i = 0; i < this->${field.name}.size(); ++i) {
+        __size += this->${field.name}[i]->calcsize();
+    }
+            #end
+        #else
+    if (this->${field.name} != NULL) {
+        __size += this->${field.name}->calcsize();
+    }
+        #end
+    #end
+#end
+
+    return __size;
+}
+
+void ${struct.className}::write(structpp::StructEncoder &encoder)
+{
+#foreach ($field in $struct.fields)
+    #if ($field.type.isBasic())## 基本数据类型
+        #if ($field.type.hasArray())## 数组
+    encoder.write_array(&this->${field.name}, "${field.type.prototype}", "${field.name}", $dataTypeEnum[${field.type.name}]);
+        #else
+            #if ($field.reference)
+    this->${field.name} = (#declareType($field)) this->${field.reference.name}.size();
+            #end
+    encoder.write_basic(&this->${field.name}, "${field.type.prototype}", "${field.name}", $dataTypeEnum[${field.type.name}], dt_none, 0);
+        #end
+    #elseif ($field.type.isString())
+    encoder.write_string(&this->${field.name}, "${field.type.prototype}", "${field.name}");
+    #else
+        #if ($field.type.hasArray())
+    encoder.write_vector(&this->${field.name}, "${field.type.prototype}", "${field.name}");
+        #else
+    encoder.write_struct(this->${field.name}, "${field.name}");
+        #end
+    #end
+
+#end
+}
+
+void ${struct.className}::read(structpp::StructDecoder &decoder)
+{
+#if ($struct.decodable)
+    #foreach ($field in $struct.fields)
+        #if ($field.type.isBasic())
+            #if ($field.type.hasArray())
+                #if ($field.type.array.identifier)
+    if (${field.type.arraySize} < 0) {
+        throw std::invalid_argument("array size identifier cannot be negative");
+    }
+                #end
+    decoder.read_array(&this->${field.name}, $dataTypeEnum[${field.type.name}], (size_t) ${field.type.arraySize});
+            #else
+    decoder.read_basic(&this->${field.name}, $dataTypeEnum[${field.type.name}]);
+            #end
+        #elseif ($field.type.isString())
+    decoder.read_string(&this->${field.name});
+        #else
+            #if ($field.type.hasArray())
+    decoder.read_vector(&this->${field.name}, "${field.type.name}", ${field.type.arraySize});
+            #else
+    decoder.read_struct(this->${field.name});
+            #end
+        #end
+
+    #end
+#else
+    throw std::invalid_argument("cannot decode unknown size array");
+#end
+}
+

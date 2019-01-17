@@ -2,7 +2,6 @@ package cc.devfun.struct.compiler;
 
 
 import cc.devfun.struct.compiler.model.Struct;
-import cc.devfun.struct.compiler.model.StructType;
 
 import java.io.File;
 import java.util.Map;
@@ -15,7 +14,9 @@ public class GeneratorContext {
     private String javaPackage;
     private String basePackage;
     private File defineFile;
+    private boolean skipIncludes;
     private Map<String, Struct> allStructs;
+    private int includeLevel;
 
     public GeneratorContext() {
         this.encoding = "utf8";
@@ -25,6 +26,7 @@ public class GeneratorContext {
         this.javaPackage = "";
         this.basePackage = null;
         this.allStructs = null;
+        this.includeLevel = 0;
     }
 
     public String getEncoding() {
@@ -89,6 +91,26 @@ public class GeneratorContext {
 
     public void setAllStructs(Map<String, Struct> allStructs) {
         this.allStructs = allStructs;
+    }
+
+    public boolean isSkipIncludes() {
+        return skipIncludes;
+    }
+
+    public void setSkipIncludes(boolean skipIncludes) {
+        this.skipIncludes = skipIncludes;
+    }
+
+    public void increaseIncludeLevel() {
+        ++includeLevel;
+    }
+
+    public void decreaseIncludeLevel() {
+        --includeLevel;
+    }
+
+    public int getIncludeLevel() {
+        return includeLevel;
     }
 
     public String getBasePackage() {

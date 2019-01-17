@@ -1,0 +1,84 @@
+struct Htpv4Task {
+    Htpv4Head head;
+    Htpv4Set htpv4Set;
+}
+
+struct Htpv4Head {
+    uint16 version;
+    byte[16] taskId;
+    uint16 taskType;
+    uint8 retryTimes;
+    uint16 processingTime;
+    byte[32] reserved;
+}
+
+struct Htpv4Set {
+    byte[4] setId;
+    uint16 setType;
+    uint16 baudrate;
+    uint8 channel;
+    uint8 rfPower;
+    uint8 groupWakeupTime;
+    uint8 eslRfWorkTime;
+    uint8 duration;
+    uint8 slot;
+    uint8 groupNum;
+    byte[32] reserved;
+    Htpv4Group[groupNum] groups;
+}
+
+struct Htpv4Group {
+    byte[4] groupId;
+    uint8 mask;
+    uint8 mode;
+    uint16 baudrate;
+    uint8 channel;
+    uint8 rfPower;
+    uint8 duration;
+    uint8 slot;
+    Htpv4Esl esls;
+}
+
+struct EslPacket {
+    byte[26] data;
+}
+
+struct Htpv4Esl {
+    uint16 eslNum;
+    byte[32] reserved;
+    byte[4] masterId;
+    uint8 channel;
+    uint8 power;
+    uint16 txBaudrate;
+    uint16 rxBaudrate;
+    uint8 eslWindow;
+    uint8 xCtrl;
+    uint8 dealDuration;
+    uint8 txInterval;
+    uint16 txDuration;
+
+    struct Htpv4EslData {
+        byte[8] eslId;
+        uint8 subnetMask;
+
+        struct Htpv4SleepEsl {
+            uint16 sleepEslNum;
+            uint8 channel;
+            uint16 baudrate;
+            uint8 power;
+            uint8 mode;
+            uint8 interval;
+            uint8 xCtrl;
+            uint8 times;
+            struct SleepEslIds {
+                byte[8] eslId;
+            }[sleepEslNum] sleepEslIds;
+        }htpv4SleepEsl;
+
+        uint16 subsessionPacketNum;
+        uint16 packetNum;
+        uint8 packetLen;
+        byte[32] reserved;
+        EslPacket[packetNum] packets;
+    }[eslNum] htpv4EslData;
+}

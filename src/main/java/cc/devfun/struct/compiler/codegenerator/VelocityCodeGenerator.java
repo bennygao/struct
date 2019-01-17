@@ -24,6 +24,8 @@ public class VelocityCodeGenerator {
                 "Velocity Classpath Resource Loader");
         props.setProperty("class.resource.loader.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+//        props.setProperty("class.resource.loader.class",
+//                "cc.devfun.struct.compiler.codegenerator.StructuredGlobbingResourceLoader");
         props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
         props.setProperty("runtime.log.invalid.references", "false");
 //                "org.apache.velocity.runtime.log.Log4JLogChute");
@@ -46,12 +48,17 @@ public class VelocityCodeGenerator {
 
     Writer getSourceWriter(String pathname, String encoding)
             throws Exception {
+        return getSourceWriter(new File(pathname), encoding);
+    }
+
+    Writer getSourceWriter(File file, String encoding)
+            throws Exception {
         Writer writer;
         if (encoding != null) {
-            writer = new OutputStreamWriter(new FileOutputStream(pathname),
+            writer = new OutputStreamWriter(new FileOutputStream(file),
                     encoding);
         } else {
-            writer = new FileWriter(pathname);
+            writer = new FileWriter(file);
         }
 
         return new LineEndFilterWriter(writer);

@@ -51,6 +51,10 @@ public class J2seCodeGenerator extends VelocityCodeGenerator implements
         Template structTemplate = Velocity.getTemplate("vm/java/StructInstance.java.vm");
         Template bitfieldTemplate = Velocity.getTemplate("vm/java/BitFieldInstance.java.vm");
         for (Struct struct : ctx.getAllStructs().values()) {
+            if (struct.isIncluded() && ctx.isSkipIncludes()) {
+                continue;
+            }
+
             vc = new VelocityContext();
             vc.put("package", ctx.getJavaPackage());
             vc.put("basePackage", ctx.getBasePackage());
