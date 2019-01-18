@@ -23,19 +23,11 @@ public class Struct {
         return output.getBuffer();
     }
 
-    public void encode(DataOutput output) throws IOException {
-    }
-
-    public Struct decode(DataInput input) throws IOException {
-        return this;
-    }
-
     public void encode(OutputStream output) throws IOException {
-        encode(getDataOutput(output));
     }
 
     public Struct decode(InputStream input) throws IOException {
-        return decode(getDataInput(input));
+        return this;
     }
 
     public int calcSize() {
@@ -64,17 +56,17 @@ public class Struct {
         }
     }
 
-    protected DataInput getDataInput(InputStream input) {
-        if (input instanceof DataInput) {
-            return (DataInput) input;
+    protected DataInputStream getDataInput(InputStream input) {
+        if (input instanceof DataInputStream) {
+            return (DataInputStream) input;
         } else {
             return new DataInputStream(input);
         }
     }
 
-    protected DataOutput getDataOutput(OutputStream output) {
+    protected DataOutputStream getDataOutput(OutputStream output) {
         if (output instanceof DataOutputStream) {
-            return (DataOutput) output;
+            return (DataOutputStream) output;
         } else {
             return new DataOutputStream(output);
         }
