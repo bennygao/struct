@@ -14,18 +14,7 @@ public class Struct {
     private final static int TRUE = 1;
     private final static int FALSE = 0;
 
-    private byte[] data;
-
     public Struct() {
-        this.data = null;
-    }
-
-    public Struct(int len) {
-        if (len < 0) {
-            throw new IllegalArgumentException("illegal length of generic Struct: " + len);
-        }
-
-        this.data = new byte[len];
     }
 
     public byte[] encodeToByteArray() throws IOException {
@@ -34,22 +23,23 @@ public class Struct {
         return output.getBuffer();
     }
 
-    public void encode(OutputStream output) throws IOException {
-        if (this.data != null) {
-            output.write(this.data);
-        }
+    public void encode(DataOutput output) throws IOException {
     }
 
-    public Struct decode(InputStream input) throws IOException {
-        if (this.data != null) {
-            input.read(this.data);
-        }
-
+    public Struct decode(DataInput input) throws IOException {
         return this;
     }
 
+    public void encode(OutputStream output) throws IOException {
+        encode(getDataOutput(output));
+    }
+
+    public Struct decode(InputStream input) throws IOException {
+        return decode(getDataInput(input));
+    }
+
     public int calcSize() {
-        return this.data == null ? 0 : this.data.length;
+        return 0;
     }
 
     /*************************************************************************
@@ -74,17 +64,17 @@ public class Struct {
         }
     }
 
-    protected DataInputStream getDataInput(InputStream input) {
-        if (input instanceof DataInputStream) {
-            return (DataInputStream) input;
+    protected DataInput getDataInput(InputStream input) {
+        if (input instanceof DataInput) {
+            return (DataInput) input;
         } else {
             return new DataInputStream(input);
         }
     }
 
-    protected DataOutputStream getDataOutput(OutputStream output) {
+    protected DataOutput getDataOutput(OutputStream output) {
         if (output instanceof DataOutputStream) {
-            return (DataOutputStream) output;
+            return (DataOutput) output;
         } else {
             return new DataOutputStream(output);
         }
@@ -353,9 +343,6 @@ public class Struct {
 
     protected void format(TextStructFormat structFormat, int level) {
         structFormat.beginStruct(getClass().getCanonicalName(), level);
-        if (this.data != null) {
-            structFormat.writeArray("data", level + 1, this.data, "byte");
-        }
         structFormat.endStruct(getClass().getCanonicalName(), level);
     }
 

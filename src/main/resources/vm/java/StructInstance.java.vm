@@ -1,12 +1,8 @@
 #parse("vm/license.vm")
 package ${package};
 
-#if ($struct.decodable)
-import java.io.DataInputStream;
-#end
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 #if ($basePackage)
 
@@ -249,9 +245,7 @@ public class ${struct.className} extends Struct {
     }
 
     @Override
-    public void encode(OutputStream output) throws IOException {
-        DataOutputStream __dos = getDataOutput(output);
-
+    public void encode(DataOutput __dos) throws IOException {
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
@@ -290,10 +284,8 @@ public class ${struct.className} extends Struct {
     }
 
     @Override
-    public Struct decode(InputStream input) throws IOException {
+    public Struct decode(DataInput __dis) throws IOException {
 #if ($struct.decodable)
-        DataInputStream __dis = getDataInput(input);
-
 #foreach ($field in $struct.fields)
 #if ($field.type.isBasic())
 #if ($field.type.hasArray())
