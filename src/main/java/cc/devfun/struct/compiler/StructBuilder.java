@@ -296,27 +296,6 @@ public class StructBuilder extends StructBaseListener {
         currentType = structType;
         super.exitStructType(ctx);
     }
-//
-//    @Override public void exitGenericType(StructParser.GenericTypeContext ctx) {
-//        int len;
-//        String lv = ctx.getChild(2).getText();
-//        try {
-//            len = Integer.parseInt(lv);
-//        } catch (Exception e) {
-//            String errmsg = String.format("%s:%d illegal length value \"%s\" of generic Struct.",
-//                    src.getName(), ctx.getStart().getLine(), lv);
-//            throw new IllegalSemanticException(errmsg);
-//        }
-//
-//        if (len <= 0) {
-//            String errmsg = String.format("%s:%d illegal length value %d of generic Struct.",
-//                    src.getName(), ctx.getStart().getLine(), len);
-//            throw new IllegalSemanticException(errmsg);
-//        }
-//
-//        currentType = new GenericType(len);
-//    }
-
 
     @Override
     public void enterArray(StructParser.ArrayContext ctx) {

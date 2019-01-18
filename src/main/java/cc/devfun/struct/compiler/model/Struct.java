@@ -1,5 +1,6 @@
 package cc.devfun.struct.compiler.model;
 
+import cc.devfun.struct.compiler.IllegalSemanticException;
 import cc.devfun.struct.compiler.Utils;
 
 import java.io.*;
@@ -81,6 +82,12 @@ public class Struct implements Commentable {
     }
 
     public void addField(Field f) {
+        if (this.fields.containsKey(f.getName())) {
+            throw new IllegalSemanticException(String.format(
+                    "Duplicate field name %s in struct %s",
+                    f.getName(), name));
+        }
+
         DataType type = f.getType();
         if (type.isStruct()) {
             StructType st = (StructType) type;

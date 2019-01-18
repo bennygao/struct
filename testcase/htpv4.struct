@@ -41,6 +41,7 @@ struct Htpv4Group {
 
 struct EslPacket {
     byte[26] data;
+    int data;
 }
 
 struct Htpv4Esl {
