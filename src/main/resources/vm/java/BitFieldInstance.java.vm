@@ -86,7 +86,7 @@ public class ${struct.className} extends Struct {
     public void ${utils.getSetter($field.name)}(#bitsType($field) $field.name) {
         if (${field.name} < 0) {
             throw new RuntimeException("value of bitfield \"${field.name}\" cannot be negative.");
-        } else if (${field.name} >= Math.pow(2, ${field.type.arraySize})) {
+        } else if (${field.name} >= (2 << (${field.type.arraySize} - 1))) {
             throw new RuntimeException("value of bitfield \"${field.name}\" overflow.");
         } else {
             this.${field.name} = ${field.name};
@@ -100,11 +100,7 @@ public class ${struct.className} extends Struct {
 #foreach ($field in $struct.fields)
         __bits += ${field.type.arraySize};
 #end
-        int __remainder = __bits % 8;
-        if (__remainder > 0) {
-            __bits += 8 - __remainder;
-        }
-        return __bits / 8;
+        return (__bits + 7) / 8;
     }
 
     @Override
