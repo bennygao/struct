@@ -96,7 +96,7 @@ public class Struct {
     }
 
     public int readUint8(DataInput dis) throws IOException {
-        return toUnsignedInt(readByte(dis));
+        return Byte.toUnsignedInt(readByte(dis));
     }
 
     public void writeUint8(int value, DataOutput dos) throws IOException {
@@ -125,8 +125,7 @@ public class Struct {
     }
 
     public void writeShort(short value, DataOutput dos) throws IOException {
-        short bits = byteOrder == ByteOrder.LITTLE_ENDIAN ? Short.reverseBytes(value) : value;
-        dos.writeShort(bits);
+        dos.writeShort(byteOrder == ByteOrder.LITTLE_ENDIAN ? Short.reverseBytes(value) : value);
     }
 
     public short readInt16(DataInput dis) throws IOException {
@@ -138,7 +137,7 @@ public class Struct {
     }
 
     public int readUint16(DataInput dis) throws IOException {
-        return toUnsignedInt(readShort(dis));
+        return Short.toUnsignedInt(readShort(dis));
     }
 
     public void writeUint16(int value, DataOutput dos) throws IOException {
@@ -151,8 +150,7 @@ public class Struct {
     }
 
     public void writeInt(int value, DataOutput dos) throws IOException {
-        int bits = byteOrder == ByteOrder.LITTLE_ENDIAN ? Integer.reverseBytes(value) : value;
-        dos.writeInt(bits);
+        dos.writeInt(byteOrder == ByteOrder.LITTLE_ENDIAN ? Integer.reverseBytes(value) : value);
     }
 
     public int readInt32(DataInput dis) throws IOException {
@@ -164,7 +162,7 @@ public class Struct {
     }
 
     public long readUint32(DataInput dis) throws IOException {
-        return toUnsignedLong(readInt(dis));
+        return Integer.toUnsignedLong(readInt(dis));
     }
 
     public void writeUint32(long value, DataOutput dos) throws IOException {
@@ -177,8 +175,7 @@ public class Struct {
     }
 
     public void writeLong(long value, DataOutput dos) throws IOException {
-        long bits = byteOrder == ByteOrder.LITTLE_ENDIAN ? Long.reverseBytes(value) : value;
-        dos.writeLong(bits);
+        dos.writeLong(byteOrder == ByteOrder.LITTLE_ENDIAN ? Long.reverseBytes(value) : value);
     }
 
     public long readInt64(DataInput dis) throws IOException {
@@ -197,10 +194,9 @@ public class Struct {
     }
 
     public void writeFloat(float value, DataOutput dos) throws IOException {
-        float bits = byteOrder == ByteOrder.LITTLE_ENDIAN ?
+        dos.writeFloat(byteOrder == ByteOrder.LITTLE_ENDIAN ?
                 Float.intBitsToFloat(Integer.reverseBytes(Float.floatToIntBits(value))) :
-                value;
-        dos.writeFloat(bits);
+                value);
 
     }
 
@@ -212,10 +208,9 @@ public class Struct {
     }
 
     public void writeDouble(double value, DataOutput dos) throws IOException {
-        double bits = byteOrder == ByteOrder.LITTLE_ENDIAN ?
+        dos.writeDouble(byteOrder == ByteOrder.LITTLE_ENDIAN ?
                 Double.longBitsToDouble(Long.reverseBytes(Double.doubleToLongBits(value))) :
-                value;
-        dos.writeDouble(bits);
+                value);
     }
 
     public int readBits(BitInputStream bis, int num) throws IOException {
@@ -238,11 +233,7 @@ public class Struct {
     }
 
     private boolean isEmpty(String str) {
-        if (str == null) {
-            return true;
-        } else {
-            return str.length() == 0;
-        }
+        return str == null || str.length() == 0;
     }
 
     private String getString(byte[] bytes) {
@@ -253,18 +244,6 @@ public class Struct {
             }
         }
         return new String(bytes, 0, i);
-    }
-
-    public static int toUnsignedInt(byte x) {
-        return ((int) x) & 0xff;
-    }
-
-    public static int toUnsignedInt(short x) {
-        return ((int) x) & 0xffff;
-    }
-
-    public static long toUnsignedLong(int x) {
-        return ((long) x) & 0xffffffffL;
     }
 
     public static class BitInputStream extends InputStream {

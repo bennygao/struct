@@ -14,7 +14,11 @@ import org.apache.velocity.app.Velocity;
 public class VelocityCodeGenerator {
     private final static String DIGEST_IDENTIFIER = "@DIGEST";
 
-    public void init(String encoding) throws Exception {
+    public void init(String encoding) {
+        init(encoding, "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+    }
+
+    public void init(String encoding, String resourceLoader) {
         Properties props = new Properties();
         // 模板文件是UTF-8编码
         props.setProperty("input.encoding", encoding);
@@ -22,8 +26,7 @@ public class VelocityCodeGenerator {
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.description",
                 "Velocity Classpath Resource Loader");
-        props.setProperty("class.resource.loader.class",
-                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        props.setProperty("class.resource.loader.class", resourceLoader);
 //        props.setProperty("class.resource.loader.class",
 //                "cc.devfun.struct.compiler.codegenerator.StructuredGlobbingResourceLoader");
         props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");

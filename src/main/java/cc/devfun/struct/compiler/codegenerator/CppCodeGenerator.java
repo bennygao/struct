@@ -24,7 +24,7 @@ public class CppCodeGenerator extends VelocityCodeGenerator implements CodeGener
 
     @Override
     public void generate(GeneratorContext ctx) throws Exception {
-        init(ctx.getEncoding());
+        init(ctx.getEncoding(), "cc.devfun.struct.compiler.codegenerator.StructuredGlobbingResourceLoader");
 
         if (!ctx.getOutputDir().exists()) {
             if (!ctx.getOutputDir().mkdirs()) {

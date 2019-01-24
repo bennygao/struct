@@ -112,7 +112,7 @@
     }
             #end
         #elseif ($field.type.typeName == "Struct")
-    this->${field.name} = new ${field.type.typeName}($field.type.len);
+    this->${field.name} = new ${field.type.typeName}();
         #else
     this->${field.name} = new ${field.type.typeName}();
         #end
