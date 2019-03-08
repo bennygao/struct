@@ -63,7 +63,7 @@ void StructDecoder::read_vector(void *pv, const std::string sname, size_t num)
         } else {
             s = (*vec)[i];
         }
-        
+
         read_struct(s);
     }
 }
@@ -160,7 +160,7 @@ void BinaryStructDecoder::read_bitfield(uint32_t *pp, int nbits)
             input->read((char *) &bits8, 1);
             index = 7;
         }
-        
+
         if (bits8 & (0x01 << index--)) {
             value |= 0x01;
         }
@@ -185,7 +185,7 @@ void BinaryStructDecoder::end_read_struct(void)
 ///////////////////////////////////////////////////////////////
 StructEncoder::StructEncoder(void)
 {
-    
+
 }
 
 void StructEncoder::write_struct(Struct *pp, const std::string propname)
@@ -198,7 +198,7 @@ void StructEncoder::write_struct(Struct *pp, const std::string propname)
 void StructEncoder::write_vector(void *pv, const std::string prototype, const std::string propname)
 {
     begin_write_vector(pv, prototype, propname);
-    
+
     std::vector<Struct *> *vec = (std::vector<Struct *> *) pv;
     std::stringstream ss;
     for (size_t i = 0; i < vec->size(); ++i) {
@@ -207,7 +207,7 @@ void StructEncoder::write_vector(void *pv, const std::string prototype, const st
         Struct *s = (*vec)[i];
         this->write_struct(s, ss.str());
     }
-    
+
     end_write_vector(pv, prototype, propname);
 }
 
@@ -244,12 +244,11 @@ void StructEncoder::write_array(void *pa, const std::string prototype, const std
 ///////////////////////////////////////////////////////////////
 // methods implements of Struct
 ///////////////////////////////////////////////////////////////
-Struct::Struct(size_t len)
+Struct::Struct(void)
 {
     StructInstanceCounter::onStructConstructed(GENERIC_STRUCT_NAME);
     this->name = GENERIC_STRUCT_NAME;
     this->clazz = sc_struct;
-    this->data.resize(len);
 }
 
 Struct::Struct(std::string name, StructClass clazz)
@@ -394,7 +393,7 @@ void TextStructEncoder::write_basic(void *pp, const std::string prototype, const
 {
     std::stringstream ss;
     tostr(dtype, pp, ss);
-    
+
     if (ctype == dt_none) {
         indent();
         *output << prototype << ' ' << propname << " = " << ss.str() << std::endl;

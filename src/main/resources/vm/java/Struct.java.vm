@@ -51,13 +51,13 @@ public class Struct {
     }
 
     public void writeString(String value, int len, DataOutput dos) throws IOException {
-        if (isEmpty(value)) {
-            return;
+        int written = 0;
+        if (!isEmpty(value)) {
+            byte[] bytes = value.getBytes();
+            written = Math.min(bytes.length, len);
+            dos.write(bytes, 0, written);
         }
 
-        byte[] bytes = value.getBytes();
-        int written = Math.min(bytes.length, len);
-        dos.write(bytes, 0, written);
         for (int i = written; i < len; ++i) {
             dos.write(0);
         }
